@@ -1,0 +1,6 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Acessibilidade: foco visível (opcional, mas inofensivo) */
+:focus-visible { outline: 3px solid #1e3a8a; outline-offset: 2px; }

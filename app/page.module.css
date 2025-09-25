@@ -1,0 +1,489 @@
+/* app/page.module.css */
+
+.page {
+  --gray-rgb: 0, 0, 0;
+  --gray-alpha-200: rgba(var(--gray-rgb), 0.08);
+  --gray-alpha-100: rgba(var(--gray-rgb), 0.05);
+
+  --button-primary-hover: #383838;
+  --button-secondary-hover: #f2f2f2;
+
+  display: grid;
+  grid-template-rows: 20px 1fr 20px;
+  align-items: center;
+  justify-items: center;
+  min-height: 100svh;
+  padding: 80px;
+  gap: 64px;
+  font-family: var(--font-geist-sans);
+}
+
+@media (prefers-color-scheme: dark) {
+  .page {
+    --gray-rgb: 255, 255, 255;
+    --gray-alpha-200: rgba(var(--gray-rgb), 0.145);
+    --gray-alpha-100: rgba(var(--gray-rgb), 0.06);
+
+    --button-primary-hover: #ccc;
+    --button-secondary-hover: #1a1a1a;
+  }
+}
+
+.main {
+  display: flex;
+  flex-direction: column;
+  gap: 32px;
+  grid-row-start: 2;
+}
+
+.main ol {
+  font-family: var(--font-geist-mono);
+  padding-left: 0;
+  margin: 0;
+  font-size: 14px;
+  line-height: 24px;
+  letter-spacing: -0.01em;
+  list-style-position: inside;
+}
+
+.main li:not(:last-of-type) {
+  margin-bottom: 8px;
+}
+
+.main code {
+  font-family: inherit;
+  background: var(--gray-alpha-100);
+  padding: 2px 4px;
+  border-radius: 4px;
+  font-weight: 600;
+}
+
+.ctas {
+  display: flex;
+  gap: 16px;
+}
+
+.ctas a {
+  appearance: none;
+  border-radius: 128px;
+  height: 48px;
+  padding: 0 20px;
+  border: 1px solid transparent;
+  transition:
+    background 0.2s,
+    color 0.2s,
+    border-color 0.2s;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 16px;
+  line-height: 20px;
+  font-weight: 500;
+}
+
+a.primary {
+  background: var(--foreground);
+  color: var(--background);
+  gap: 8px;
+}
+
+a.secondary {
+  border-color: var(--gray-alpha-200);
+  min-width: 158px;
+}
+
+.footer {
+  grid-row-start: 3;
+  display: flex;
+  gap: 24px;
+}
+
+.footer a {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.footer img {
+  flex-shrink: 0;
+}
+
+/* Enable hover only on non-touch devices */
+@media (hover: hover) and (pointer: fine) {
+  a.primary:hover {
+    background: var(--button-primary-hover);
+    border-color: transparent;
+  }
+
+  a.secondary:hover {
+    background: var(--button-secondary-hover);
+    border-color: transparent;
+  }
+
+  .footer a:hover {
+    text-decoration: underline;
+    text-underline-offset: 4px;
+  }
+}
+
+@media (max-width: 600px) {
+  .page {
+    padding: 32px;
+    padding-bottom: 80px;
+  }
+
+  .main {
+    align-items: center;
+  }
+
+  .main ol {
+    text-align: center;
+  }
+
+  .ctas {
+    flex-direction: column;
+  }
+
+  .ctas a {
+    font-size: 14px;
+    height: 40px;
+    padding: 0 16px;
+  }
+
+  a.secondary {
+    min-width: auto;
+  }
+
+  .footer {
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: center;
+  }
+}
+
+@media (prefers-color-scheme: dark) {
+  .logo {
+    filter: invert();
+  }
+}
+
+/* ===================================================== */
+/* ==== HERO PNGs: crossfade suave (NOMES EM camelCase) */
+/* ===================================================== */
+
+@keyframes heroFade {
+  0% { opacity: 0; }
+  5% { opacity: 1; }
+  33% { opacity: 1; }
+  38% { opacity: 0; }
+  100% { opacity: 0; }
+}
+
+.heroFade {
+  opacity: 0;
+  animation: heroFade 12s infinite;
+  will-change: opacity;
+}
+
+/* Atrasos para cada PNG */
+.heroDelay1 { animation-delay: 0s; }
+.heroDelay2 { animation-delay: 4s; }
+.heroDelay3 { animation-delay: 8s; }
+
+/* === Conquistas: hover no CARD, sem zoom na imagem === */
+
+/* 1) Mate QUALQUER zoom/transform na imagem (inclusive de group-hover) */
+.conquistasHoverSoft :where(img) {
+  transform: none !important;
+  transition: none !important;     /* evita animação de escala */
+}
+
+/* Segurança extra: garante zero escala em qualquer estado */
+.conquistasHoverSoft :where(img:hover, img:focus, img:active) {
+  transform: none !important;
+}
+
+/* 2) Aplique o "stroke" no CONTÊINER do card (o elemento que envolve a img)  */
+/*    Usamos :has(> img) para pegar o wrapper direto da imagem, seja <div> ou <a>. */
+.conquistasHoverSoft :where(a, div):has(> img) {
+  border-radius: 28px;                    /* combine com o raio dos seus cards */
+  outline: 2px solid transparent;         /* stroke inicial */
+  outline-offset: 0;
+  transition: outline-color 180ms ease, box-shadow 180ms ease;
+}
+
+/* Hover/focus do CARD (não da imagem) -> fica azul e com glow suave */
+.conquistasHoverSoft :where(a, div):has(> img):hover,
+.conquistasHoverSoft :where(a, div):has(> img):focus-within {
+  outline-color: #14D3E0;                 /* azul claro do brand */
+  box-shadow: 0 0 0 8px rgba(20, 211, 224, 0.12);
+}
+
+/* Permite que as imagens crescidas “passem” do container */
+.heroStage {
+  overflow: visible;
+  position: relative;
+}
+
+/* Deixa cada PNG maior e um pouco mais para baixo.
+   A onda (z-30) cobre o corte inferior, criando o efeito de “encostar”. */
+.heroImg {
+  transform-origin: center bottom;
+  transform: translateY(6%) scale(1.18);
+  will-change: transform;
+}
+
+/* Responsivo: aumenta um pouco mais em telas maiores */
+@media (min-width: 768px) {
+  .heroImg {
+    transform: translateY(8%) scale(1.26);
+  }
+}
+@media (min-width: 1024px) {
+  .heroImg {
+    transform: translateY(10%) scale(1.34);
+  }
+}
+/* Permite que a imagem crescida passe do container */
+.heroStage {
+  position: relative;
+  overflow: visible;
+}
+
+/* -------------------------
+   Ajuste global: encostar na onda
+   - mais para baixo (translateY)
+   - maior (scale)
+   ------------------------- */
+.heroImg {
+  /* usando CSS vars para facilitar overrides por imagem/breakpoint */
+  --tx: 0%;
+  --ty: 16%;
+  --sc: 1.30;
+
+  transform-origin: center bottom;
+  transform: translate(var(--tx), var(--ty)) scale(var(--sc));
+  will-change: transform;
+}
+
+/* md: desce mais e aumenta */
+@media (min-width: 768px) {
+  .heroImg {
+    --ty: 20%;
+    --sc: 1.36;
+  }
+}
+
+/* lg: desce um pouco mais ainda = encosta de vez na onda */
+@media (min-width: 1024px) {
+  .heroImg {
+    --ty: 24%;
+    --sc: 1.42;
+  }
+}
+
+/* 3ª imagem: levemente para a esquerda para não invadir o texto */
+.heroImg3 {
+  --tx: -4%;
+}
+
+/* em telas grandes, um pouco mais à esquerda */
+@media (min-width: 1024px) {
+  .heroImg3 {
+    --tx: -6%;
+  }
+}
+/* Empurra as imagens para baixo sem alterar layout/altura da seção */
+.heroDock {
+  /* X e Y configuráveis; mantemos tudo com o mesmo tamanho */
+  --dockX: 0px;
+  --dockY: 18px;            /* mobile: encosta na onda */
+  transform: translate(var(--dockX), var(--dockY));
+  transform-origin: center bottom;
+  will-change: transform;
+}
+
+/* em telas médias, um pouco mais pra baixo */
+@media (min-width: 768px) {
+  .heroDock { --dockY: 26px; }
+}
+
+/* em telas grandes, mais um tiquinho pra baixo (sem mexer em tamanho) */
+@media (min-width: 1024px) {
+  .heroDock { --dockY: 125px; }
+}
+
+/* 3ª imagem: levemente para a esquerda para não invadir o texto */
+.heroDockShift3 { --dockX: -12px; }
+
+@media (min-width: 1024px) {
+  .heroDockShift3 { --dockX: -80px; }
+}
+/* Mantém o empurrão X/Y e agora também escala a imagem
+   sem alterar o layout da seção. */
+.heroDock {
+  /* você já tinha esses dois: */
+  --dockX: 0px;
+  --dockY: 18px;
+
+  /* NOVO: fator de escala fixo (padrão) */
+  --heroScale: 1.14;
+
+  /* importante: crescer “a partir” da base para cima */
+  transform: translate(var(--dockX), var(--dockY)) scale(var(--heroScale));
+  transform-origin: center bottom;
+  will-change: transform;
+}
+
+/* você pode manter os mesmos valores de Y que já ajustou;
+   aqui só um exemplo de responsivo sem mudar layout */
+@media (min-width: 768px) {
+  .heroDock { --dockY: 80px; --heroScale: 1.18; }
+}
+@media (min-width: 1024px) {
+  .heroDock { --dockY: 120px; --heroScale: 1.22; }
+}
+
+/* Se precisar ajustar a 3ª um pouco para a esquerda (você já tinha): */
+.heroDockShift3 { --dockX: -12px; }
+@media (min-width: 1024px) {
+  .heroDockShift3 { --dockX: -20px; }
+}
+
+/* OPÇÕES finas (caso alguma precise mais/menos escala) */
+.heroScaleMore { --heroScale: calc(var(--heroScale) + 0.06); }
+.heroScaleLess { --heroScale: calc(var(--heroScale) - 0.06); }
+
+/* Cresce a imagem “a partir da base” (continua encostada na onda). */
+.heroDock{
+  --dockX: 0px;
+  --dockY: 18px;
+
+  /* AQUI: escala bem maior por padrão */
+  --heroScale: 1.0;
+
+  transform: translate(var(--dockX), var(--dockY)) scale(var(--heroScale));
+  transform-origin: center bottom;
+  will-change: transform;
+}
+
+/* Escala maior conforme a tela cresce (não muda layout) */
+@media (min-width: 640px){ .heroDock{ --dockY: 12px; --heroScale: 1.8; } }
+@media (min-width: 768px){ .heroDock{ --dockY: 28px; --heroScale: 1.2; } }
+@media (min-width: 1024px){ .heroDock{ --dockY: 34px; --heroScale: 1.2; } }
+@media (min-width: 1280px){ .heroDock{ --dockY: 40px; --heroScale: 1.30; } }
+
+/* Ajuste fino por imagem (ex.: a #3 mais à esquerda) */
+.heroShift3{ --dockX: -39px; }
+
+/* Opcional: “turbinar”/“reduzir” uma específica sem mexer no resto */
+.heroScaleMore{ --heroScale: calc(var(--heroScale) + 0.05); }
+.heroScaleLess{ --heroScale: calc(var(--heroScale) - 0.05); }
+
+/* ===== HERO – CONTROLE FINO POR FOTO (somente adicionar) ===== */
+.heroCtl{
+  --hx: 0px;   /* X: negativo = esquerda, positivo = direita */
+  --hy: 0px;   /* Y: positivo = desce, negativo = sobe */
+  --hs: 1;     /* escala: 1 = original */
+
+  transform: translate(var(--hx), var(--hy)) scale(var(--hs));
+  transform-origin: center bottom;
+  will-change: transform;
+}
+
+/* IMAGEM 1 */
+.hero1{
+  --hs: 1.65;
+  --hx:  0px;
+  --hy: 90px;
+}
+
+/* IMAGEM 2 */
+.hero2{
+  --hs: 1.72;
+  --hx:  0px;
+  --hy: 95px;
+}
+
+/* IMAGEM 3 (pouco à esquerda) */
+.hero3{
+  --hs: 1.68;
+  --hx: -36px;
+  --hy: 92px;
+}
+
+@media (min-width: 768px){
+  .hero1{ --hs: 1.78; --hy: 98px; }
+  .hero2{ --hs: 1.86; --hy: 104px; }
+  .hero3{ --hs: 1.80; --hy: 100px; --hx: -44px; }
+}
+@media (min-width: 1024px){
+  .hero1{ --hs: 1.6; --hy: 110px; }
+  .hero2{ --hs: 1.6; --hy: 116px; }
+  .hero3{ --hs: 1.7; --hy: 128px; --hx: -86px; }
+}
+
+/* ====== FILOSOFIA: controle fino das 3 imagens do hero ====== */
+/* Escala/posição via variáveis. Útil para "puxar para a direita". */
+.heroFiloCtl{
+  --dockX: 32px;   /* + direita | - esquerda */
+  --dockY: 18px;   /* + desce   | - sobe     */
+  --heroScale: 1.24;
+
+  transform: translate(var(--dockX), var(--dockY)) scale(var(--heroScale));
+  transform-origin: center bottom;
+  will-change: transform;
+}
+
+/* Quebra por tamanho (ajustes leves, pode alterar à vontade) */
+@media (min-width: 768px){
+  .heroFiloCtl{ --dockX: 44px; --dockY: 26px; --heroScale: 1.28; }
+}
+@media (min-width: 1024px){
+  .heroFiloCtl{ --dockX: 56px; --dockY: 28px; --heroScale: 1.34; }
+}
+
+/* Por-imagem (ex.: a #3 um pouco mais para a direita ou menor/maior) */
+.heroFilo1{ /* primeira */ --heroScale: 1.34; }
+.heroFilo2{ /* segunda  */ --heroScale: 1.36; }
+.heroFilo3{ /* terceira */ --dockX: 60px; --heroScale: 1.30; }
+
+/* === HERO (3 PNGs): crossfade contínuo e suave === */
+.heroCtl{
+  will-change: transform, opacity;
+  transition: transform 300ms ease;
+  pointer-events: none;
+  backface-visibility: hidden;
+}
+
+/* Cada PNG roda o mesmo ciclo; os delays (0s, 4s, 8s) vêm do TSX */
+.heroFade{
+  opacity: 0;
+  animation-name: sj-hero-cycle;
+  animation-duration: 12s;                /* 3 × ~4s */
+  animation-timing-function: cubic-bezier(.4,0,.2,1);
+  animation-iteration-count: infinite;
+  animation-fill-mode: both;
+}
+
+.hero1{ z-index: 3; }
+.hero2{ z-index: 2; }
+.hero3{ z-index: 1; }
+
+/* Crossfade com sobreposição maior */
+@keyframes sj-hero-cycle{
+  0%   { opacity: 0; }
+  6%   { opacity: 1; }   /* entra suave */
+  30%  { opacity: 1; }   /* fica visível */
+  40%  { opacity: 0; }   /* sai devagar, sobrepondo com a próxima */
+  100% { opacity: 0; }
+}
+
+@media (prefers-reduced-motion: reduce){
+  .heroFade{
+    animation-timing-function: linear;
+    animation-duration: 12s;
+  }
+}
+
