@@ -1,11 +1,12 @@
 // app/noticias/[slug]/page.tsx
+import type { ReadonlyURLSearchParams } from "next/navigation";
 import Link from "next/link";
 import { readNewsBySlug, listNewsMeta } from "@/lib/news";
 
-// ✔️ Em Next 15, a página deve aceitar também `searchParams`
+// Tipagem compatível com Next 15 (inclui searchParams)
 type PageProps = {
   params: { slug: string };
-  searchParams: ReadonlyURLSearchParams; // não usamos, mas precisa existir
+  searchParams: ReadonlyURLSearchParams; // não usado, mas deixa o tipo correto
 };
 
 export default function NewsPostPage({ params }: PageProps) {
@@ -42,6 +43,7 @@ export default function NewsPostPage({ params }: PageProps) {
 
       <article>
         <h1 className="text-3xl font-extrabold text-gray-900">{post.title}</h1>
+
         {post.date && (
           <p className="mt-2 text-sm text-gray-500">
             {new Date(post.date).toLocaleDateString("pt-BR")}
@@ -78,7 +80,7 @@ export default function NewsPostPage({ params }: PageProps) {
   );
 }
 
-// Geração estática das rotas de notícia
+// Gera rotas estaticamente (ajuda no build)
 export function generateStaticParams(): Array<{ slug: string }> {
   const posts = listNewsMeta();
   return posts.map((p) => ({ slug: p.slug }));
