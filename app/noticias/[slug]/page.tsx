@@ -1,16 +1,20 @@
 // app/noticias/[slug]/page.tsx
-import type { ReadonlyURLSearchParams } from "next/navigation";
 import Link from "next/link";
 import { readNewsBySlug, listNewsMeta } from "@/lib/news";
 
-// Tipagem compatível com Next 15 (inclui searchParams)
-type PageProps = {
-  params: { slug: string };
-  searchParams: ReadonlyURLSearchParams; // não usado, mas deixa o tipo correto
+// Next 15: params e (opcional) searchParams são Promises
+type Params = { slug: string };
+type Props = {
+  params: Promise<Params>;
+  // você não usa searchParams aqui; tipamos de forma genérica e segura:
+  searchParams?: Promise<Record<string, string | string[] | undefined>>;
 };
 
-export default function NewsPostPage({ params }: PageProps) {
-  const post = readNewsBySlug(params.slug);
+export default async function NewsPostPage({ params }: Props) {
+  // Desempacota o slug a partir da Promise
+  const { slug } = await params;
+
+  const post = readNewsBySlug(slug);
 
   if (!post) {
     return (
@@ -43,7 +47,6 @@ export default function NewsPostPage({ params }: PageProps) {
 
       <article>
         <h1 className="text-3xl font-extrabold text-gray-900">{post.title}</h1>
-
         {post.date && (
           <p className="mt-2 text-sm text-gray-500">
             {new Date(post.date).toLocaleDateString("pt-BR")}
@@ -80,8 +83,8 @@ export default function NewsPostPage({ params }: PageProps) {
   );
 }
 
-// Gera rotas estaticamente (ajuda no build)
-export function generateStaticParams(): Array<{ slug: string }> {
+// Geração estática das rotas (ok no Next 15). Pode retornar direto ou Promise.
+export async function generateStaticParams() {
   const posts = listNewsMeta();
   return posts.map((p) => ({ slug: p.slug }));
 }
