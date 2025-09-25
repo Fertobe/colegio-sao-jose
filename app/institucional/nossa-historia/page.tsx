@@ -4,7 +4,7 @@ import Link from "next/link";
 import BackToTop from "../../components/BackToTop";
 
 // ==================== CONFIG ====================
-const HERO_IMG = "/historia/hero.png"; // única imagem no herói
+const HERO_IMG = "/historia/Hero.png"; // única imagem no herói
 
 // Linha do tempo (conteúdo do PDF resumido em marcos)
 const TIMELINE: Array<{ year: string; title: string; text: string }> = [

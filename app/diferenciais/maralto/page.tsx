@@ -15,7 +15,7 @@ export default function MaraltoPage() {
       {/* HERO — imagem única ocupando toda a largura */}
       <section className="relative overflow-hidden bg-black">
         <img
-          src="/maralto/hero.png"
+          src="/maralto/Hero.png"
           alt="Programa de Formação Leitora Maralto"
           className="w-full h-auto select-none"
           loading="eager"

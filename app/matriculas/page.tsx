@@ -11,7 +11,7 @@ export const metadata: Metadata = {
 };
 
 // ==================== CONFIG FÁCIL ====================
-const HERO_IMG = "/matriculas/hero.png";
+const HERO_IMG = "/matriculas/Hero.png";
 const PASSO_IMG = "/matriculas/passo.png";
 
 const MAPS_EMBED =
