@@ -2,9 +2,13 @@
 import Link from "next/link";
 import { readNewsBySlug, listNewsMeta } from "@/lib/news";
 
-type Props = { params: { slug: string } };
+// ✔️ Em Next 15, a página deve aceitar também `searchParams`
+type PageProps = {
+  params: { slug: string };
+  searchParams: ReadonlyURLSearchParams; // não usamos, mas precisa existir
+};
 
-export default function NewsPostPage({ params }: Props) {
+export default function NewsPostPage({ params }: PageProps) {
   const post = readNewsBySlug(params.slug);
 
   if (!post) {
@@ -29,7 +33,7 @@ export default function NewsPostPage({ params }: Props) {
       {/* ← Voltar */}
       <div className="mb-6">
         <Link
-          href="/institucional/noticias" // aponta para a rota institucional (que vamos redirecionar)
+          href="/institucional/noticias"
           className="inline-flex items-center gap-2 rounded-full border px-4 py-2 text-sm font-semibold text-brand-700 hover:bg-brand-50"
         >
           ← Voltar para notícias
@@ -74,8 +78,8 @@ export default function NewsPostPage({ params }: Props) {
   );
 }
 
-// Gera rotas estaticamente (opcional, ajuda no build)
-export function generateStaticParams() {
+// Geração estática das rotas de notícia
+export function generateStaticParams(): Array<{ slug: string }> {
   const posts = listNewsMeta();
   return posts.map((p) => ({ slug: p.slug }));
 }
