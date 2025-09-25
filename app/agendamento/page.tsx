@@ -2,25 +2,50 @@
 "use client";
 
 import { useMemo, useState } from "react";
-import BackToTop from "../components/BackToTop"; // botão flutuante
-import BrandIcon from "../components/icons/BrandIcon"; // ícones centralizados
+import BackToTop from "../components/BackToTop";
+import BrandIcon from "../components/icons/BrandIcon";
 
-// DESKTOP (mantém exatamente como estava)
+/** ====== TOGGLES ======
+ * Se estiver FALSE (padrão), não chama a API e usa fallback (WhatsApp ou e-mail).
+ * Quando você finalizar o backend, coloque TRUE no .env:
+ * NEXT_PUBLIC_AGENDAMENTOS_ATIVO=true
+ */
+const AGENDAMENTO_ATIVO =
+  typeof process !== "undefined" &&
+  process.env.NEXT_PUBLIC_AGENDAMENTOS_ATIVO === "true";
+
+/** Fallback (enquanto o e-mail não estiver pronto)
+ * Opções: "whatsapp" | "email"
+ * Se quiser usar e-mail temporariamente:
+ * NEXT_PUBLIC_AGENDAMENTOS_FALLBACK=email
+ */
+const FALLBACK =
+  (typeof process !== "undefined" &&
+    (process.env.NEXT_PUBLIC_AGENDAMENTOS_FALLBACK as
+      | "whatsapp"
+      | "email")) || "whatsapp";
+
+/** E-mail de destino para o fallback por e-mail (se usar) */
+const DEST_EMAIL =
+  (typeof process !== "undefined" &&
+    process.env.NEXT_PUBLIC_CONTATO_EMAIL) ||
+  "contato@colegiosaojose.com.br";
+
+// ======== Imagens ========
 const HERO_SIDE_IMG_DESKTOP = "/agendamento/hero-side.png";
-// MOBILE (PNG recortado com transparência)
 const HERO_SIDE_IMG_MOBILE = "/agendamento/mobile/hero-side.png";
 
-// ÚNICA unidade (sem selects)
+// ======== Dados fixos da unidade ========
 const COLEGIO = {
   nome: "Colégio São José - Educação para a vida.",
   endereco: "R. Cândido de Abreu, 1636 - Prudentópolis, PR, 84400-000",
-  telefoneWa: "5542998276516", // DDI 55 + DDD + número (para o WhatsApp)
+  telefoneWa: "5542998276516", // DDI 55 + DDD + número
   horario: "7h – 19h",
   segmentos: "Da Educação Infantil ao Ensino Médio",
   img: "/agendamento/colegio.jpg",
 };
 
-// Helpers de máscara/validação
+// ======== Helpers de máscara/validação ========
 function formatPhoneBR(value: string): string {
   const d = value.replace(/\D/g, "").slice(0, 11);
   if (d.length <= 10) {
@@ -61,6 +86,7 @@ export default function AgendamentoPage() {
   const canIrAluno =
     respNome.trim().length > 0 && isValidPhone(respTel) && isValidEmail(respEmail);
 
+  // Link para falar com a unidade (CTA do card)
   const whatsUrl = useMemo(() => {
     const texto =
       `Olá! Gostaria de falar com a unidade.\n\n` +
@@ -101,11 +127,51 @@ export default function AgendamentoPage() {
     }
   }
 
+  /** Envio temporário sem API:
+   *  - "whatsapp": abre conversa com todos os dados
+   *  - "email": abre redator do e-mail (mailto:) com assunto e corpo preenchidos
+   */
+  function sendFallback() {
+    const corpo =
+      `Olá! Quero agendar uma visita.\n\n` +
+      `— Unidade: ${COLEGIO.nome}\n` +
+      `— Endereço: ${COLEGIO.endereco}\n\n` +
+      `Responsável:\n` +
+      `• Nome: ${respNome}\n` +
+      `• Telefone: ${respTel}\n` +
+      `• E-mail: ${respEmail}\n\n` +
+      `Aluno(a):\n` +
+      `• Nome: ${alunoNome}\n` +
+      `• Série/Idade: ${alunoSerie || "-"}\n\n` +
+      `Observações:\n${mensagem || "-"}`;
+
+    if (FALLBACK === "email") {
+      const subject = "Agendamento de visita — Colégio São José";
+      const href = `mailto:${encodeURIComponent(
+        DEST_EMAIL
+      )}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(corpo)}`;
+      window.location.href = href;
+    } else {
+      // whatsapp (padrão)
+      const href = `https://wa.me/${COLEGIO.telefoneWa}?text=${encodeURIComponent(corpo)}`;
+      window.open(href, "_blank", "noopener,noreferrer");
+    }
+  }
+
   async function handleAgendar() {
     if (!validateResponsavel() || !alunoNome.trim()) {
       setOk("erro");
       return;
     }
+
+    // Enquanto o backend não está pronto, usa fallback e não chama a API:
+    if (!AGENDAMENTO_ATIVO) {
+      sendFallback();
+      setOk("ok");
+      return;
+    }
+
+    // ==== Fluxo "definitivo" com API (quando AGENDAMENTO_ATIVO = true) ====
     setEnviando(true);
     setOk(null);
     try {
@@ -136,7 +202,7 @@ export default function AgendamentoPage() {
 
   return (
     <main className="bg-white">
-      {/* ===================== HERO (padrão Matrículas/Filosofia) ===================== */}
+      {/* HERO */}
       <section className="relative overflow-hidden">
         <div className="absolute inset-0 bg-gradient-to-br from-brand-900 via-brand-800 to-brand-600" />
 
@@ -157,20 +223,23 @@ export default function AgendamentoPage() {
               Venha conhecer nossos espaços e conversar com nossa equipe. O processo é simples:
               preencha seus dados, escolha o melhor horário e nós confirmamos com você.
             </p>
+
+            {!AGENDAMENTO_ATIVO && (
+              <p className="mt-3 inline-block rounded-full bg-white/15 px-3 py-1 text-xs font-semibold text-white/90">
+                Envio temporariamente via {FALLBACK === "email" ? "e-mail" : "WhatsApp"}.
+              </p>
+            )}
           </div>
 
-          {/* DIREITA: imagem — mobile com tuning separado, desktop inalterado */}
+          {/* DIREITA: imagem */}
           <div className="relative mx-auto aspect-square w-[320px] md:w-[420px] lg:w-[520px]">
-            {/* MOBILE (PNG recortado) */}
+            {/* MOBILE */}
             <div className="md:hidden">
               <img
                 src={HERO_SIDE_IMG_MOBILE}
                 alt="Família visitando a escola (mobile)"
                 className="absolute left-1/2 bottom-[-10px] h-[120%] w-auto max-w-none select-none object-contain origin-bottom drop-shadow-[0_25px_40px_rgba(0,0,0,.35)]"
-                style={{
-                  // ⬇️ baixa um pouco no mobile (sem afetar desktop)
-                  transform: "translateX(-50%) translateY(30px) scale(0.98)",
-                }}
+                style={{ transform: "translateX(-50%) translateY(30px) scale(0.98)" }}
                 loading="eager"
                 decoding="async"
                 fetchPriority="high"
@@ -178,7 +247,7 @@ export default function AgendamentoPage() {
               />
             </div>
 
-            {/* DESKTOP/TABLET (como estava) */}
+            {/* DESKTOP/TABLET */}
             <div className="hidden md:block">
               <img
                 src={HERO_SIDE_IMG_DESKTOP}
@@ -199,19 +268,15 @@ export default function AgendamentoPage() {
           </div>
         </div>
 
-        {/* Onda branca padrão (mesma altura das outras páginas) */}
+        {/* Onda branca */}
         <div className="pointer-events-none absolute inset-x-0 bottom-0 z-30">
-          <svg
-            viewBox="0 0 1440 140"
-            className="h-[90px] w-full md:h-[110px] lg:h-[130px]"
-            preserveAspectRatio="none"
-          >
+          <svg viewBox="0 0 1440 140" className="h-[90px] w-full md:h-[110px] lg:h-[130px]" preserveAspectRatio="none">
             <path d="M0,80 C320,140 920,10 1440,90 L1440,140 L0,140 Z" fill="#fff" />
           </svg>
         </div>
       </section>
 
-      {/* ===================== INTRO ===================== */}
+      {/* INTRO */}
       <section className="bg-white">
         <div className="mx-auto max-w-6xl px-4 py-10 md:py-12">
           <h2 className="text-center text-3xl font-bold text-brand-700">
@@ -223,82 +288,64 @@ export default function AgendamentoPage() {
         </div>
       </section>
 
-      {/* ===================== FORM + CARD ===================== */}
+      {/* FORM + CARD */}
       <section className="bg-white">
         <div className="mx-auto max-w-6xl px-4 pb-16">
           <div className="grid items-start gap-10 md:grid-cols-2">
             {/* --------- FORM --------- */}
             <div>
-              {/* etiqueta fixa do colégio */}
               <div className="mb-6">
                 <span className="rounded-full bg-brand-50 px-4 py-2 text-sm font-semibold text-brand-700 ring-1 ring-brand-300/50">
                   {COLEGIO.nome}
                 </span>
               </div>
 
-              {/* tabs de passos */}
               <div className="flex items-center gap-8 text-brand-700">
                 <button
                   type="button"
-                  className={`relative pb-2 text-sm font-semibold ${
-                    passo === 1 ? "text-brand-700" : "text-brand-700/60"
-                  }`}
+                  className={`relative pb-2 text-sm font-semibold ${passo === 1 ? "text-brand-700" : "text-brand-700/60"}`}
                   onClick={() => setPasso(1)}
                 >
                   <span className="mr-2 inline-flex h-6 w-6 items-center justify-center rounded-full bg-brand-300 text-brand-900 text-xs font-bold">
                     1
                   </span>
                   Dados do Responsável
-                  <span
-                    className={`absolute left-0 -bottom-[2px] h-[2px] w-full rounded-full transition ${
-                      passo === 1 ? "bg-brand-400" : "bg-transparent"
-                    }`}
-                  />
+                  <span className={`absolute left-0 -bottom-[2px] h-[2px] w-full rounded-full transition ${passo === 1 ? "bg-brand-400" : "bg-transparent"}`} />
                 </button>
 
                 <button
                   type="button"
                   aria-disabled={!canIrAluno}
                   disabled={!canIrAluno}
-                  className={`relative pb-2 text-sm font-semibold ${
-                    passo === 2 ? "text-brand-700" : "text-brand-700/60"
-                  } ${!canIrAluno ? "cursor-not-allowed opacity-40" : ""}`}
+                  className={`relative pb-2 text-sm font-semibold ${passo === 2 ? "text-brand-700" : "text-brand-700/60"} ${
+                    !canIrAluno ? "cursor-not-allowed opacity-40" : ""
+                  }`}
                   onClick={() => (canIrAluno ? setPasso(2) : null)}
                 >
                   <span className="mr-2 inline-flex h-6 w-6 items-center justify-center rounded-full bg-brand-300 text-brand-900 text-xs font-bold">
                     2
                   </span>
                   Dados do Aluno
-                  <span
-                    className={`absolute left-0 -bottom-[2px] h-[2px] w-full rounded-full transition ${
-                      passo === 2 ? "bg-brand-400" : "bg-transparent"
-                    }`}
-                  />
+                  <span className={`absolute left-0 -bottom-[2px] h-[2px] w-full rounded-full transition ${passo === 2 ? "bg-brand-400" : "bg-transparent"}`} />
                 </button>
               </div>
 
               {alertaResp && (
-                <p className="mt-3 text-sm font-semibold text-rose-600">
-                  Preencha os dados do responsável para continuar.
-                </p>
+                <p className="mt-3 text-sm font-semibold text-rose-600">Preencha os dados do responsável para continuar.</p>
               )}
 
               {/* passo 1 */}
               {passo === 1 && (
                 <div className="mt-5 space-y-4">
                   <div>
-                    <label className="mb-1 block text-sm font-medium text-brand-700">
-                      Nome do Responsável *
-                    </label>
+                    <label className="mb-1 block text-sm font-medium text-brand-700">Nome do Responsável *</label>
                     <input
                       value={respNome}
                       onChange={(e) => {
                         setRespNome(e.target.value);
                         if (e.target.value.trim()) setErrNome(null);
                       }}
-                      onBlur={() =>
-                        setErrNome(respNome.trim() ? null : "Informe o nome do responsável.")
-                      }
+                      onBlur={() => setErrNome(respNome.trim() ? null : "Informe o nome do responsável.")}
                       className="w-full rounded-full border border-black/10 px-4 py-3 outline-none focus:ring-2 focus:ring-brand-300"
                       placeholder="Informe o nome do Responsável"
                     />
@@ -306,9 +353,7 @@ export default function AgendamentoPage() {
                   </div>
 
                   <div>
-                    <label className="mb-1 block text-sm font-medium text-brand-700">
-                      Telefone *
-                    </label>
+                    <label className="mb-1 block text-sm font-medium text-brand-700">Telefone *</label>
                     <input
                       type="tel"
                       value={respTel}
@@ -317,9 +362,7 @@ export default function AgendamentoPage() {
                         setRespTel(masked);
                         if (isValidPhone(masked)) setErrTel(null);
                       }}
-                      onBlur={() =>
-                        setErrTel(isValidPhone(respTel) ? null : "Informe um telefone válido.")
-                      }
+                      onBlur={() => setErrTel(isValidPhone(respTel) ? null : "Informe um telefone válido.")}
                       className="w-full rounded-full border border-black/10 px-4 py-3 outline-none focus:ring-2 focus:ring-brand-300"
                       placeholder="(99) 99999-9999"
                       inputMode="numeric"
@@ -328,9 +371,7 @@ export default function AgendamentoPage() {
                   </div>
 
                   <div>
-                    <label className="mb-1 block text-sm font-medium text-brand-700">
-                      E-mail do Responsável *
-                    </label>
+                    <label className="mb-1 block text-sm font-medium text-brand-700">E-mail do Responsável *</label>
                     <input
                       type="email"
                       value={respEmail}
@@ -338,15 +379,11 @@ export default function AgendamentoPage() {
                         setRespEmail(e.target.value);
                         if (isValidEmail(e.target.value)) setErrEmail(null);
                       }}
-                      onBlur={() =>
-                        setErrEmail(isValidEmail(respEmail) ? null : "Informe um e-mail válido.")
-                      }
+                      onBlur={() => setErrEmail(isValidEmail(respEmail) ? null : "Informe um e-mail válido.")}
                       className="w-full rounded-full border border-black/10 px-4 py-3 outline-none focus:ring-2 focus:ring-brand-300"
                       placeholder="Informe seu melhor e-mail"
                     />
-                    {errEmail && (
-                      <p className="mt-1 text-xs font-semibold text-rose-600">{errEmail}</p>
-                    )}
+                    {errEmail && <p className="mt-1 text-xs font-semibold text-rose-600">{errEmail}</p>}
                   </div>
 
                   <button
@@ -363,9 +400,7 @@ export default function AgendamentoPage() {
               {passo === 2 && (
                 <div className="mt-5 space-y-4">
                   <div>
-                    <label className="mb-1 block text-sm font-medium text-brand-700">
-                      Nome do Aluno *
-                    </label>
+                    <label className="mb-1 block text-sm font-medium text-brand-700">Nome do Aluno *</label>
                     <input
                       value={alunoNome}
                       onChange={(e) => setAlunoNome(e.target.value)}
@@ -374,9 +409,7 @@ export default function AgendamentoPage() {
                     />
                   </div>
                   <div>
-                    <label className="mb-1 block text-sm font-medium text-brand-700">
-                      Série / Idade
-                    </label>
+                    <label className="mb-1 block text-sm font-medium text-brand-700">Série / Idade</label>
                     <input
                       value={alunoSerie}
                       onChange={(e) => setAlunoSerie(e.target.value)}
@@ -385,9 +418,7 @@ export default function AgendamentoPage() {
                     />
                   </div>
                   <div>
-                    <label className="mb-1 block text-sm font-medium text-brand-700">
-                      Observações (opcional)
-                    </label>
+                    <label className="mb-1 block text-sm font-medium text-brand-700">Observações (opcional)</label>
                     <textarea
                       value={mensagem}
                       onChange={(e) => setMensagem(e.target.value)}
@@ -402,12 +433,12 @@ export default function AgendamentoPage() {
                     disabled={enviando}
                     className="mt-2 inline-flex rounded-full bg-brand-300 px-5 py-3 font-semibold text-brand-900 shadow-sm transition hover:bg-brand-200 disabled:opacity-60"
                   >
-                    {enviando ? "Enviando…" : "Agendar"}
+                    {enviando ? "Enviando…" : AGENDAMENTO_ATIVO ? "Agendar" : "Enviar pedido"}
                   </button>
 
                   {ok === "ok" && (
                     <p className="text-sm font-semibold text-emerald-600">
-                      Agendamento enviado com sucesso! Em breve entraremos em contato.
+                      Pedido enviado! Em breve entraremos em contato.
                     </p>
                   )}
                   {ok === "erro" && (
@@ -423,11 +454,7 @@ export default function AgendamentoPage() {
             <div className="space-y-4">
               <div className="overflow-hidden rounded-2xl border border-black/10 shadow-md">
                 <div className="aspect-[16/9] w-full overflow-hidden">
-                  <img
-                    src={COLEGIO.img}
-                    alt={COLEGIO.nome}
-                    className="h-full w-full object-cover"
-                  />
+                  <img src={COLEGIO.img} alt={COLEGIO.nome} className="h-full w-full object-cover" />
                 </div>
                 <div className="space-y-3 p-4">
                   <h3 className="text-xl font-semibold text-brand-700">{COLEGIO.nome}</h3>
@@ -451,19 +478,13 @@ export default function AgendamentoPage() {
                     Se você já é pai, mãe ou responsável de aluno matriculado, fale diretamente com a unidade.
                   </p>
 
-                  {/* Botão azul (padrão do site) */}
                   <a
                     href={whatsUrl}
                     target="_blank"
                     rel="noopener noreferrer"
                     className="inline-flex items-center justify-center gap-2 rounded-full bg-brand-300 px-5 py-3 text-sm font-semibold text-brand-900 shadow-sm transition hover:bg-brand-200"
                   >
-                    <BrandIcon
-                      name="whatsapp"
-                      color="currentColor"
-                      className="h-5 w-5 text-brand-900"
-                      title="WhatsApp"
-                    />
+                    <BrandIcon name="whatsapp" color="currentColor" className="h-5 w-5 text-brand-900" title="WhatsApp" />
                     Falar com a unidade no WhatsApp
                   </a>
                 </div>
@@ -473,7 +494,6 @@ export default function AgendamentoPage() {
         </div>
       </section>
 
-      {/* ⬇️ Botão flutuante “Voltar ao topo” */}
       <BackToTop />
     </main>
   );
