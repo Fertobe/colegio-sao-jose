@@ -123,6 +123,7 @@ export default function NossaHistoriaPage() {
               "
               loading="eager"
               decoding="async"
+              fetchPriority="high"
               width={1000}
               height={1000}
               draggable={false}
@@ -169,10 +170,10 @@ export default function NossaHistoriaPage() {
               />
             </div>
             {/* ornamentos leves */}
-            <svg className="pointer-events-none absolute -left-3 -top-3 h-20 w-20 opacity-60" viewBox="0 0 100 100" fill="none">
+            <svg aria-hidden className="pointer-events-none absolute -left-3 -top-3 h-20 w-20 opacity-60" viewBox="0 0 100 100" fill="none">
               <circle cx="50" cy="50" r="40" stroke="#14D3E0" strokeDasharray="4 10" strokeWidth="4" />
             </svg>
-            <svg className="pointer-events-none absolute -right-4 bottom-2 h-16 w-16 opacity-60" viewBox="0 0 100 100" fill="none">
+            <svg aria-hidden className="pointer-events-none absolute -right-4 bottom-2 h-16 w-16 opacity-60" viewBox="0 0 100 100" fill="none">
               <circle cx="50" cy="50" r="28" stroke="#0ea5b7" strokeOpacity="0.35" strokeWidth="6" />
             </svg>
           </div>
@@ -213,32 +214,32 @@ export default function NossaHistoriaPage() {
       {/* ===== MARCOS QUE NOS ORGULHAM ===== */}
       <section className="bg-white">
         <div className="mx-auto max-w-6xl px-4 pb-16">
-          <h3 className="text-2xl font-bold text-brand-700 uppercase">Marcos que nos orgulham</h3>
+            <h3 className="text-2xl font-bold text-brand-700 uppercase">Marcos que nos orgulham</h3>
 
-          <div className="mt-6 grid gap-6 md:grid-cols-3">
-            {[
-              {
-                title: "Tradição e Inovação",
-                text: "Décadas de história aliadas a projetos atuais, conectados às demandas do século XXI.",
-              },
-              {
-                title: "Formação Integral",
-                text: "Acadêmico forte com socioemocional, cidadania e espiritualidade.",
-              },
-              {
-                title: "Resultados",
-                text: "Aprovações, olimpíadas, protagonismo estudantil e reconhecimento na comunidade.",
-              },
-            ].map((c) => (
-              <div
-                key={c.title}
-                className="rounded-3xl bg-brand-700/90 p-6 text-white shadow-lg ring-1 ring-white/10 transition-colors hover:bg-brand-600"
-              >
-                <h4 className="mb-2 text-lg font-semibold">{c.title}</h4>
-                <p className="text-white/95 leading-relaxed">{c.text}</p>
-              </div>
-            ))}
-          </div>
+            <div className="mt-6 grid gap-6 md:grid-cols-3">
+              {[
+                {
+                  title: "Tradição e Inovação",
+                  text: "Décadas de história aliadas a projetos atuais, conectados às demandas do século XXI.",
+                },
+                {
+                  title: "Formação Integral",
+                  text: "Acadêmico forte com socioemocional, cidadania e espiritualidade.",
+                },
+                {
+                  title: "Resultados",
+                  text: "Aprovações, olimpíadas, protagonismo estudantil e reconhecimento na comunidade.",
+                },
+              ].map((c) => (
+                <div
+                  key={c.title}
+                  className="rounded-3xl bg-brand-700/90 p-6 text-white shadow-lg ring-1 ring-white/10 transition-colors hover:bg-brand-600"
+                >
+                  <h4 className="mb-2 text-lg font-semibold">{c.title}</h4>
+                  <p className="text-white/95 leading-relaxed">{c.text}</p>
+                </div>
+              ))}
+            </div>
         </div>
       </section>
 

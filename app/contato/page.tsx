@@ -3,9 +3,8 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import BackToTop from "../components/BackToTop";
 import ContatoForm from "./ContatoForm";
-import BrandIcon from "../components/icons/BrandIcon"; // ✅ ícones centralizados
+import BrandIcon from "../components/icons/BrandIcon";
 
-// ============ META ============
 export const metadata: Metadata = {
   title: "Contato | Colégio São José",
   description:
@@ -13,12 +12,10 @@ export const metadata: Metadata = {
 };
 
 // ============ CONFIG ============
-// DESKTOP mantém a mesma arte/posicionamento
 const HERO_DESKTOP = {
   src: "/contato/hero.webp",
   alt: "Equipe de atendimento do Colégio São José",
 };
-// MOBILE: coloque a PNG recortada (transparência) em /public/contato/mobile/hero.webp
 const HERO_MOBILE = {
   src: "/contato/mobile/hero.webp",
   alt: "Equipe de atendimento do Colégio São José (mobile)",
@@ -36,9 +33,12 @@ const MAPS_LINK =
 export default function ContatoPage() {
   return (
     <main className="bg-white">
-      {/* ===== HERO (desktop inalterado + versão mobile com tuning) ===== */}
+      {/* ===== HERO ===== */}
       <section className="relative overflow-hidden">
-        <div className="absolute inset-0 bg-gradient-to-br from-brand-900 via-brand-800 to-brand-600" />
+        <div
+          className="absolute inset-0 bg-gradient-to-br from-brand-900 via-brand-800 to-brand-600"
+          aria-hidden="true"
+        />
 
         <div className="relative z-10 mx-auto grid max-w-6xl items-center gap-10 px-4 py-16 md:grid-cols-2 md:py-20 lg:py-24">
           {/* Esquerda: texto */}
@@ -57,26 +57,22 @@ export default function ContatoPage() {
             </p>
           </div>
 
-          {/* Direita: IMAGEM (duas versões para não mexer no desktop) */}
+          {/* Direita: imagem */}
           <div className="relative mx-auto aspect-square w-[320px] md:w-[420px] lg:w-[520px]">
-            {/* Mobile: PNG com transparência + tuning independente */}
+            {/* Mobile */}
             <div className="md:hidden">
               <img
                 src={HERO_MOBILE.src}
                 alt={HERO_MOBILE.alt}
                 className="absolute left-1/2 bottom-[-10px] h-[118%] w-auto max-w-none select-none object-contain origin-bottom drop-shadow-[0_25px_40px_rgba(0,0,0,.35)]"
-                style={{
-                  // ✅ inclui o translateX(-50%) para centralizar corretamente
-                  transform: "translateX(-50%) translateY(12px) scale(0.98)",
-                }}
+                style={{ transform: "translateX(-50%) translateY(12px) scale(0.98)" }}
                 loading="eager"
                 decoding="async"
                 fetchPriority="high"
                 draggable={false}
               />
             </div>
-
-            {/* Desktop/Tablet: mantém EXACTAMENTE o que já estava */}
+            {/* Desktop/Tablet */}
             <div className="hidden md:block">
               <img
                 src={HERO_DESKTOP.src}
@@ -97,12 +93,14 @@ export default function ContatoPage() {
           </div>
         </div>
 
-        {/* Onda branca padronizada (altura padrão) */}
+        {/* Onda branca */}
         <div className="pointer-events-none absolute inset-x-0 bottom-0 z-30">
           <svg
             viewBox="0 0 1440 140"
             className="h-[90px] w-full md:h-[110px] lg:h-[130px]"
             preserveAspectRatio="none"
+            aria-hidden="true"
+            focusable="false"
           >
             <path d="M0,80 C320,140 920,10 1440,90 L1440,140 L0,140 Z" fill="#fff" />
           </svg>
@@ -115,7 +113,7 @@ export default function ContatoPage() {
           <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
             {/* Telefone */}
             <a
-              href={`tel:${TELEFONE.replace(/\D/g, "")}`}
+              href={`tel:+${TELEFONE.replace(/\D/g, "")}`} // ✅ mantém o "+" (E.164)
               className="group rounded-2xl border border-brand-100 p-5 shadow-sm transition hover:shadow-md"
             >
               <div className="flex items-center gap-3">
@@ -185,7 +183,6 @@ export default function ContatoPage() {
                 Preencha os campos e vamos responder o quanto antes. Campos com * são obrigatórios.
               </p>
               <div className="mt-6 rounded-2xl border border-brand-100 p-6 shadow-sm">
-                {/* ⚠️ Form agora só com “Enviar por e-mail” (sem botão WhatsApp) */}
                 <ContatoForm email={EMAIL} />
               </div>
             </div>
@@ -208,6 +205,7 @@ export default function ContatoPage() {
                   loading="lazy"
                   allowFullScreen
                   referrerPolicy="no-referrer-when-downgrade"
+                  title="Mapa do Colégio São José" // ✅ a11y
                 />
               </div>
               <div className="mt-4">
@@ -225,7 +223,6 @@ export default function ContatoPage() {
         </div>
       </section>
 
-      {/* Back to Top — azul */}
       <BackToTop
         variant="brand"
         threshold={500}

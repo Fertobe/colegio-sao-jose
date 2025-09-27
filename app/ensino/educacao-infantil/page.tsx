@@ -1,7 +1,32 @@
 // app/ensino/educacao-infantil/page.tsx
 import type { CSSProperties } from "react";
+import type { Metadata } from "next";
 import BackToTop from "../../components/BackToTop";
 import BrandIcon from "../../components/icons/BrandIcon"; // ✅ ícone oficial do WhatsApp
+
+/** SEO da página (não altera layout) */
+export const metadata: Metadata = {
+  title: "Educação Infantil — Colégio São José",
+  description:
+    "Solução completa do Berçário ao Infantil 5 com propostas mão na massa, jogos, trilhas digitais e avaliação contínua.",
+  metadataBase: new URL("https://colegio.artferro.site"),
+  alternates: { canonical: "/ensino/educacao-infantil" },
+  openGraph: {
+    type: "article",
+    siteName: "Colégio São José",
+    title: "Educação Infantil — Colégio São José",
+    description:
+      "Um começo lúdico, afetivo e intencional: do Berçário ao Infantil 5, com projetos, tecnologia e avaliação contínua.",
+    url: "https://colegio.artferro.site/ensino/educacao-infantil",
+    images: ["/ensino/infantil/hero.webp"],
+  },
+  robots: {
+    index: true,
+    follow: true,
+    "max-image-preview": "large",
+  },
+  twitter: { card: "summary_large_image" },
+};
 
 export default function EducacaoInfantilPage() {
   // Desktop: imagem original (sem mudanças)
@@ -52,6 +77,8 @@ export default function EducacaoInfantilPage() {
                 decoding="async"
                 fetchPriority="high"
                 draggable={false}
+                width={900}
+                height={900}
               />
             </div>
 
@@ -66,6 +93,8 @@ export default function EducacaoInfantilPage() {
                 decoding="async"
                 fetchPriority="high"
                 draggable={false}
+                width={1200}
+                height={1200}
               />
             </div>
           </div>

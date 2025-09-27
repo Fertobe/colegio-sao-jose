@@ -2,5 +2,51 @@
 @tailwind components;
 @tailwind utilities;
 
-/* Acessibilidade: foco visível (opcional, mas inofensivo) */
-:focus-visible { outline: 3px solid #1e3a8a; outline-offset: 2px; }
+/* =========================
+   Base: acessibilidade & UX
+   ========================= */
+@layer base {
+  html { scroll-behavior: smooth; }
+
+  /* Foco visível: só em elementos interativos (menos conflito com rings) */
+  :where(a, button, input, textarea, select, [role="button"], [tabindex]):focus-visible {
+    outline: 3px solid #5B2E83; /* brand-700 */
+    outline-offset: 3px;
+  }
+
+  /* Mídias consistentes */
+  img, svg, video, canvas {
+    display: block;
+    max-width: 100%;
+    height: auto;
+  }
+
+  /* Seleção de texto nas cores da marca */
+  ::selection {
+    background: #14D3E0; /* brand-400/teal */
+    color: #0b0f19;      /* texto legível sobre o teal */
+  }
+}
+
+/* Respeita “reduzir movimentos” do sistema */
+@media (prefers-reduced-motion: reduce) {
+  * {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/* ============================================
+   (Opcional) Tipografia das notícias (.prose)
+   Use se você NÃO customizou no tailwind.config
+   ============================================ */
+@layer components {
+  .prose-brand :where(h1, h2, h3, h4) { @apply text-brand-900; }
+  .prose-brand :where(a) { @apply text-brand-700 underline underline-offset-4 hover:text-brand-600; }
+  .prose-brand :where(hr) { @apply border-brand-200; }
+  .prose-brand :where(blockquote) { @apply border-l-4 border-brand-300 bg-brand-50/50 p-4 rounded-r-lg; }
+  .prose-brand :where(code, pre code) { @apply bg-brand-50 text-brand-900; }
+  .prose-brand :where(figcaption) { @apply text-sm text-brand-800/70; }
+}

@@ -2,8 +2,9 @@
 import Link from "next/link";
 import type { CSSProperties } from "react";
 import BackToTop from "../../components/BackToTop";
+import type { Metadata } from "next";
 
-export const metadata = {
+export const metadata: Metadata = {
   title: "Nossa Filosofia | Colégio São José",
   description:
     "Conheça a missão, visão e valores do Colégio São José — princípios que orientam nossa prática pedagógica.",

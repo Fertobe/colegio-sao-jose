@@ -7,9 +7,12 @@ type Item = { src: string; alt?: string; href?: string };
 export default function ConquistasCarousel({
   items,
   perPage = 3,
+  /** Quando true (default), os cards NÃO são clicáveis */
+  disableLinks = true,
 }: {
   items: Item[];
   perPage?: number;
+  disableLinks?: boolean;
 }) {
   /**
    * ===== Desktop (mantido como estava) =====
@@ -19,7 +22,7 @@ export default function ConquistasCarousel({
   const ARROW_OUT_DESK = 56;  // setas “para fora” da grade (px)
 
   /**
-   * ===== Mobile (apenas ajustes para caber setas e dots) =====
+   * ===== Mobile (ajustes para caber setas e dots) =====
    */
   const IMG_H_MOBILE = 220;       // imagem um pouco mais baixa
   const DOT_OFFSET_MOBILE = 40;   // espaço para os dots
@@ -111,12 +114,10 @@ export default function ConquistasCarousel({
 
       {/* ===== GRID — desktop 3 por página; mobile 1 por página ===== */}
       <div className="grid items-start gap-6 grid-cols-1 md:grid-cols-3">
-        {view.map((it, idx) => (
-          <a
-            key={`${page}-${idx}-${it.src}`}
-            href={it.href || "#"}
-            className="group block"
-          >
+        {view.map((it, idx) => {
+          const clickable = !disableLinks && !!it.href;
+
+          const CardInner = (
             <div
               className="overflow-hidden rounded-3xl border bg-white p-2 shadow-sm transition mx-auto"
               style={{
@@ -138,8 +139,28 @@ export default function ConquistasCarousel({
                 draggable={false}
               />
             </div>
-          </a>
-        ))}
+          );
+
+          return clickable ? (
+            <a
+              key={`${page}-${idx}-${it.src}`}
+              href={it.href!}
+              className="group block"
+            >
+              {CardInner}
+            </a>
+          ) : (
+            <div
+              key={`${page}-${idx}-${it.src}`}
+              className="group block cursor-default"
+              // acessível, mas sem ação de clique
+              role="group"
+              aria-label={it.alt || "Conquista do colégio"}
+            >
+              {CardInner}
+            </div>
+          );
+        })}
       </div>
     </div>
   );

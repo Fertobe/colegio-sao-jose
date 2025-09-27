@@ -6,33 +6,57 @@ export type CarouselItem = { img: string; title: string; href: string };
 
 type NewsFrontmatter = {
   title?: string;
-  date?: string;   // YYYY-MM-DD
-  cover?: string;  // "feira.webp" ou "/noticias/feira.webp"
+  date?: string;       // YYYY-MM-DD
+  cover?: string;      // "feira.webp" ou "/noticias/feira.webp"
   excerpt?: string;
+  published?: boolean; // novo: default true se ausente
+  tags?: string[];     // opcional (não usado na UI ainda)
+  author?: string;     // opcional
 };
 
 const POSTS_DIR = path.join(process.cwd(), "content", "noticias");
 
-function parseFrontmatter(md: string): NewsFrontmatter {
-  if (!md.startsWith("---")) return {};
-  const end = md.indexOf("\n---", 3);
-  if (end === -1) return {};
-  const block = md.slice(3, end).trim();
-  const obj: NewsFrontmatter = {};
-  for (const raw of block.split("\n")) {
-    const idx = raw.indexOf(":");
-    if (idx === -1) continue;
-    const key = raw.slice(0, idx).trim();
-    let val = raw.slice(idx + 1).trim();
-    if ((val.startsWith('"') && val.endsWith('"')) || (val.startsWith("'") && val.endsWith("'"))) {
-      val = val.slice(1, -1);
-    }
-    if (key === "title") obj.title = val;
-    if (key === "date") obj.date = val;
-    if (key === "cover") obj.cover = val;
-    if (key === "excerpt") obj.excerpt = val;
+/* =========================
+   Helpers
+   ========================= */
+
+function parseBool(val?: string): boolean | undefined {
+  if (!val) return undefined;
+  const v = val.toLowerCase().trim();
+  if (v === "true") return true;
+  if (v === "false") return false;
+  return undefined;
+}
+
+// Aceita: [A, B], ["A","B"], [A ,B ], ou uma string "A, B"
+function parseTags(val?: string): string[] | undefined {
+  if (!val) return undefined;
+  let raw = val.trim();
+
+  // Se vier entre aspas simples/duplas e sem colchetes, trata como string simples
+  const isQuoted = (s: string) =>
+    (s.startsWith('"') && s.endsWith('"')) || (s.startsWith("'") && s.endsWith("'"));
+
+  if (raw.startsWith("[") && raw.endsWith("]")) {
+    raw = raw.slice(1, -1).trim();
   }
-  return obj;
+  // Agora raw é um conteúdo separado por vírgula
+  const parts = raw
+    .split(",")
+    .map(s => s.trim())
+    .filter(Boolean)
+    .map(s => (isQuoted(s) ? s.slice(1, -1) : s));
+
+  return parts.length ? parts : undefined;
+}
+
+// Data estável (sem variação por fuso local)
+function parseDateISO(d?: string): Date {
+  if (!d) return new Date(0);
+  // Ex: "2025-02-18" -> "2025-02-18T00:00:00Z"
+  const iso = /^\d{4}-\d{2}-\d{2}$/.test(d) ? `${d}T00:00:00Z` : d;
+  const dt = new Date(iso);
+  return isNaN(dt.getTime()) ? new Date(0) : dt;
 }
 
 function resolveCover(cover?: string) {
@@ -40,51 +64,160 @@ function resolveCover(cover?: string) {
   return cover.startsWith("/") ? cover : `/noticias/${cover}`;
 }
 
-/** -------------- JÁ EXISTE no seu arquivo, mantenha -------------- */
+/* =========================
+   Frontmatter
+   ========================= */
+
+function parseFrontmatter(md: string): NewsFrontmatter {
+  if (!md.startsWith("---")) return {};
+  const end = md.indexOf("\n---", 3);
+  if (end === -1) return {};
+  const block = md.slice(3, end).trim();
+
+  const obj: NewsFrontmatter = {};
+  for (const raw of block.split("\n")) {
+    const idx = raw.indexOf(":");
+    if (idx === -1) continue;
+    const key = raw.slice(0, idx).trim();
+    let val = raw.slice(idx + 1).trim();
+
+    // remove aspas do início/fim
+    if ((val.startsWith('"') && val.endsWith('"')) || (val.startsWith("'") && val.endsWith("'"))) {
+      val = val.slice(1, -1);
+    }
+
+    switch (key) {
+      case "title":
+        obj.title = val;
+        break;
+      case "date":
+        obj.date = val;
+        break;
+      case "cover":
+        obj.cover = val;
+        break;
+      case "excerpt":
+        obj.excerpt = val;
+        break;
+      case "published":
+        obj.published = parseBool(val);
+        break;
+      case "tags":
+        obj.tags = parseTags(val);
+        break;
+      case "author":
+        obj.author = val;
+        break;
+      default:
+        break;
+    }
+  }
+  return obj;
+}
+
+/* =========================
+   Markdown -> HTML simples
+   (com escape de HTML)
+   ========================= */
+
+function escapeHtml(src: string) {
+  return src
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;");
+}
+
+function mdToHtml(src: string) {
+  // 1) escapa qualquer HTML cru
+  let html = escapeHtml(src);
+
+  // 2) títulos
+  html = html
+    .replace(/^### (.*)$/gm, "<h3>$1</h3>")
+    .replace(/^## (.*)$/gm, "<h2>$1</h2>")
+    .replace(/^# (.*)$/gm, "<h1>$1</h1>");
+
+  // 3) negrito / itálico (ordem importa para não conflitar)
+  html = html.replace(/\*\*(.+?)\*\*/g, "<strong>$1</strong>");
+  html = html.replace(/\*(.+?)\*/g, "<em>$1</em>");
+
+  // 4) links [txt](url)
+  html = html.replace(
+    /\[([^\]]+)\]\(([^)]+)\)/g,
+    '<a href="$2" target="_blank" rel="noopener">$1</a>'
+  );
+
+  // 5) parágrafos (mantém headings como blocos)
+  html = html
+    .split(/\n{2,}/)
+    .map((b) => (b.match(/^<h[1-3]>/) ? b : `<p>${b.replace(/\n/g, "<br/>")}</p>`))
+    .join("\n");
+
+  return html;
+}
+
+/* =========================
+   API pública
+   ========================= */
+
+/** Carrossel: pega as últimas N (publicadas) */
 export function getLatestNewsForCarousel(limit = 12): CarouselItem[] {
   if (!fs.existsSync(POSTS_DIR)) return [];
   const files = fs.readdirSync(POSTS_DIR).filter((f) => f.endsWith(".md"));
+
   const posts = files.map((f) => {
     const slug = f.replace(/\.md$/, "");
     const md = fs.readFileSync(path.join(POSTS_DIR, f), "utf8");
     const fm = parseFrontmatter(md);
-    const date = fm.date ? new Date(fm.date) : new Date(0);
+    const date = parseDateISO(fm.date);
+    const published = fm.published ?? true;
+
     return {
       slug,
       title: fm.title ?? slug,
       img: resolveCover(fm.cover),
-      date: isNaN(date.getTime()) ? new Date(0) : date,
+      date,
+      published,
     };
   });
-  posts.sort((a, b) => b.date.getTime() - a.date.getTime());
-  return posts.slice(0, limit).map((p) => ({
+
+  const onlyPublished = posts.filter((p) => p.published);
+  onlyPublished.sort((a, b) => b.date.getTime() - a.date.getTime());
+
+  return onlyPublished.slice(0, limit).map((p) => ({
     img: p.img,
     title: p.title,
     href: `/noticias/${p.slug}`,
   }));
 }
-/** --------------------------------------------------------------- */
 
 /** Lista metadados para a página /noticias */
 export function listNewsMeta() {
   if (!fs.existsSync(POSTS_DIR)) return [];
   const files = fs.readdirSync(POSTS_DIR).filter((f) => f.endsWith(".md"));
+
   const rows = files.map((f) => {
     const slug = f.replace(/\.md$/, "");
     const md = fs.readFileSync(path.join(POSTS_DIR, f), "utf8");
     const fm = parseFrontmatter(md);
-    const date = fm.date ? new Date(fm.date) : new Date(0);
+    const date = parseDateISO(fm.date);
+    const published = fm.published ?? true;
+
     return {
       slug,
       title: fm.title ?? slug,
       date: fm.date ?? undefined,
       cover: resolveCover(fm.cover),
       excerpt: fm.excerpt ?? undefined,
-      time: isNaN(date.getTime()) ? 0 : date.getTime(),
+      time: date.getTime(),
+      published,
     };
   });
-  rows.sort((a, b) => b.time - a.time);
-  return rows.map(({ time, ...rest }) => rest);
+
+  const onlyPublished = rows.filter((r) => r.published);
+  onlyPublished.sort((a, b) => b.time - a.time);
+  return onlyPublished.map(({ time, published, ...rest }) => rest);
 }
 
 /** Lê um post completo pela slug e retorna HTML simples */
@@ -104,6 +237,9 @@ export function readNewsBySlug(slug: string) {
     }
   }
 
+  // se published:false, trata como não encontrado (mantém privacidade)
+  if (fm.published === false) return null;
+
   const html = mdToHtml(body);
   return {
     slug,
@@ -113,24 +249,4 @@ export function readNewsBySlug(slug: string) {
     excerpt: fm.excerpt,
     html,
   };
-}
-
-/** Conversor Markdown → HTML (simples, sem dependências) */
-function mdToHtml(src: string) {
-  // títulos
-  let html = src
-    .replace(/^### (.*)$/gm, "<h3>$1</h3>")
-    .replace(/^## (.*)$/gm, "<h2>$1</h2>")
-    .replace(/^# (.*)$/gm, "<h1>$1</h1>");
-  // negrito / itálico
-  html = html.replace(/\*\*(.+?)\*\*/g, "<strong>$1</strong>");
-  html = html.replace(/\*(.+?)\*/g, "<em>$1</em>");
-  // links [txt](url)
-  html = html.replace(/\[([^\]]+)\]\(([^)]+)\)/g, '<a href="$2" target="_blank" rel="noopener">$1</a>');
-  // parágrafos
-  html = html
-    .split(/\n{2,}/)
-    .map((b) => (b.match(/^<h[1-3]>/) ? b : `<p>${b.replace(/\n/g, "<br/>")}</p>`))
-    .join("\n");
-  return html;
 }

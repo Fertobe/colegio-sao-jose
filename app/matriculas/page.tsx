@@ -2,7 +2,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import BackToTop from "../components/BackToTop";
-import Passos from "./Passos"; // ⬅️ add
+import Passos from "./Passos";
 
 export const metadata: Metadata = {
   title: "Matrículas | Colégio São José",
@@ -83,7 +83,7 @@ export default function MatriculasPage() {
         </div>
       </section>
 
-      {/* ===== PASSO A PASSO (agora interativo, mantendo o visual do passo 1) ===== */}
+      {/* ===== PASSO A PASSO (interativo, mantendo o visual) ===== */}
       <Passos
         imgSrc={PASSO_IMG}
         telefone={CENTRAL_TELEFONE}
@@ -105,6 +105,7 @@ export default function MatriculasPage() {
           <div className="mt-8 grid gap-8 md:grid-cols-2">
             <div className="overflow-hidden rounded-2xl shadow ring-1 ring-black/10">
               <iframe
+                title="Mapa do Colégio São José"
                 src={MAPS_EMBED}
                 width="100%"
                 height="360"

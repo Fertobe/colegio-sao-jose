@@ -60,6 +60,8 @@ export default async function NewsPostPage({ params }: Props) {
               alt={post.title}
               className="h-auto w-full object-cover"
               loading="eager"
+              decoding="async"
+              draggable={false}
             />
           </div>
         )}

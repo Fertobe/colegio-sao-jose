@@ -1,7 +1,28 @@
 // app/ensino/ensino-fundamental/page.tsx
 import type { CSSProperties } from "react";
+import type { Metadata } from "next";
 import BackToTop from "../../components/BackToTop";
 import BrandIcon from "../../components/icons/BrandIcon"; // ✅ ícone oficial
+
+/** SEO da página (não altera layout) */
+export const metadata: Metadata = {
+  title: "Ensino Fundamental — Colégio São José",
+  description:
+    "Transição cuidadosa, propostas interdisciplinares, recursos digitais e acompanhamento contínuo da aprendizagem no Ensino Fundamental.",
+  metadataBase: new URL("https://colegio.artferro.site"),
+  alternates: { canonical: "/ensino/ensino-fundamental" },
+  openGraph: {
+    type: "article",
+    siteName: "Colégio São José",
+    title: "Ensino Fundamental — Colégio São José",
+    description:
+      "Base forte para os próximos desafios: práticas interdisciplinares, tecnologia e avaliação contínua.",
+    url: "https://colegio.artferro.site/ensino/ensino-fundamental",
+    images: ["/ensino/fundamental/hero.webp"],
+  },
+  robots: { index: true, follow: true, "max-image-preview": "large" },
+  twitter: { card: "summary_large_image" },
+};
 
 export default function EnsinoFundamentalPage() {
   // DESKTOP/TABLET — imagem original
@@ -51,6 +72,8 @@ export default function EnsinoFundamentalPage() {
                 decoding="async"
                 fetchPriority="high"
                 draggable={false}
+                width={900}
+                height={900}
               />
             </div>
             {/* DESKTOP/TABLET (inalterado) */}
@@ -64,6 +87,8 @@ export default function EnsinoFundamentalPage() {
                 decoding="async"
                 fetchPriority="high"
                 draggable={false}
+                width={1200}
+                height={1200}
               />
             </div>
           </div>

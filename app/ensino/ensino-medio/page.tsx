@@ -1,7 +1,28 @@
 // app/ensino/ensino-medio/page.tsx
 import type { CSSProperties } from "react";
+import type { Metadata } from "next";
 import BackToTop from "../../components/BackToTop";
 import BrandIcon from "../../components/icons/BrandIcon"; // ✅ usa o ícone oficial
+
+/** SEO da página (não altera layout) */
+export const metadata: Metadata = {
+  title: "Ensino Médio — Colégio São José",
+  description:
+    "Itinerários formativos, eletivas, projeto de vida e simulados — proposta alinhada ao Novo Ensino Médio, com trilhas e acompanhamento contínuo.",
+  metadataBase: new URL("https://colegio.artferro.site"),
+  alternates: { canonical: "/ensino/ensino-medio" },
+  openGraph: {
+    type: "article",
+    siteName: "Colégio São José",
+    title: "Ensino Médio — Colégio São José",
+    description:
+      "Base forte para o futuro: trilhas, eletivas, projeto de vida e simulados alinhados ao Novo Ensino Médio.",
+    url: "https://colegio.artferro.site/ensino/ensino-medio",
+    images: ["/ensino/medio/hero.webp"],
+  },
+  robots: { index: true, follow: true, "max-image-preview": "large" },
+  twitter: { card: "summary_large_image" },
+};
 
 export default function EnsinoMedioPage() {
   // DESKTOP/TABLET — mantém a arte e o tuning originais
@@ -51,6 +72,8 @@ export default function EnsinoMedioPage() {
                 decoding="async"
                 fetchPriority="high"
                 draggable={false}
+                width={900}
+                height={900}
               />
             </div>
 
@@ -65,6 +88,8 @@ export default function EnsinoMedioPage() {
                 decoding="async"
                 fetchPriority="high"
                 draggable={false}
+                width={1200}
+                height={1200}
               />
             </div>
           </div>
@@ -142,7 +167,7 @@ export default function EnsinoMedioPage() {
             De que forma os alunos se preparam para o futuro?
           </h2>
 
-          <div className="mt-8 grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+        <div className="mt-8 grid gap-6 md:grid-cols-2 lg:grid-cols-3">
             {[
               {
                 title: "Formação Geral Básica (FGB)",
@@ -194,7 +219,7 @@ export default function EnsinoMedioPage() {
             Avaliações e Simulados do COC
           </h2>
 
-        <div className="mt-8 grid gap-6 md:grid-cols-2 lg:grid-cols-4">
+          <div className="mt-8 grid gap-6 md:grid-cols-2 lg:grid-cols-4">
             {[
               {
                 title: "Simulado Enem",

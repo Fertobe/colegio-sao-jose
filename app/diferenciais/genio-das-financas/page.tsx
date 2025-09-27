@@ -1,13 +1,28 @@
 // app/diferenciais/genio-das-financas/page.tsx
 import Link from "next/link";
 import type { CSSProperties } from "react";
+import type { Metadata } from "next";
 import ObjectAnimation from "./ObjectAnimation";
 import BackToTop from "../../components/BackToTop"; // ⬅️ botão flutuante
 
-export const metadata = {
-  title: "Gênio das Finanças • Diferenciais",
+/** SEO (não altera layout) */
+export const metadata: Metadata = {
+  title: "Gênio das Finanças • Diferenciais — Colégio São José",
   description:
     "Programa de educação financeira para estudantes — projetos práticos, trilhas por faixa etária e integração com a comunidade escolar.",
+  metadataBase: new URL("https://colegio.artferro.site"),
+  alternates: { canonical: "/diferenciais/genio-das-financas" },
+  openGraph: {
+    type: "article",
+    siteName: "Colégio São José",
+    title: "Gênio das Finanças • Diferenciais",
+    description:
+      "Educação financeira comportamental com projetos práticos e trilhas por faixa etária.",
+    url: "https://colegio.artferro.site/diferenciais/genio-das-financas",
+    images: ["/genio/hero.webp"],
+  },
+  robots: { index: true, follow: true, "max-image-preview": "large" },
+  twitter: { card: "summary_large_image" },
 };
 
 export default function GenioFinancasPage() {
@@ -26,9 +41,13 @@ export default function GenioFinancasPage() {
           alt="Gênio das Finanças — Educação Financeira"
           className="w-full h-auto select-none"
           loading="eager"
+          decoding="async"
+          fetchPriority="high"
           draggable={false}
+          width={1920}
+          height={900}
         />
-        <div className="pointer-events-none absolute inset-x-0 bottom-0">
+        <div className="pointer-events-none absolute inset-x-0 bottom-0" aria-hidden="true">
           <svg
             viewBox="0 0 1440 120"
             xmlns="http://www.w3.org/2000/svg"
@@ -104,7 +123,10 @@ export default function GenioFinancasPage() {
               className="pointer-events-none select-none block w-auto h-[300px] md:h-[300px] lg:h-[450px]
                          translate-y-[1px] md:translate-y-[1.5px] lg:translate-y-[0.5px]"
               loading="lazy"
+              decoding="async"
               draggable={false}
+              width={720}
+              height={720}
             />
           </div>
         </div>

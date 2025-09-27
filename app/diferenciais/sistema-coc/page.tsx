@@ -1,9 +1,9 @@
 // app/diferenciais/coc/page.tsx
 import type { Metadata } from "next";
 import type { CSSProperties } from "react";
-import BackToTop from "../../components/BackToTop"; // ⬅️ botão flutuante
-import Reveal from "../../components/Reveal";       // ⬅️ animação leve
-import Link from "next/link";                       // ⬅️ ADICIONADO
+import BackToTop from "../../components/BackToTop";
+import Reveal from "../../components/Reveal";
+import Link from "next/link";
 
 export const metadata: Metadata = {
   title: "Sistema COC | Colégio São José",
@@ -18,12 +18,12 @@ const HERO_IMG = "/coc/hero.webp";
 const DECO_LEFT = "/coc/ornament-1.svg";
 const FOTO_DIREITA = "/coc/plataforma-coc.webp";
 
-// Ícones dos pilares (PNG com transparência)
+// Ícones dos pilares
 const PILAR_1 = "/coc/pilares/pilar1.webp";
 const PILAR_2 = "/coc/pilares/pilar2.webp";
 const PILAR_3 = "/coc/pilares/pilar3.webp";
 
-// Fundo do bloco “Nossos pilares” (1920x850)
+// Fundo do bloco “Nossos pilares”
 const PILARES_BG = "/coc/pilares/bg.webp";
 
 // “Nossas soluções educacionais”
@@ -42,7 +42,7 @@ const DECO_VARS: CSSProperties = {
   ["--coc-deco-size" as any]: "420px",
 };
 
-/** 🔧 Vars do “DNA Aprovador” */
+/** Vars do “DNA Aprovador” (desktop/tablet) */
 const DNA_VARS: CSSProperties = {
   ["--dna-c-h" as any]: "360px",
   ["--dna-c-ml" as any]: "-380px",
@@ -153,11 +153,9 @@ export default function COCPage() {
       </section>
 
       {/* ===================== NOSSOS PILARES ===================== */}
-      {/* Mobile: conteúdo em fluxo normal + fundo verde sólido.
-          Desktop (md+): mantém a composição com imagem de fundo e conteúdo absoluto centralizado. */}
       <section className="relative md:overflow-hidden">
         <div className="relative w-full md:aspect-[1920/850] md:min-h-[620px] bg-[#0FA958] md:bg-transparent">
-          {/* Fundo (só no desktop/tablet) */}
+          {/* Fundo desktop */}
           <img
             src={PILARES_BG}
             alt=""
@@ -166,7 +164,7 @@ export default function COCPage() {
             draggable={false}
           />
 
-          {/* Conteúdo: fluxo no mobile; absoluto centralizado no md+ */}
+          {/* Conteúdo */}
           <div className="px-4 py-12 text-white md:absolute md:inset-0 md:flex md:items-center md:px-4 md:py-0">
             <div className="mx-auto w-full max-w-6xl">
               <h3 className="text-center font-extrabold tracking-wide text-3xl md:text-5xl lg:text-6xl drop-shadow-[0_6px_16px_rgba(0,0,0,.25)]">
@@ -235,9 +233,15 @@ export default function COCPage() {
 
       {/* ===================== NOSSAS SOLUÇÕES EDUCACIONAIS ===================== */}
       <section className="relative bg-white">
-        <div className="mx-auto grid max-w-6xl items-center gap-12 px-4 py-16 md:grid-cols-2">
+        <div className="mx-auto grid max-w-6xl items-center gap-12 px-4 py-8 md:py-16 md:grid-cols-2">
           <div className="relative mx-auto aspect-square w-[360px] md:w-[440px] lg:w-[520px]">
-            <img src={SOLUCOES_IMG} alt="Estudante utilizando materiais do Sistema COC" className="absolute inset-0 h-full w-full object-contain" loading="lazy" draggable={false} />
+            <img
+              src={SOLUCOES_IMG}
+              alt="Estudante utilizando materiais do Sistema COC"
+              className="absolute inset-0 h-full w-full object-contain"
+              loading="lazy"
+              draggable={false}
+            />
           </div>
 
           <div>
@@ -255,14 +259,26 @@ export default function COCPage() {
 
       {/* ===================== DNA APROVADOR ===================== */}
       <section className="relative overflow-visible bg-white">
-        <div className="relative mx-auto max-w-7xl px-6 py-36" style={DNA_VARS}>
-          <div className="grid items-center gap-8 md:grid-cols-12">
-            {/* “C” com escala controlada por variável */}
+        {/* mobile: menos padding para tirar o “vazio” */}
+        <div className="relative mx-auto max-w-7xl px-6 py-8 md:py-36" style={DNA_VARS}>
+          {/* “C” sobreposto no mobile */}
+          <div className="md:hidden pointer-events-none absolute left-1/2 top-4 -translate-x-1/2 z-[60]">
+            <img
+              src={DNA_LEFT}
+              alt=""
+              className="block h-56 w-auto select-none"
+              loading="eager"
+              decoding="async"
+              draggable={false}
+            />
+          </div>
+
+          <div className="grid items-center gap-8 md:grid-cols-12 relative z-[30]">
+            {/* “C” (desktop/tablet) */}
             <div className="relative hidden overflow-visible md:block md:col-span-2">
               <img
                 src={DNA_LEFT}
                 alt=""
-                aria-hidden
                 className="block h-[var(--dna-c-h)] w-auto object-contain select-none"
                 style={{
                   marginLeft: "var(--dna-c-ml)",
@@ -273,7 +289,7 @@ export default function COCPage() {
               />
             </div>
 
-            {/* Texto — alinhado à esquerda */}
+            {/* Texto */}
             <div className="col-span-12 md:col-span-4 text-left">
               <h3 className="text-[#106F2D] text-[32px] md:text-[40px] font-extrabold leading-tight">
                 DNA Aprovador
@@ -293,10 +309,9 @@ export default function COCPage() {
               )}
             </div>
 
-            {/* Anel + estudantes com animação leve */}
-            <div className="relative col-span-12 md:col-span-6 min-h-[320px]">
-              {/* Anel: entra da direita */}
-              <Reveal from="right" duration={700} className="absolute right-0 top-1/2 -translate-y-1/2">
+            {/* Anel + estudantes */}
+            <div className="relative col-span-12 md:col-span-6 min-h-[200px] md:min-h-[320px]">
+              <Reveal from="right" duration={700} className="absolute right-0 top-1/2 -translate-y-1/2 z-0">
                 <img
                   src={DNA_RING}
                   alt=""
@@ -306,7 +321,6 @@ export default function COCPage() {
                 />
               </Reveal>
 
-              {/* Estudantes: entram da direita com pequeno atraso */}
               <Reveal
                 from="right"
                 duration={700}
@@ -326,8 +340,8 @@ export default function COCPage() {
         </div>
       </section>
 
-      {/* ===================== VOLTAR PARA DIFERENCIAIS (HOME) ===================== */}
-      <section className="bg-[#]">
+      {/* ===================== VOLTAR PARA DIFERENCIAIS ===================== */}
+      <section className="bg-white">
         <div className="mx-auto max-w-6xl px-4 py-10">
           <Link
             href="/#diferenciais"
@@ -338,7 +352,7 @@ export default function COCPage() {
         </div>
       </section>
 
-      {/* ✅ Botão flutuante “Voltar ao topo” — verde da página */}
+      {/* Botão flutuante */}
       <BackToTop
         variant="brand"
         threshold={650}

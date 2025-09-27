@@ -21,7 +21,6 @@ const HERO_MOBILE = {
 
 // ⬇️ Ajustes finos de posição/escala (pode editar à vontade)
 const heroDesktopStyle: CSSProperties = {
-  // mover para cima/baixo e ajustar tamanho
   transform: "translateX(-50%) translateY(0px) scale(1.1)",
   transformOrigin: "bottom center",
   willChange: "transform",
@@ -39,7 +38,10 @@ export default function PoliticaDeCookiesPage() {
     <main className="bg-white">
       {/* ===================== HERO ===================== */}
       <section className="relative overflow-hidden">
-        <div className="absolute inset-0 bg-gradient-to-br from-brand-900 via-brand-800 to-brand-600" />
+        <div
+          className="absolute inset-0 bg-gradient-to-br from-brand-900 via-brand-800 to-brand-600"
+          aria-hidden="true"
+        />
 
         <div className="relative z-10 mx-auto grid max-w-6xl items-center gap-10 px-4 py-16 md:grid-cols-2 md:py-20 lg:py-24">
           {/* Texto */}
@@ -103,6 +105,8 @@ export default function PoliticaDeCookiesPage() {
             viewBox="0 0 1440 140"
             className="h-[90px] w-full md:h-[110px] lg:h-[130px]"
             preserveAspectRatio="none"
+            aria-hidden="true"
+            focusable="false"
           >
             <path d="M0,80 C320,140 920,10 1440,90 L1440,140 L0,140 Z" fill="#fff" />
           </svg>
@@ -241,10 +245,10 @@ export default function PoliticaDeCookiesPage() {
               Em caso de dúvidas sobre esta política ou sobre o uso de cookies, entre em contato
               pelo e-mail{" "}
               <a
-                href="mailto:contato@colegiosaojose.net"
+                href="mailto:contato@colegiosaojese.net"
                 className="font-semibold text-brand-700 underline underline-offset-4"
               >
-                contato@colegiosaojose.net
+                contato@colegiosaojese.net
               </a>
             </p>
           </section>

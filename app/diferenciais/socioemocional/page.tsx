@@ -1,8 +1,9 @@
 /* app/diferenciais/socioemocional/page.tsx */
 import BackToTop from "../../components/BackToTop";
-import Link from "next/link"; // ⬅️ ADICIONADO
+import Link from "next/link";
+import type { Metadata } from "next";
 
-export const metadata = {
+export const metadata: Metadata = {
   title: "Educação Socioemocional · Programa Pleno | Colégio São José",
   description:
     "Conheça o Programa Pleno: competências socioemocionais, metodologias ativas e aprendizagem conectada à realidade dos estudantes.",
@@ -316,7 +317,7 @@ export default function SocioemocionalPage() {
       </section>
 
       {/* ===================== VOLTAR PARA DIFERENCIAIS (HOME) ===================== */}
-      <section className="bg-[]">
+      <section className="bg-white">
         <div className="mx-auto max-w-6xl px-4 py-10">
           <Link
             href="/#diferenciais"

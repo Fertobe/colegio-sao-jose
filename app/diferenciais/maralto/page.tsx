@@ -1,27 +1,51 @@
 // app/diferenciais/maralto/page.tsx
 import Link from "next/link";
+import type { Metadata } from "next";
 import BackToTop from "../../components/BackToTop"; // ⬅️ mesmo import da Home (azul por padrão)
 import Gallery from "./gallery";
 
-export const metadata = {
-  title: "Programa de Formação Leitora Maralto • Diferenciais",
+export const metadata: Metadata = {
+  title: "Programa de Formação Leitora Maralto • Diferenciais — Colégio São José",
   description:
     "Iniciativa que promove a cultura do livro e da leitura para estudantes da Educação Infantil ao Ensino Médio.",
+  metadataBase: new URL("https://colegio.artferro.site"),
+  alternates: { canonical: "/diferenciais/maralto" },
+  openGraph: {
+    type: "article",
+    siteName: "Colégio São José",
+    title: "Programa de Formação Leitora Maralto • Diferenciais",
+    description:
+      "Iniciativa que promove a cultura do livro e da leitura para estudantes da Educação Infantil ao Ensino Médio.",
+    url: "https://colegio.artferro.site/diferenciais/maralto",
+    images: ["/maralto/Hero.webp"],
+  },
+  robots: { index: true, follow: true, "max-image-preview": "large" },
+  twitter: { card: "summary_large_image" },
 };
 
 export default function MaraltoPage() {
   return (
     <>
+      {/* Preload leve para suavizar o 1º paint */}
+      <link rel="preload" as="image" href="/maralto/Hero.webp" />
+      <link rel="preload" as="image" href="/maralto/gal-01.avif" />
+      <link rel="preload" as="image" href="/maralto/gal-02.avif" />
+
       {/* HERO — imagem única ocupando toda a largura */}
-      <section className="relative overflow-hidden bg-black">
+      <section
+        className="relative overflow-hidden bg-black"
+        style={{ contentVisibility: "auto" as any, containIntrinsicSize: "600px" as any }}
+      >
         <img
           src="/maralto/Hero.webp"
           alt="Programa de Formação Leitora Maralto"
           className="w-full h-auto select-none"
           loading="eager"
+          decoding="async"
+          fetchPriority="high"
           draggable={false}
         />
-        <div className="pointer-events-none absolute inset-x-0 bottom-0">
+        <div className="pointer-events-none absolute inset-x-0 bottom-0" aria-hidden="true">
           <svg
             viewBox="0 0 1440 120"
             xmlns="http://www.w3.org/2000/svg"
@@ -34,7 +58,10 @@ export default function MaraltoPage() {
       </section>
 
       {/* BLOCO — o que o programa oferece */}
-      <section className="bg-white">
+      <section
+        className="bg-white"
+        style={{ contentVisibility: "auto" as any, containIntrinsicSize: "900px" as any }}
+      >
         <div className="mx-auto max-w-6xl px-4 py-14">
           <div className="grid gap-8 md:grid-cols-3">
             {/* ...cards... */}
@@ -98,7 +125,10 @@ export default function MaraltoPage() {
       </section>
 
       {/* GALERIA */}
-      <section className="bg-gray-50">
+      <section
+        className="bg-gray-50"
+        style={{ contentVisibility: "auto" as any, containIntrinsicSize: "700px" as any }}
+      >
         <div className="mx-auto max-w-6xl px-4 py-12">
           <h2 className="text-2xl font-bold text-teal-800 uppercase">Galeria</h2>
           <div className="mt-6">

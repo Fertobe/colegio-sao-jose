@@ -11,7 +11,6 @@ export const metadata: Metadata = {
 };
 
 // ============ CONFIG ============
-// Ajuste os caminhos/alt conforme suas artes finais em /public/privacidade/
 const HERO_DESKTOP = {
   src: "/privacidade/hero.webp",
   alt: "Estudantes do Colégio São José",
@@ -21,9 +20,9 @@ const HERO_MOBILE = {
   alt: "Estudantes do Colégio São José (mobile)",
 };
 
-// Tuning fino do hero (escala/posição) — edite se precisar
+// Tuning fino do hero (escala/posição)
 const heroDesktopStyle: CSSProperties = {
-  transform: "translateX(-50%) translateY(20px) scale(1.0",
+  transform: "translateX(-50%) translateY(20px) scale(1.0)", // ✅ fechou o parêntese
   transformOrigin: "bottom center",
   willChange: "transform",
 };
@@ -33,8 +32,8 @@ const heroMobileStyle: CSSProperties = {
   willChange: "transform",
 };
 
-const DPO_EMAIL = "privacidade@colegiosaojose.net"; // ajuste para o canal oficial
-const LAST_UPDATE = "23/09/2025"; // atualize quando fizer alterações
+const DPO_EMAIL = "privacidade@colegiosaojose.net";
+const LAST_UPDATE = "23/09/2025";
 // =================================
 
 export default function PoliticaPrivacidadePage() {
@@ -42,7 +41,10 @@ export default function PoliticaPrivacidadePage() {
     <main className="bg-white">
       {/* ===== HERO (com imagem, padrão do site) ===== */}
       <section className="relative overflow-hidden">
-        <div className="absolute inset-0 bg-gradient-to-br from-brand-900 via-brand-800 to-brand-600" />
+        <div
+          className="absolute inset-0 bg-gradient-to-br from-brand-900 via-brand-800 to-brand-600"
+          aria-hidden="true"
+        />
 
         <div className="relative z-10 mx-auto grid max-w-6xl items-center gap-10 px-4 py-16 md:grid-cols-2 md:py-20 lg:py-24">
           {/* Texto */}
@@ -76,7 +78,7 @@ export default function PoliticaPrivacidadePage() {
                 <Link
                   key={id}
                   href={`#${id}`}
-                  className="rounded-full bg-white/15 px-3 py-1 text-xs font-semibold text-white backdrop-blur transition hover:bg-white/25"
+                  className="rounded-full bg-white/15 px-3 py-1 text-xs font-semibold text-white backdrop-blur transition hover:bg白/25 hover:bg-white/25"
                 >
                   {label}
                 </Link>
@@ -123,6 +125,8 @@ export default function PoliticaPrivacidadePage() {
             viewBox="0 0 1440 140"
             className="h-[90px] w-full md:h-[110px] lg:h-[130px]"
             preserveAspectRatio="none"
+            aria-hidden="true"
+            focusable="false"
           >
             <path d="M0,80 C320,140 920,10 1440,90 L1440,140 L0,140 Z" fill="#fff" />
           </svg>
