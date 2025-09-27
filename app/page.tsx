@@ -560,7 +560,7 @@ export default function Home() {
             <div className="relative">
               <div className="mx-auto w-full h-[260px] md:h-[320px] rounded-3xl overflow-hidden shadow-lg">
                 <img
-                  src="/cta/colegio.jpg"
+                  src="/cta/colegio.webp"
                   alt="Fachada do Colégio São José"
                   className="h-full w-full object-cover select-none"
                   loading="lazy"

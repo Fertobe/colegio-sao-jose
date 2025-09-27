@@ -215,7 +215,7 @@ export default function NossaFilosofiaPage() {
           <div className="relative">
             <div className="relative aspect-[16/9] overflow-hidden rounded-2xl shadow-lg md:rounded-3xl">
               <img
-                src="/cta/colegio.jpg"
+                src="/cta/colegio.webp"
                 alt="Fachada do Colégio São José"
                 className="h-full w-full select-none object-cover"
                 loading="lazy"

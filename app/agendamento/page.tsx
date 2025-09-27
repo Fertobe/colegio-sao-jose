@@ -42,7 +42,7 @@ const COLEGIO = {
   telefoneWa: "5542998276516", // DDI 55 + DDD + número
   horario: "7h – 19h",
   segmentos: "Da Educação Infantil ao Ensino Médio",
-  img: "/agendamento/colegio.jpg",
+  img: "/agendamento/colegio.webp",
 };
 
 // ======== Helpers de máscara/validação ========

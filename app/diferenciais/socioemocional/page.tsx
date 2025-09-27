@@ -9,7 +9,7 @@ export const metadata = {
 };
 
 // imagem única do herói
-const HERO_IMG = "/pleno/hero-pack.png";
+const HERO_IMG = "/pleno/hero-pack.webp";
 
 // pilares
 const PILARES = [
