@@ -15,12 +15,12 @@ export const metadata: Metadata = {
 // ============ CONFIG ============
 // DESKTOP mantém a mesma arte/posicionamento
 const HERO_DESKTOP = {
-  src: "/contato/hero.png",
+  src: "/contato/hero.webp",
   alt: "Equipe de atendimento do Colégio São José",
 };
-// MOBILE: coloque a PNG recortada (transparência) em /public/contato/mobile/hero.png
+// MOBILE: coloque a PNG recortada (transparência) em /public/contato/mobile/hero.webp
 const HERO_MOBILE = {
-  src: "/contato/mobile/hero.png",
+  src: "/contato/mobile/hero.webp",
   alt: "Equipe de atendimento do Colégio São José (mobile)",
 };
 

@@ -22,7 +22,7 @@ export default function GenioFinancasPage() {
       {/* ===================== HERO ===================== */}
       <section className="relative overflow-hidden bg-black">
         <img
-          src="/genio/hero.png"
+          src="/genio/hero.webp"
           alt="Gênio das Finanças — Educação Financeira"
           className="w-full h-auto select-none"
           loading="eager"
@@ -99,7 +99,7 @@ export default function GenioFinancasPage() {
         <div className="absolute inset-x-0 bottom-0 z-20">
           <div className="mx-auto max-w-6xl px-2">
             <img
-              src="/genio/kid.png"
+              src="/genio/kid.webp"
               alt=""
               className="pointer-events-none select-none block w-auto h-[300px] md:h-[300px] lg:h-[450px]
                          translate-y-[1px] md:translate-y-[1.5px] lg:translate-y-[0.5px]"

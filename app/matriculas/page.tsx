@@ -11,8 +11,8 @@ export const metadata: Metadata = {
 };
 
 // ==================== CONFIG FÁCIL ====================
-const HERO_IMG = "/matriculas/Hero.png";
-const PASSO_IMG = "/matriculas/passo.png";
+const HERO_IMG = "/matriculas/Hero.webp";
+const PASSO_IMG = "/matriculas/passo.webp";
 
 const MAPS_EMBED =
   "https://www.google.com/maps?q=R.+C%C3%A2ndido+de+Abreu,+1636+-+Prudent%C3%B3polis,+PR,+84400-000&output=embed";

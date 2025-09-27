@@ -6,13 +6,13 @@ import BrandIcon from "../../components/icons/BrandIcon"; // ✅ ícone oficial 
 export default function EducacaoInfantilPage() {
   // Desktop: imagem original (sem mudanças)
   const heroImgDesktop = {
-    src: "/ensino/infantil/hero.png",
+    src: "/ensino/infantil/hero.webp",
     alt: "Estudante da Educação Infantil",
   };
 
-  // Mobile: coloque a versão com transparência em /public/ensino/infantil/mobile/hero.png
+  // Mobile: coloque a versão com transparência em /public/ensino/infantil/mobile/hero.webp
   const heroImgMobile = {
-    src: "/ensino/infantil/mobile/hero.png",
+    src: "/ensino/infantil/mobile/hero.webp",
     alt: "Estudante da Educação Infantil (mobile)",
   };
 

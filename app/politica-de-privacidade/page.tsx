@@ -13,11 +13,11 @@ export const metadata: Metadata = {
 // ============ CONFIG ============
 // Ajuste os caminhos/alt conforme suas artes finais em /public/privacidade/
 const HERO_DESKTOP = {
-  src: "/privacidade/hero.png",
+  src: "/privacidade/hero.webp",
   alt: "Estudantes do Colégio São José",
 };
 const HERO_MOBILE = {
-  src: "/privacidade/hero.png",
+  src: "/privacidade/hero.webp",
   alt: "Estudantes do Colégio São José (mobile)",
 };
 

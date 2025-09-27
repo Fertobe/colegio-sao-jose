@@ -7,7 +7,7 @@ export type CarouselItem = { img: string; title: string; href: string };
 type NewsFrontmatter = {
   title?: string;
   date?: string;   // YYYY-MM-DD
-  cover?: string;  // "feira.jpg" ou "/noticias/feira.jpg"
+  cover?: string;  // "feira.webp" ou "/noticias/feira.webp"
   excerpt?: string;
 };
 

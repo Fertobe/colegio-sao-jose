@@ -11,11 +11,11 @@ export const metadata: Metadata = {
 
 // ⬇️ Imagem do HERO (troque quando subir as artes definitivas)
 const HERO_DESKTOP = {
-  src: "/cookies/hero.png",
+  src: "/cookies/hero.webp",
   alt: "Ilustração relacionada à Política de Cookies",
 };
 const HERO_MOBILE = {
-  src: "/cookies/mobile/hero.png",
+  src: "/cookies/mobile/hero.webp",
   alt: "Ilustração relacionada à Política de Cookies (mobile)",
 };
 

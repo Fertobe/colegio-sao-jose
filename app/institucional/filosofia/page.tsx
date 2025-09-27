@@ -12,8 +12,8 @@ export const metadata = {
 export default function NossaFilosofiaPage() {
   // ✅ UMA ÚNICA IMAGEM (PNG com transparência)
   // se quiser um arquivo específico para mobile, coloque em /filosofia/mobile/hero-01.png
-  const HERO_DESKTOP = { src: "/filosofia/hero-01.png", alt: "Estudante — Nossa Filosofia" };
-  const HERO_MOBILE  = { src: "/filosofia/hero-01.png", alt: "Estudante — Nossa Filosofia (mobile)" };
+  const HERO_DESKTOP = { src: "/filosofia/hero-01.webp", alt: "Estudante — Nossa Filosofia" };
+  const HERO_MOBILE  = { src: "/filosofia/hero-01.webp", alt: "Estudante — Nossa Filosofia (mobile)" };
 
   // 🎛️ CONTROLES FINOS (pode mudar estes valores sem tocar no restante)
   // *-bottom: quanto “cola” na onda (valores negativos descem)

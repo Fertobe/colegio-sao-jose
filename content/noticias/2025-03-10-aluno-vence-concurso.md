@@ -2,7 +2,7 @@
 title: "Aluno do São José vence concurso de leitura"
 date: "2025-03-10"
 excerpt: "Estudante do 7º ano é destaque em etapa regional."
-cover: "/noticias/aluno-leitura.jpg"  
+cover: "/noticias/aluno-leitura.webp"  
 tags: ["Leitura", "Premiações"]
 author: "Equipe de Comunicação"
 published: true

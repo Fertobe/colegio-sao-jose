@@ -7,18 +7,18 @@ import { silkaBold } from "../../fonts"; // usa a Silka Bold
 type ID = 0 | 1 | 2 | 3 | 4;
 
 const STAGE: Record<ID, string> = {
-  0: "/genio/anim/Stage_0.png",
-  1: "/genio/anim/Stage_1.png",
-  2: "/genio/anim/Stage_2.png",
-  3: "/genio/anim/Stage_3.png",
-  4: "/genio/anim/Stage_4.png",
+  0: "/genio/anim/Stage_0.webp",
+  1: "/genio/anim/Stage_1.webp",
+  2: "/genio/anim/Stage_2.webp",
+  3: "/genio/anim/Stage_3.webp",
+  4: "/genio/anim/Stage_4.webp",
 };
 
 const CENTER: Record<Exclude<ID, 0>, { icon: string; lines: string[] }> = {
-  1: { icon: "/genio/anim/icon_branco_1.png", lines: ["Planejamento", "Financeiro"] },
-  2: { icon: "/genio/anim/icon_branco_2.png", lines: ["Sustentabilidade"] },
-  3: { icon: "/genio/anim/icon_branco_3.png", lines: ["Autonomia e tomada", "de decisão", "consciente"] },
-  4: { icon: "/genio/anim/icon_branco_4.png", lines: ["Empreendedorismo e", "Projeto de Vida"] },
+  1: { icon: "/genio/anim/icon_branco_1.webp", lines: ["Planejamento", "Financeiro"] },
+  2: { icon: "/genio/anim/icon_branco_2.webp", lines: ["Sustentabilidade"] },
+  3: { icon: "/genio/anim/icon_branco_3.webp", lines: ["Autonomia e tomada", "de decisão", "consciente"] },
+  4: { icon: "/genio/anim/icon_branco_4.webp", lines: ["Empreendedorismo e", "Projeto de Vida"] },
 };
 
 const POS: Record<Exclude<ID, 0>, { top: string; left: string }> = {

@@ -2,7 +2,7 @@
 title: "Feira de Ciências reúne projetos premiados"
 date: "2025-02-18"
 excerpt: "Eventos, bancas e oficinas mobilizaram toda a comunidade."
-cover: "/noticias/feira-ciencias.jpg"
+cover: "/noticias/feira-ciencias.webp"
 tags: ["Ciências", "Feira"]
 author: "Coordenação Pedagógica"
 published: true

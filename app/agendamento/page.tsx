@@ -32,8 +32,8 @@ const DEST_EMAIL =
   "contato@colegiosaojose.com.br";
 
 // ======== Imagens ========
-const HERO_SIDE_IMG_DESKTOP = "/agendamento/hero-side.png";
-const HERO_SIDE_IMG_MOBILE = "/agendamento/mobile/hero-side.png";
+const HERO_SIDE_IMG_DESKTOP = "/agendamento/hero-side.webp";
+const HERO_SIDE_IMG_MOBILE = "/agendamento/mobile/hero-side.webp";
 
 // ======== Dados fixos da unidade ========
 const COLEGIO = {

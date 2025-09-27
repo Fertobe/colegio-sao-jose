@@ -4,7 +4,7 @@ import Link from "next/link";
 import BackToTop from "../../components/BackToTop";
 
 // ==================== CONFIG ====================
-const HERO_IMG = "/historia/Hero.png"; // única imagem no herói
+const HERO_IMG = "/historia/Hero.webp"; // única imagem no herói
 
 // Linha do tempo (conteúdo do PDF resumido em marcos)
 const TIMELINE: Array<{ year: string; title: string; text: string }> = [
@@ -160,7 +160,7 @@ export default function NossaHistoriaPage() {
           <div className="relative">
             <div className="relative aspect-[16/9] overflow-hidden rounded-2xl shadow-lg md:rounded-3xl">
               <img
-                src="/historia/capasala.jpg"
+                src="/historia/capasala.webp"
                 alt="Registro histórico do Colégio São José"
                 className="h-full w-full select-none object-cover"
                 loading="lazy"

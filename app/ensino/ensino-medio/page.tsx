@@ -6,13 +6,13 @@ import BrandIcon from "../../components/icons/BrandIcon"; // ✅ usa o ícone of
 export default function EnsinoMedioPage() {
   // DESKTOP/TABLET — mantém a arte e o tuning originais
   const heroImgDesktop = {
-    src: "/ensino/medio/hero.png",
+    src: "/ensino/medio/hero.webp",
     alt: "Estudante do Ensino Médio",
   };
 
   // MOBILE — coloque a PNG recortada (transparente) aqui
   const heroImgMobile = {
-    src: "/ensino/medio/mobile/hero.png",
+    src: "/ensino/medio/mobile/hero.webp",
     alt: "Estudante do Ensino Médio (mobile)",
   };
 

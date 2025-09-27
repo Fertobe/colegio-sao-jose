@@ -6,13 +6,13 @@ import BrandIcon from "../../components/icons/BrandIcon"; // ✅ ícone oficial
 export default function EnsinoFundamentalPage() {
   // DESKTOP/TABLET — imagem original
   const heroImgDesktop = {
-    src: "/ensino/fundamental/hero.png",
+    src: "/ensino/fundamental/hero.webp",
     alt: "Estudante do Ensino Fundamental",
   };
 
   // MOBILE — coloque a versão recortada/transparente aqui
   const heroImgMobile = {
-    src: "/ensino/fundamental/mobile/hero.png",
+    src: "/ensino/fundamental/mobile/hero.webp",
     alt: "Estudante do Ensino Fundamental (mobile)",
   };
 

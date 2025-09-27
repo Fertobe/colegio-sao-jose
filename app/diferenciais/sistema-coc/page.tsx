@@ -12,27 +12,27 @@ export const metadata: Metadata = {
 };
 
 // HERO (1920x700)
-const HERO_IMG = "/coc/hero.png";
+const HERO_IMG = "/coc/hero.webp";
 
 // Ornamento e foto
 const DECO_LEFT = "/coc/ornament-1.svg";
-const FOTO_DIREITA = "/coc/plataforma-coc.png";
+const FOTO_DIREITA = "/coc/plataforma-coc.webp";
 
 // Ícones dos pilares (PNG com transparência)
-const PILAR_1 = "/coc/pilares/pilar1.png";
-const PILAR_2 = "/coc/pilares/pilar2.png";
-const PILAR_3 = "/coc/pilares/pilar3.png";
+const PILAR_1 = "/coc/pilares/pilar1.webp";
+const PILAR_2 = "/coc/pilares/pilar2.webp";
+const PILAR_3 = "/coc/pilares/pilar3.webp";
 
 // Fundo do bloco “Nossos pilares” (1920x850)
-const PILARES_BG = "/coc/pilares/bg.png";
+const PILARES_BG = "/coc/pilares/bg.webp";
 
 // “Nossas soluções educacionais”
-const SOLUCOES_IMG = "/coc/solucoes.png";
+const SOLUCOES_IMG = "/coc/solucoes.webp";
 
 // DNA Aprovador
-const DNA_LEFT = "/coc/dna/left-c.png";
+const DNA_LEFT = "/coc/dna/left-c.webp";
 const DNA_RING = "/coc/dna/right-ring.png";
-const DNA_STUDENTS = "/coc/dna/students.png";
+const DNA_STUDENTS = "/coc/dna/students.webp";
 const SHOW_DNA_BUTTON = false;
 
 // Vars do primeiro bloco (ornamento)

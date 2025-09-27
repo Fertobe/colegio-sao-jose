@@ -12,17 +12,17 @@ import BrandIcon from "./components/icons/BrandIcon";
 export default function Home() {
   // === HERO DESKTOP (como estava) ==========================================
   const heroPngsDesktop = [
-    { src: "/hero/aluno-01.png", alt: "Estudante 1 sorrindo com cadernos" },
-    { src: "/hero/aluna-02.png", alt: "Estudante 2 com mochila" },
-    { src: "/hero/aluno-03.png", alt: "Estudante 3 animado" },
+    { src: "/hero/aluno-01.webp", alt: "Estudante 1 sorrindo com cadernos" },
+    { src: "/hero/aluna-02.webp", alt: "Estudante 2 com mochila" },
+    { src: "/hero/aluno-03.webp", alt: "Estudante 3 animado" },
   ];
 
   // === HERO MOBILE (novas imagens; você coloca o degradê no PNG) ===========
-  // /public/hero/mobile/aluno-01.png, aluna-02.png, aluno-03.png
+  // /public/hero/mobile/aluno-01.webp, aluna-02.webp, aluno-03.webp
   const heroPngsMobile = [
-    { src: "/hero/mobile/aluno-01.png", alt: "Estudante 1 (mobile)" },
-    { src: "/hero/mobile/aluna-02.png", alt: "Estudante 2 (mobile)" },
-    { src: "/hero/mobile/aluno-03.png", alt: "Estudante 3 (mobile)" }, // 3ª mais alta/central
+    { src: "/hero/mobile/aluno-01.webp", alt: "Estudante 1 (mobile)" },
+    { src: "/hero/mobile/aluna-02.webp", alt: "Estudante 2 (mobile)" },
+    { src: "/hero/mobile/aluno-03.webp", alt: "Estudante 3 (mobile)" }, // 3ª mais alta/central
   ];
 
   // 🔧 CONTROLE INDIVIDUAL
@@ -59,7 +59,7 @@ export default function Home() {
     // se falhar, fica vazio e a seção não renderiza
   }
 
-  // ✅ Conquistas com IMAGENS LOCAIS em /public/conquistas/01.jpg … 12.jpg
+  // ✅ Conquistas com IMAGENS LOCAIS em /public/conquistas/01.webp … 12.webp
   const conquistas = Array.from({ length: 12 }, (_, i) => {
     const n = String(i + 1).padStart(2, "0");
     return { src: `/conquistas/${n}.jpg`, alt: `Conquista ${n}` };
@@ -74,19 +74,19 @@ export default function Home() {
         <link
           rel="preload"
           as="image"
-          href="/hero/mobile/aluno-01.png"
+          href="/hero/mobile/aluno-01.webp"
           media="(max-width: 767px)"
           /* tamanhos aproximados do container: 320px */
-          imageSrcSet="/hero/mobile/aluno-01.png 1x"
+          imageSrcSet="/hero/mobile/aluno-01.webp 1x"
           imageSizes="(max-width: 767px) 320px"
         />
         {/* Preload do primeiro hero para desktop/tablet */}
         <link
           rel="preload"
           as="image"
-          href="/hero/aluno-01.png"
+          href="/hero/aluno-01.webp"
           media="(min-width: 768px)"
-          imageSrcSet="/hero/aluno-01.png 1x"
+          imageSrcSet="/hero/aluno-01.webp 1x"
           imageSizes="(min-width: 768px) 420px"
         />
       </Head>
@@ -158,7 +158,7 @@ export default function Home() {
             <h1 className="mt-3 text-[28px] font-extrabold leading-tight md:text-5xl">
               No Colégio São José,<span className="text-brand-300">tradição e inovação</span> andam
               juntas para formar estudantes preparados para o
-              <span className="text-brand-300">Mundo Real</span>
+              <span className="text-brand-300"> Mundo Real</span>
             </h1>
             <p className="mt-4 text-base text-white/90 md:text-lg">
               Do Infantil ao Ensino Médio, com projetos, tecnologia e desenvolvimento socioemocional.
