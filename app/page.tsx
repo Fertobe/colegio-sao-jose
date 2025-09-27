@@ -62,7 +62,7 @@ export default function Home() {
   // ✅ Conquistas com IMAGENS LOCAIS em /public/conquistas/01.webp … 12.webp
   const conquistas = Array.from({ length: 12 }, (_, i) => {
     const n = String(i + 1).padStart(2, "0");
-    return { src: `/conquistas/${n}.jpg`, alt: `Conquista ${n}` };
+    return { src: `/conquistas/${n}.webp`, alt: `Conquista ${n}` };
   });
 
   return (
