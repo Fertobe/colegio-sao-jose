@@ -31,7 +31,7 @@ const SOLUCOES_IMG = "/coc/solucoes.webp";
 
 // DNA Aprovador
 const DNA_LEFT = "/coc/dna/left-c.webp";
-const DNA_RING = "/coc/dna/right-ring.png";
+const DNA_RING = "/coc/dna/right-ring.png"; // confirme extensão/caixa no /public
 const DNA_STUDENTS = "/coc/dna/students.webp";
 const SHOW_DNA_BUTTON = false;
 
@@ -75,7 +75,10 @@ export default function COCPage() {
 
       {/* ===================== TEXTO + IMAGEM ===================== */}
       <section className="relative bg-white">
-        <div className="relative mx-auto max-w-6xl px-4 py-12 md:py-16" style={DECO_VARS}>
+        <div
+          className="relative mx-auto max-w-6xl px-4 py-12 md:py-16"
+          style={DECO_VARS}
+        >
           <img
             src={DECO_LEFT}
             alt=""
@@ -98,10 +101,10 @@ export default function COCPage() {
 
               <p className="mt-6 text-[16px] md:text-[17px] leading-8 text-[#305B3B]">
                 Com escolas parceiras em todo o Brasil, somos uma plataforma de
-                educação com décadas de experiência aliada à inovação — oferecendo
-                apoio completo às escolas em toda a trajetória escolar, mantendo o
-                mesmo compromisso: excelência no ensino, formação integral dos
-                estudantes e os melhores resultados.
+                educação com décadas de experiência aliada à inovação —
+                oferecendo apoio completo às escolas em toda a trajetória
+                escolar, mantendo o mesmo compromisso: excelência no ensino,
+                formação integral dos estudantes e os melhores resultados.
               </p>
             </div>
 
@@ -127,14 +130,18 @@ export default function COCPage() {
                   estados
                 </div>
               </div>
-              <p className="mt-2 text-[#305B3B]">brasileiros com presença COC.</p>
+              <p className="mt-2 text-[#305B3B]">
+                brasileiros com presença COC.
+              </p>
             </div>
 
             <div className="flex flex-col items-center">
               <div className="leading-none font-black text-[#41C541] text-[72px] md:text-[92px] lg:text-[108px]">
                 93%
               </div>
-              <p className="mt-2 text-[#305B3B]">de satisfação das escolas parceiras.</p>
+              <p className="mt-2 text-[#305B3B]">
+                de satisfação das escolas parceiras.
+              </p>
             </div>
 
             <div className="flex flex-col items-center md:items-start">
@@ -183,7 +190,9 @@ export default function COCPage() {
                     />
                   </div>
                   <h4 className="mt-5 text-[22px] md:text-[24px] lg:text-[26px] font-extrabold leading-snug">
-                    Tradição feita<br />no presente
+                    Tradição feita
+                    <br />
+                    no presente
                   </h4>
                   <p className="mt-3 mx-auto max-w-[360px] text-base md:text-[17px] leading-relaxed text-white/90">
                     Pioneirismo e referência em educação há 60 anos.
@@ -201,7 +210,9 @@ export default function COCPage() {
                     />
                   </div>
                   <h4 className="mt-5 text-[22px] md:text-[24px] lg:text-[26px] font-extrabold leading-snug">
-                    Resultados ao longo de<br />toda a jornada
+                    Resultados ao longo de
+                    <br />
+                    toda a jornada
                   </h4>
                   <p className="mt-3 mx-auto max-w-[380px] text-base md:text-[17px] leading-relaxed text-white/90">
                     Formação integral, conteúdo forte e apoio completo à escola.
@@ -219,7 +230,9 @@ export default function COCPage() {
                     />
                   </div>
                   <h4 className="mt-5 text-[22px] md:text-[24px] lg:text-[26px] font-extrabold leading-snug">
-                    Inovação propulsora da<br />aprendizagem
+                    Inovação propulsora da
+                    <br />
+                    aprendizagem
                   </h4>
                   <p className="mt-3 mx-auto max-w-[380px] text-base md:text-[17px] leading-relaxed text-white/90">
                     Produtos e práticas pedagógicas em constante evolução.
@@ -249,40 +262,46 @@ export default function COCPage() {
               Nossas soluções educacionais
             </h3>
             <p className="mt-4 text-[16px] md:text-[17px] leading-8 text-[#305B3B]">
-              Todos os nossos materiais estão 100% alinhados com a Base Nacional Comum Curricular (BNCC), com foco na interdisciplinaridade
-              e na contextualização para entregar um conteúdo forte e proporcionar autonomia a estudantes e professores, possibilitando
-              uma alta performance durante toda a jornada escolar.
+              Todos os nossos materiais estão 100% alinhados com a Base Nacional
+              Comum Curricular (BNCC), com foco na interdisciplinaridade e na
+              contextualização para entregar um conteúdo forte e proporcionar
+              autonomia a estudantes e professores, possibilitando uma alta
+              performance durante toda a jornada escolar.
             </p>
           </div>
         </div>
       </section>
 
       {/* ===================== DNA APROVADOR ===================== */}
-      <section className="relative overflow-visible bg-white">
+      <section className="relative bg-white">
         {/* mobile: menos padding para tirar o “vazio” */}
-        <div className="relative mx-auto max-w-7xl px-6 py-8 md:py-36" style={DNA_VARS}>
-          {/* “C” sobreposto no mobile */}
-          <div className="md:hidden pointer-events-none absolute left-1/2 top-4 -translate-x-1/2 z-[60]">
+        <div
+          className="relative isolate mx-auto max-w-7xl px-6 py-8 md:py-36"
+          style={DNA_VARS}
+        >
+          {/* “C” sobreposto no mobile (ajustado) */}
+          <div className="md:hidden pointer-events-none absolute left-1/2 top-24 -translate-x-1/2 z-10">
             <img
               src={DNA_LEFT}
               alt=""
-              className="block h-56 w-auto select-none"
+              className="block h-48 w-auto select-none opacity-50"
               loading="eager"
               decoding="async"
               draggable={false}
             />
           </div>
 
-          <div className="grid items-center gap-8 md:grid-cols-12 relative z-[30]">
+          <div className="relative z-20 grid items-center gap-8 md:grid-cols-12">
             {/* “C” (desktop/tablet) */}
-            <div className="relative hidden overflow-visible md:block md:col-span-2">
+            <div className="relative hidden md:col-span-2 md:block">
               <img
                 src={DNA_LEFT}
                 alt=""
                 className="block h-[var(--dna-c-h)] w-auto object-contain select-none"
                 style={{
                   marginLeft: "var(--dna-c-ml)",
-                  transform: "translate(var(--dna-c-x), var(--dna-c-y)) scale(var(--dna-c-scale))",
+                  transform:
+                    "translate(var(--dna-c-x), var(--dna-c-y)) scale(var(--dna-c-scale))",
                   transformOrigin: "left center",
                 }}
                 draggable={false}
@@ -295,9 +314,12 @@ export default function COCPage() {
                 DNA Aprovador
               </h3>
               <p className="mt-4 text-[16px] md:text-[17px] leading-8 text-[#305B3B]">
-                O COC é referência em resultados e aprovações nos principais vestibulares do país! Isso porque oferecemos, além de conteúdo
-                forte, vivências leves e abordagens que vão além dos livros. Assim, o conhecimento é construído de forma integral, despertando
-                a curiosidade e o interesse e impulsionando os estudantes rumo a grandes resultados.
+                O COC é referência em resultados e aprovações nos principais
+                vestibulares do país! Isso porque oferecemos, além de conteúdo
+                forte, vivências leves e abordagens que vão além dos livros.
+                Assim, o conhecimento é construído de forma integral, despertando
+                a curiosidade e o interesse e impulsionando os estudantes rumo a
+                grandes resultados.
               </p>
               {SHOW_DNA_BUTTON && (
                 <button
@@ -311,7 +333,11 @@ export default function COCPage() {
 
             {/* Anel + estudantes */}
             <div className="relative col-span-12 md:col-span-6 min-h-[200px] md:min-h-[320px]">
-              <Reveal from="right" duration={700} className="absolute right-0 top-1/2 -translate-y-1/2 z-0">
+              <Reveal
+                from="right"
+                duration={700}
+                className="absolute right-0 top-1/2 -translate-y-1/2 z-0"
+              >
                 <img
                   src={DNA_RING}
                   alt=""
