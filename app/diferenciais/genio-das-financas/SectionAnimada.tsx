@@ -23,7 +23,8 @@ export default function SectionAnimada({
   objetoHeight = 360,
   objetoWidth,
 }: Props) {
-  const ref = useRef<HTMLElement>(null);
+  // ✅ ref tipado com possibilidade de null
+  const ref = useRef<HTMLElement | null>(null);
   const [inView, setInView] = useState(false);
 
   useEffect(() => {
@@ -36,15 +37,18 @@ export default function SectionAnimada({
       return;
     }
 
+    // ✅ callback tipado e com checagem de undefined
     const io = new IntersectionObserver(
-      ([entry]) => {
-        if (entry.isIntersecting) {
+      (entries: IntersectionObserverEntry[], observer) => {
+        const entry = entries[0];
+        if (entry && entry.isIntersecting) {
           setInView(true);
-          io.disconnect(); // anima só na primeira vez
+          observer.disconnect(); // anima só na primeira vez
         }
       },
       { threshold: 0.2 }
     );
+
     io.observe(el);
     return () => io.disconnect();
   }, []);
