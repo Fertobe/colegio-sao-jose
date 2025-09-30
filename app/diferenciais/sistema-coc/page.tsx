@@ -57,12 +57,6 @@ const DNA_VARS: CSSProperties = {
   ["--dna-y" as any]: "0px",
 };
 
-/** Reserva pintura fora da tela (melhora performance sem afetar visual) */
-const LAZY_BLOCK_STYLE: CSSProperties = {
-  contentVisibility: "auto",
-  containIntrinsicSize: "720px",
-};
-
 export default function COCPage() {
   return (
     <main className="bg-white">
@@ -74,6 +68,10 @@ export default function COCPage() {
             alt="Tradição, resultados e inovação — Sistema COC"
             className="h-full w-full object-cover"
             loading="eager"
+            decoding="sync"
+            fetchPriority="high"
+            width={1920}
+            height={700}
             draggable={false}
           />
         </div>
@@ -90,6 +88,7 @@ export default function COCPage() {
             alt=""
             aria-hidden
             className="pointer-events-none absolute left-[var(--coc-deco-left)] top-[var(--coc-deco-top)] hidden select-none opacity-95 md:block h-[var(--coc-deco-size)] w-auto"
+            decoding="async"
             draggable={false}
           />
 
@@ -120,6 +119,7 @@ export default function COCPage() {
                 alt="Apoio pedagógico e tecnologia em sala"
                 className="absolute inset-0 m-auto h-full w-full object-contain"
                 loading="lazy"
+                decoding="async"
                 draggable={false}
               />
             </div>
@@ -166,7 +166,7 @@ export default function COCPage() {
       </section>
 
       {/* ===================== NOSSOS PILARES ===================== */}
-      <section className="relative md:overflow-hidden" style={LAZY_BLOCK_STYLE}>
+      <section className="relative md:overflow-hidden">
         <div className="relative w-full md:aspect-[1920/850] md:min-h-[620px] bg-[#0FA958] md:bg-transparent">
           {/* Fundo desktop */}
           <img
@@ -174,6 +174,7 @@ export default function COCPage() {
             alt=""
             aria-hidden
             className="absolute inset-0 hidden h-full w-full select-none object-cover md:block"
+            decoding="async"
             draggable={false}
           />
 
@@ -192,6 +193,7 @@ export default function COCPage() {
                       alt="Tradição feita no presente"
                       className="h-full w-full select-none object-contain"
                       loading="lazy"
+                      decoding="async"
                       draggable={false}
                     />
                   </div>
@@ -212,6 +214,7 @@ export default function COCPage() {
                       alt="Resultados ao longo de toda a jornada"
                       className="h-full w-full select-none object-contain"
                       loading="lazy"
+                      decoding="async"
                       draggable={false}
                     />
                   </div>
@@ -232,6 +235,7 @@ export default function COCPage() {
                       alt="Inovação propulsora da aprendizagem"
                       className="h-full w-full select-none object-contain"
                       loading="lazy"
+                      decoding="async"
                       draggable={false}
                     />
                   </div>
@@ -251,7 +255,7 @@ export default function COCPage() {
       </section>
 
       {/* ===================== NOSSAS SOLUÇÕES EDUCACIONAIS ===================== */}
-      <section className="relative bg-white" style={LAZY_BLOCK_STYLE}>
+      <section className="relative bg-white">
         <div className="mx-auto grid max-w-6xl items-center gap-12 px-4 py-8 md:py-16 md:grid-cols-2">
           <div className="relative mx-auto aspect-square w-[360px] md:w-[440px] lg:w-[520px]">
             <img
@@ -259,6 +263,7 @@ export default function COCPage() {
               alt="Estudante utilizando materiais do Sistema COC"
               className="absolute inset-0 h-full w-full object-contain"
               loading="lazy"
+              decoding="async"
               draggable={false}
             />
           </div>
@@ -279,7 +284,7 @@ export default function COCPage() {
       </section>
 
       {/* ===================== DNA APROVADOR ===================== */}
-      <section className="relative bg-white" style={LAZY_BLOCK_STYLE}>
+      <section className="relative bg-white">
         {/* mobile: menos padding para tirar o “vazio” */}
         <div
           className="relative isolate mx-auto max-w-7xl px-6 py-8 md:py-36"
@@ -310,6 +315,7 @@ export default function COCPage() {
                     "translate(var(--dna-c-x), var(--dna-c-y)) scale(var(--dna-c-scale))",
                   transformOrigin: "left center",
                 }}
+                decoding="async"
                 draggable={false}
               />
             </div>
@@ -349,6 +355,7 @@ export default function COCPage() {
                   alt=""
                   aria-hidden
                   className="h-[var(--dna-ring-h)] w-auto object-contain select-none"
+                  decoding="async"
                   draggable={false}
                 />
               </Reveal>
@@ -364,6 +371,7 @@ export default function COCPage() {
                   alt="Estudantes do Sistema COC"
                   className="h-[var(--dna-students-h)] w-auto object-contain"
                   loading="lazy"
+                  decoding="async"
                   draggable={false}
                 />
               </Reveal>

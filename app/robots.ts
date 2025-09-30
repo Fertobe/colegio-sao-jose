@@ -1,22 +1,30 @@
 // app/robots.ts
 import type { MetadataRoute } from "next";
 
-const base =
-  process.env.NEXT_PUBLIC_SITE_URL?.replace(/\/$/, "") ||
-  "https://colegio.artferro.site";
+// Normaliza base: remove barra final e garante protocolo
+function normalizeBase(u?: string) {
+  if (!u) return "https://colegio.artferro.site";
+  let s = u.trim().replace(/\/$/, "");
+  if (!/^https?:\/\//i.test(s)) s = `https://${s}`;
+  return s;
+}
+
+const base = normalizeBase(process.env.NEXT_PUBLIC_SITE_URL);
 
 export default function robots(): MetadataRoute.Robots {
   // Em previews (Vercel) bloqueia tudo para não indexar staging
   if (process.env.VERCEL_ENV && process.env.VERCEL_ENV !== "production") {
     return {
       rules: [{ userAgent: "*", disallow: "/" }],
+      // sem sitemap/host em preview
     };
   }
 
+  // Produção
   return {
     rules: [
       { userAgent: "*", allow: "/" },
-      // evita o crawl da rota intermediária que só faz redirect
+      // evita crawl da rota intermediária que só faz redirect
       { userAgent: "*", disallow: ["/institucional/noticias"] },
     ],
     sitemap: `${base}/sitemap.xml`,
