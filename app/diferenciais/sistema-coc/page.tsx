@@ -57,6 +57,12 @@ const DNA_VARS: CSSProperties = {
   ["--dna-y" as any]: "0px",
 };
 
+/** Reserva pintura fora da tela (melhora performance sem afetar visual) */
+const LAZY_BLOCK_STYLE: CSSProperties = {
+  contentVisibility: "auto",
+  containIntrinsicSize: "720px",
+};
+
 export default function COCPage() {
   return (
     <main className="bg-white">
@@ -160,7 +166,7 @@ export default function COCPage() {
       </section>
 
       {/* ===================== NOSSOS PILARES ===================== */}
-      <section className="relative md:overflow-hidden">
+      <section className="relative md:overflow-hidden" style={LAZY_BLOCK_STYLE}>
         <div className="relative w-full md:aspect-[1920/850] md:min-h-[620px] bg-[#0FA958] md:bg-transparent">
           {/* Fundo desktop */}
           <img
@@ -245,7 +251,7 @@ export default function COCPage() {
       </section>
 
       {/* ===================== NOSSAS SOLUÇÕES EDUCACIONAIS ===================== */}
-      <section className="relative bg-white">
+      <section className="relative bg-white" style={LAZY_BLOCK_STYLE}>
         <div className="mx-auto grid max-w-6xl items-center gap-12 px-4 py-8 md:py-16 md:grid-cols-2">
           <div className="relative mx-auto aspect-square w-[360px] md:w-[440px] lg:w-[520px]">
             <img
@@ -273,7 +279,7 @@ export default function COCPage() {
       </section>
 
       {/* ===================== DNA APROVADOR ===================== */}
-      <section className="relative bg-white">
+      <section className="relative bg-white" style={LAZY_BLOCK_STYLE}>
         {/* mobile: menos padding para tirar o “vazio” */}
         <div
           className="relative isolate mx-auto max-w-7xl px-6 py-8 md:py-36"
@@ -284,7 +290,7 @@ export default function COCPage() {
             <img
               src={DNA_LEFT}
               alt=""
-              className="block h-48 w-auto select-none opacity-50 md:opacity-100"
+              className="block h-48 w-auto select-none opacity-50"
               loading="eager"
               decoding="async"
               draggable={false}
