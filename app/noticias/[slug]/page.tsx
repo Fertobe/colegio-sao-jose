@@ -1,57 +1,67 @@
 // app/noticias/[slug]/page.tsx
-import type { Metadata } from "next";
+import type { Metadata, ResolvingMetadata } from "next";
 import Link from "next/link";
 import { readNewsBySlug, listNewsMeta } from "@/lib/news";
 
-// Next 15: params é Promise
+// Next 15: params e (opcional) searchParams são Promises
 type Params = { slug: string };
 type Props = {
   params: Promise<Params>;
+  // você não usa searchParams aqui; tipamos de forma genérica e segura:
   searchParams?: Promise<Record<string, string | string[] | undefined>>;
 };
 
-// Conteúdo vem do filesystem ⇒ podemos gerar estaticamente
-export const dynamic = "force-static";
-
-const SITE_URL = "https://colegio.artferro.site";
-
+/* ========= METADATA DINÂMICA (OG/Twitter/Canonical) ========= */
 export async function generateMetadata(
-  { params }: { params: Promise<Params> }
+  { params }: { params: Promise<Params> },
+  _parent: ResolvingMetadata
 ): Promise<Metadata> {
   const { slug } = await params;
   const post = readNewsBySlug(slug);
 
+  // 404 lógico: evita indexar e aponta canonical da lista
   if (!post) {
     return {
       title: "Notícia não encontrada",
-      description: "Esta notícia não está disponível.",
-      alternates: { canonical: "/noticias" },
+      description: "A notícia informada não foi localizada.",
       robots: { index: false, follow: false },
+      alternates: { canonical: "/noticias" },
     };
   }
 
-  const title = `${post.title} | Colégio São José`;
+  const title = post.title;
   const description =
-    post.excerpt ||
-    // fallback: primeira frase do HTML sem tags
-    post.html.replace(/<[^>]+>/g, " ").replace(/\s+/g, " ").trim().slice(0, 160);
+    post.excerpt ?? "Leia esta notícia do Colégio São José.";
+  const url = `/noticias/${slug}`;
+  const images = post.cover ? [{ url: post.cover, alt: post.title }] : [{ url: "/og-cover.webp", alt: "Colégio São José" }];
 
   return {
-    title,
+    title, // o template global do layout acrescenta “ — Colégio São José”
     description,
-    alternates: { canonical: `/noticias/${slug}` },
+    alternates: { canonical: url },
     openGraph: {
+      type: "article",
+      url,
       title,
       description,
-      url: `${SITE_URL}/noticias/${slug}`,
-      type: "article",
-      images: post.cover ? [{ url: `${SITE_URL}${post.cover}` }] : undefined,
+      siteName: "Colégio São José",
+      images,
+      ...(post.date ? { publishedTime: post.date } : {}),
+    },
+    twitter: {
+      card: "summary_large_image",
+      title,
+      description,
+      images: images.map(i => i.url),
     },
   };
 }
 
+/* ========= PÁGINA ========= */
 export default async function NewsPostPage({ params }: Props) {
+  // Desempacota o slug a partir da Promise
   const { slug } = await params;
+
   const post = readNewsBySlug(slug);
 
   if (!post) {
@@ -61,7 +71,7 @@ export default async function NewsPostPage({ params }: Props) {
         <p className="mt-4">Verifique a URL.</p>
         <div className="mt-8">
           <Link
-            href="/noticias"
+            href="/institucional/noticias"
             className="inline-flex items-center gap-2 rounded-full border px-4 py-2 text-sm font-semibold text-brand-700 hover:bg-brand-50"
           >
             ← Voltar para notícias
@@ -71,25 +81,29 @@ export default async function NewsPostPage({ params }: Props) {
     );
   }
 
-  // JSON-LD para SEO
+  // JSON-LD por post (melhora SEO para Article/BlogPosting)
   const jsonLd = {
     "@context": "https://schema.org",
     "@type": "BlogPosting",
-    headline: post.title,
-    ...(post.date ? { datePublished: post.date } : {}),
-    image: post.cover ? [`${SITE_URL}${post.cover}`] : undefined,
-    url: `${SITE_URL}/noticias/${post.slug}`,
-    ...(post.excerpt ? { description: post.excerpt } : {}),
-    publisher: {
+    "headline": post.title,
+    ...(post.date ? { "datePublished": post.date } : {}),
+    "image": post.cover,
+    "url": `https://colegio.artferro.site/noticias/${post.slug}`,
+    // opcional: inclua quando tiver autor
+    ...(post.excerpt ? { "description": post.excerpt } : {}),
+    "publisher": {
       "@type": "Organization",
-      name: "Colégio São José",
-      logo: { "@type": "ImageObject", url: `${SITE_URL}/logo.svg` },
-    },
+      "name": "Colégio São José",
+      "logo": {
+        "@type": "ImageObject",
+        "url": "https://colegio.artferro.site/logo.svg"
+      }
+    }
   };
 
   return (
     <main className="mx-auto max-w-3xl px-4 py-10">
-      {/* JSON-LD */}
+      {/* JSON-LD específico do post */}
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
@@ -98,7 +112,7 @@ export default async function NewsPostPage({ params }: Props) {
       {/* ← Voltar */}
       <div className="mb-6">
         <Link
-          href="/noticias"
+          href="/institucional/noticias"
           className="inline-flex items-center gap-2 rounded-full border px-4 py-2 text-sm font-semibold text-brand-700 hover:bg-brand-50"
         >
           ← Voltar para notícias
@@ -107,7 +121,6 @@ export default async function NewsPostPage({ params }: Props) {
 
       <article>
         <h1 className="text-3xl font-extrabold text-gray-900">{post.title}</h1>
-
         {post.date && (
           <p className="mt-2 text-sm text-gray-500">
             {new Date(post.date).toLocaleDateString("pt-BR")}
@@ -120,10 +133,8 @@ export default async function NewsPostPage({ params }: Props) {
               src={post.cover}
               alt={post.title}
               className="h-auto w-full object-cover"
-              width={1200}
-              height={675}
               loading="eager"
-              decoding="sync"
+              decoding="async"
               draggable={false}
             />
           </div>
@@ -138,7 +149,7 @@ export default async function NewsPostPage({ params }: Props) {
       {/* ← Voltar (no final do post também) */}
       <div className="mt-10">
         <Link
-          href="/noticias"
+          href="/institucional/noticias"
           className="inline-flex items-center gap-2 rounded-full border px-4 py-2 text-sm font-semibold text-brand-700 hover:bg-brand-50"
         >
           ← Voltar para notícias
@@ -148,8 +159,11 @@ export default async function NewsPostPage({ params }: Props) {
   );
 }
 
-// Geração estática das rotas (Next 15)
+// Geração estática das rotas (ok no Next 15). Pode retornar direto ou Promise.
 export async function generateStaticParams() {
   const posts = listNewsMeta();
   return posts.map((p) => ({ slug: p.slug }));
 }
+
+// Opcional: revalida as páginas de notícia periodicamente (se você fizer deploys com frequência, pode deixar como estático também).
+export const revalidate = 3600; // 1h
