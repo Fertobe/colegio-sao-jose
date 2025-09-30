@@ -29,7 +29,6 @@ export default function NewsCarousel({
   const DOT_OFFSET_MOBILE = 56;      // espaço menor para os dots
   const ARROW_OFFSET_MOBILE = 8;     // setas “para dentro” (perto da borda)
   const SIDE_GUTTER_MOBILE = 56;     // margem lateral reservada p/ as setas
-  // -> a imagem fica com width: calc(100% - 2*SIDE_GUTTER_MOBILE)
 
   // detecta mobile sem afetar SSR
   const [isMobile, setIsMobile] = useState(false);
@@ -49,6 +48,7 @@ export default function NewsCarousel({
 
   const pages = Math.max(1, Math.ceil(items.length / perPageEffective));
   const [page, setPage] = useState(0);
+  const hasNav = pages > 1;
 
   // garante que a página atual não estoure ao mudar o perPage (ex.: rotacionar tela)
   useEffect(() => {
@@ -61,78 +61,73 @@ export default function NewsCarousel({
   }, [items, page, perPageEffective]);
 
   const go = (dir: "prev" | "next" | number) => {
+    if (!hasNav) return;
     if (dir === "prev") setPage((p) => (p - 1 + pages) % pages);
     else if (dir === "next") setPage((p) => (p + 1) % pages);
     else setPage(Math.min(Math.max(0, dir), pages - 1));
   };
 
+  // paddingBottom reserva espaço das bolinhas para não “invadir” o título
   return (
-    // paddingBottom reserva espaço das bolinhas para não “invadir” o título
     <div className="relative" style={{ paddingBottom: DOT_OFFSET + 24 }}>
       {/* ===== SETAS (desktop: fora; mobile: para dentro e fora da imagem) ===== */}
-      <div
-        className="pointer-events-none absolute left-0 right-0 z-10"
-        style={{ top: IMG_H / 2 }}
-      >
-        <button
-          type="button"
-          onClick={() => go("prev")}
-          aria-label="Anterior"
-          className="pointer-events-auto absolute top-1/2 -translate-y-1/2 flex h-10 w-10 items-center justify-center rounded-full border bg-white shadow-md hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-brand-600/40"
-          style={{ left: ARROW_LEFT }}
+      {hasNav && (
+        <div
+          className="pointer-events-none absolute left-0 right-0 z-10"
+          style={{ top: IMG_H / 2 }}
         >
-          ‹
-        </button>
-        <button
-          type="button"
-          onClick={() => go("next")}
-          aria-label="Próximo"
-          className="pointer-events-auto absolute top-1/2 -translate-y-1/2 flex h-10 w-10 items-center justify-center rounded-full border bg-white shadow-md hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-brand-600/40"
-          style={{ right: ARROW_RIGHT }}
-        >
-          ›
-        </button>
-      </div>
+          <button
+            type="button"
+            onClick={() => go("prev")}
+            aria-label="Anterior"
+            className="pointer-events-auto absolute top-1/2 -translate-y-1/2 flex h-10 w-10 items-center justify-center rounded-full border bg-white shadow-md hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-brand-600/40"
+            style={{ left: ARROW_LEFT }}
+          >
+            ‹
+          </button>
+          <button
+            type="button"
+            onClick={() => go("next")}
+            aria-label="Próximo"
+            className="pointer-events-auto absolute top-1/2 -translate-y-1/2 flex h-10 w-10 items-center justify-center rounded-full border bg-white shadow-md hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-brand-600/40"
+            style={{ right: ARROW_RIGHT }}
+          >
+            ›
+          </button>
+        </div>
+      )}
 
       {/* ===== BOLINHAS (abaixo da imagem, fixas e centralizadas) ===== */}
-      <div
-        className="pointer-events-auto absolute left-1/2 z-10 -translate-x-1/2 rounded-full bg-white/90 px-3 py-1 shadow"
-        style={{ top: IMG_H + DOT_OFFSET }}
-      >
-        <div className="flex items-center gap-3">
-          {Array.from({ length: pages }).map((_, i) => (
-            <button
-              key={i}
-              aria-label={`Ir para página ${i + 1}`}
-              onClick={() => go(i)}
-              className={`h-2.5 w-2.5 rounded-full transition ${
-                i === page
-                  ? "bg-brand-600 ring-2 ring-brand-600/30"
-                  : "bg-gray-300 hover:bg-gray-400"
-              }`}
-            />
-          ))}
+      {hasNav && (
+        <div
+          className="pointer-events-auto absolute left-1/2 z-10 -translate-x-1/2 rounded-full bg-white/90 px-3 py-1 shadow"
+          style={{ top: IMG_H + DOT_OFFSET }}
+        >
+          <div className="flex items-center gap-3">
+            {Array.from({ length: pages }).map((_, i) => (
+              <button
+                key={i}
+                aria-label={`Ir para página ${i + 1}`}
+                onClick={() => go(i)}
+                className={`h-2.5 w-2.5 rounded-full transition ${
+                  i === page
+                    ? "bg-brand-600 ring-2 ring-brand-600/30"
+                    : "bg-gray-300 hover:bg-gray-400"
+                }`}
+              />
+            ))}
+          </div>
         </div>
-      </div>
+      )}
 
       {/* ===== GRID DE CARDS ===== */}
-      {/* mobile: 1 por linha; desktop: mantém suas 3 colunas */}
       <div className="grid items-start gap-5 grid-cols-1 md:grid-cols-3">
-        {view.map((n, idx) => (
-          <a
-            key={`${page}-${idx}-${n.title}`}
-            href={n.href || "#"}
-            className="group block"
-          >
-            {/* wrapper da imagem:
-               - desktop: 100% como no seu layout
-               - mobile: width reduzida p/ abrir espaço lateral para as setas (fora da imagem) */}
+        {view.map((n, idx) => {
+          const Card = (
             <div
               className="overflow-hidden rounded-2xl border bg-white shadow-sm mx-auto"
               style={{
-                width: isMobile
-                  ? `calc(100% - ${2 * SIDE_GUTTER_MOBILE}px)`
-                  : "100%",
+                width: isMobile ? `calc(100% - ${2 * SIDE_GUTTER_MOBILE}px)` : "100%",
               }}
             >
               <img
@@ -148,13 +143,29 @@ export default function NewsCarousel({
                 draggable={false}
               />
             </div>
+          );
 
-            {/* um pouco mais de espaço para as bolinhas respirarem */}
-            <h3 className="mt-6 min-h-[64px] text-base font-semibold text-gray-900 group-hover:underline decoration-2 underline-offset-4">
-              {n.title}
-            </h3>
-          </a>
-        ))}
+          return n.href ? (
+            <a key={`${page}-${idx}-${n.title}`} href={n.href} className="group block">
+              {Card}
+              <h3 className="mt-6 min-h-[64px] text-base font-semibold text-gray-900 group-hover:underline decoration-2 underline-offset-4">
+                {n.title}
+              </h3>
+            </a>
+          ) : (
+            <div
+              key={`${page}-${idx}-${n.title}`}
+              className="group block cursor-default"
+              role="group"
+              aria-label={n.title}
+            >
+              {Card}
+              <h3 className="mt-6 min-h-[64px] text-base font-semibold text-gray-900">
+                {n.title}
+              </h3>
+            </div>
+          );
+        })}
       </div>
     </div>
   );

@@ -32,11 +32,21 @@ export default function ConquistasCarousel({
   // detecta mobile (sem quebrar SSR)
   const [isMobile, setIsMobile] = useState(false);
   useEffect(() => {
+    if (typeof window === "undefined" || !("matchMedia" in window)) return;
     const mq = window.matchMedia("(max-width: 767px)");
+
     const apply = () => setIsMobile(mq.matches);
     apply();
-    mq.addEventListener?.("change", apply);
-    return () => mq.removeEventListener?.("change", apply);
+
+    const handler = () => apply();
+
+    if (typeof mq.addEventListener === "function") {
+      mq.addEventListener("change", handler);
+      return () => mq.removeEventListener("change", handler);
+    } else if (typeof (mq as any).addListener === "function") {
+      (mq as any).addListener(handler);
+      return () => (mq as any).removeListener(handler);
+    }
   }, []);
 
   const perPageEffective = isMobile ? 1 : perPage;
@@ -62,55 +72,61 @@ export default function ConquistasCarousel({
     else setPage(Math.min(Math.max(0, dir), pages - 1));
   };
 
+  const hasControls = pages > 1;
+
   return (
     // padding-bottom reserva a área das bolinhas (nada “sobe”/“desce”)
     <div className="relative" style={{ paddingBottom: DOT_OFFSET + 26 }}>
       {/* ===== SETAS — desktop: fora; mobile: para dentro e fora da imagem ===== */}
-      <div
-        className="pointer-events-none absolute left-0 right-0 z-10"
-        style={{ top: IMG_H / 2 }}
-      >
-        <button
-          type="button"
-          onClick={() => go("prev")}
-          aria-label="Anterior"
-          className="pointer-events-auto absolute top-1/2 -translate-y-1/2 flex h-10 w-10 items-center justify-center rounded-full border bg-white shadow-md hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-brand-600/40"
-          style={{ left: isMobile ? `${ARROW_IN_MOBILE}px` : `-${ARROW_OUT_DESK}px` }}
+      {hasControls && (
+        <div
+          className="pointer-events-none absolute left-0 right-0 z-10"
+          style={{ top: IMG_H / 2 }}
         >
-          ‹
-        </button>
+          <button
+            type="button"
+            onClick={() => go("prev")}
+            aria-label="Anterior"
+            className="pointer-events-auto absolute top-1/2 -translate-y-1/2 flex h-10 w-10 items-center justify-center rounded-full border bg-white shadow-md hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-brand-600/40"
+            style={{ left: isMobile ? `${ARROW_IN_MOBILE}px` : `-${ARROW_OUT_DESK}px` }}
+          >
+            ‹
+          </button>
 
-        <button
-          type="button"
-          onClick={() => go("next")}
-          aria-label="Próximo"
-          className="pointer-events-auto absolute top-1/2 -translate-y-1/2 flex h-10 w-10 items-center justify-center rounded-full border bg-white shadow-md hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-brand-600/40"
-          style={{ right: isMobile ? `${ARROW_IN_MOBILE}px` : `-${ARROW_OUT_DESK}px` }}
-        >
-          ›
-        </button>
-      </div>
+          <button
+            type="button"
+            onClick={() => go("next")}
+            aria-label="Próximo"
+            className="pointer-events-auto absolute top-1/2 -translate-y-1/2 flex h-10 w-10 items-center justify-center rounded-full border bg-white shadow-md hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-brand-600/40"
+            style={{ right: isMobile ? `${ARROW_IN_MOBILE}px` : `-${ARROW_OUT_DESK}px` }}
+          >
+            ›
+          </button>
+        </div>
+      )}
 
       {/* ===== BOLINHAS — abaixo da imagem, fixas e centralizadas ===== */}
-      <div
-        className="pointer-events-auto absolute left-1/2 z-10 -translate-x-1/2 rounded-full bg-white/90 px-3 py-1 shadow"
-        style={{ top: IMG_H + DOT_OFFSET }}
-      >
-        <div className="flex items-center gap-3">
-          {Array.from({ length: pages }).map((_, i) => (
-            <button
-              key={i}
-              aria-label={`Ir para página ${i + 1}`}
-              onClick={() => go(i)}
-              className={`h-2.5 w-2.5 rounded-full transition ${
-                i === page
-                  ? "bg-brand-600 ring-2 ring-brand-600/30"
-                  : "bg-gray-300 hover:bg-gray-400"
-              }`}
-            />
-          ))}
+      {hasControls && (
+        <div
+          className="pointer-events-auto absolute left-1/2 z-10 -translate-x-1/2 rounded-full bg-white/90 px-3 py-1 shadow"
+          style={{ top: IMG_H + DOT_OFFSET }}
+        >
+          <div className="flex items-center gap-3">
+            {Array.from({ length: pages }).map((_, i) => (
+              <button
+                key={i}
+                aria-label={`Ir para página ${i + 1}`}
+                onClick={() => go(i)}
+                className={`h-2.5 w-2.5 rounded-full transition ${
+                  i === page
+                    ? "bg-brand-600 ring-2 ring-brand-600/30"
+                    : "bg-gray-300 hover:bg-gray-400"
+                }`}
+              />
+            ))}
+          </div>
         </div>
-      </div>
+      )}
 
       {/* ===== GRID — desktop 3 por página; mobile 1 por página ===== */}
       <div className="grid items-start gap-6 grid-cols-1 md:grid-cols-3">
@@ -121,9 +137,7 @@ export default function ConquistasCarousel({
             <div
               className="overflow-hidden rounded-3xl border bg-white p-2 shadow-sm transition mx-auto"
               style={{
-                width: isMobile
-                  ? `calc(100% - ${2 * SIDE_GUTTER_MOBILE}px)`
-                  : "100%",
+                width: isMobile ? `calc(100% - ${2 * SIDE_GUTTER_MOBILE}px)` : "100%",
               }}
             >
               <img
@@ -133,7 +147,7 @@ export default function ConquistasCarousel({
                 className="w-full rounded-2xl object-cover transition-transform duration-300 group-hover:scale-[1.02]"
                 loading={page === 0 && idx === 0 ? "eager" : "lazy"}
                 decoding="async"
-                fetchPriority={page === 0 && idx === 0 ? "high" : "low"}
+                {...(page === 0 && idx === 0 ? { fetchPriority: "high" as const } : { fetchPriority: "low" as const })}
                 width={1200}
                 height={800}
                 draggable={false}
@@ -142,18 +156,13 @@ export default function ConquistasCarousel({
           );
 
           return clickable ? (
-            <a
-              key={`${page}-${idx}-${it.src}`}
-              href={it.href!}
-              className="group block"
-            >
+            <a key={`${page}-${idx}-${it.src}`} href={it.href!} className="group block">
               {CardInner}
             </a>
           ) : (
             <div
               key={`${page}-${idx}-${it.src}`}
               className="group block cursor-default"
-              // acessível, mas sem ação de clique
               role="group"
               aria-label={it.alt || "Conquista do colégio"}
             >

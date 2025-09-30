@@ -2,7 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
-import BrandIcon from "./icons/BrandIcon"; // ⬅️ ADICIONADO
+import BrandIcon from "./icons/BrandIcon";
 
 export default function Header() {
   // ===== Desktop dropdowns =====
@@ -14,7 +14,7 @@ export default function Header() {
   const ensBtnRef = useRef<HTMLButtonElement | null>(null);
   const ensMenuRef = useRef<HTMLDivElement | null>(null);
 
-  // ✨ timers para fechar após sair com o mouse (evita piscar)
+  // timers de fechamento suave
   const instCloseTimer = useRef<number | null>(null);
   const ensCloseTimer  = useRef<number | null>(null);
   const cancelInstClose = () => { if (instCloseTimer.current) { window.clearTimeout(instCloseTimer.current); instCloseTimer.current = null; } };
@@ -49,17 +49,24 @@ export default function Header() {
     }
   };
 
-  // ESC fecha tudo
+  // ESC fecha tudo + devolve foco ao gatilho do dropdown
   useEffect(() => {
     function onKey(e: KeyboardEvent) {
       if (e.key === "Escape") {
         if (mobileOpen) toggleMobile(false);
-        closeAll();
+        if (instOpen) {
+          setInstOpen(false);
+          instBtnRef.current?.focus();
+        }
+        if (ensOpen) {
+          setEnsOpen(false);
+          ensBtnRef.current?.focus();
+        }
       }
     }
     window.addEventListener("keydown", onKey);
     return () => window.removeEventListener("keydown", onKey);
-  }, [mobileOpen]);
+  }, [mobileOpen, instOpen, ensOpen]);
 
   // Clique-fora fecha dropdowns (desktop)
   useEffect(() => {
@@ -76,17 +83,23 @@ export default function Header() {
     return () => document.removeEventListener("mousedown", onClickOutside);
   }, []);
 
-  // Trava scroll do body quando o drawer abre
+  // Trava scroll quando o drawer abre
   useEffect(() => {
     const { body } = document;
     if (mobileOpen) {
       const prev = body.style.overflow;
       body.style.overflow = "hidden";
-      return () => {
-        body.style.overflow = prev;
-      };
+      return () => { body.style.overflow = prev; };
     }
   }, [mobileOpen]);
+
+  // limpa timers se o componente desmontar
+  useEffect(() => {
+    return () => {
+      cancelInstClose();
+      cancelEnsClose();
+    };
+  }, []);
 
   // Foco primeiro item (desktop) com ↓
   const focusFirstInst = () => {
@@ -157,9 +170,9 @@ export default function Header() {
           {/* DROPDOWN: INSTITUCIONAL */}
           <div
             className="relative"
-            onMouseEnter={() => { cancelInstClose(); openInst(true); }}   // ✨ abre no hover
-            onMouseLeave={scheduleInstClose}                              // ✨ fecha ao sair
-            onBlur={(e) => {                                              // ✨ fecha ao perder foco do bloco
+            onMouseEnter={() => { cancelInstClose(); openInst(true); }}
+            onMouseLeave={scheduleInstClose}
+            onBlur={(e) => {
               if (!e.currentTarget.contains(e.relatedTarget as Node)) setInstOpen(false);
             }}
           >
@@ -201,10 +214,8 @@ export default function Header() {
               role="menu"
               aria-label="submenu institucional"
               tabIndex={-1}
-              className={`absolute left-0 top-full z-50 mt-2 w-64 rounded-2xl border bg-white p-2 shadow-lg transition ${
-                instOpen ? "pointer-events-auto opacity-100" : "pointer-events-none opacity-0"
-              }`}
-              onMouseEnter={() => { cancelInstClose(); openInst(true); }}  // ✨ mantém aberto ao entrar
+              className={`absolute left-0 top-full z-50 mt-2 w-64 rounded-2xl border bg-white p-2 shadow-lg transition ${instOpen ? "pointer-events-auto opacity-100" : "pointer-events-none opacity-0"}`}
+              onMouseEnter={() => { cancelInstClose(); openInst(true); }}
             >
               <Link
                 href="/institucional/nossa-historia"
@@ -236,9 +247,9 @@ export default function Header() {
           {/* DROPDOWN: ENSINO */}
           <div
             className="relative"
-            onMouseEnter={() => { cancelEnsClose(); openEns(true); }}      // ✨ abre no hover
-            onMouseLeave={scheduleEnsClose}                               // ✨ fecha ao sair
-            onBlur={(e) => {                                              // ✨ fecha ao perder foco do bloco
+            onMouseEnter={() => { cancelEnsClose(); openEns(true); }}
+            onMouseLeave={scheduleEnsClose}
+            onBlur={(e) => {
               if (!e.currentTarget.contains(e.relatedTarget as Node)) setEnsOpen(false);
             }}
           >
@@ -280,10 +291,8 @@ export default function Header() {
               role="menu"
               aria-label="submenu ensino"
               tabIndex={-1}
-              className={`absolute left-0 top-full z-50 mt-2 w-64 rounded-2xl border bg-white p-2 shadow-lg transition ${
-                ensOpen ? "pointer-events-auto opacity-100" : "pointer-events-none opacity-0"
-              }`}
-              onMouseEnter={() => { cancelEnsClose(); openEns(true); }}   // ✨ mantém aberto ao entrar
+              className={`absolute left-0 top-full z-50 mt-2 w-64 rounded-2xl border bg-white p-2 shadow-lg transition ${ensOpen ? "pointer-events-auto opacity-100" : "pointer-events-none opacity-0"}`}
+              onMouseEnter={() => { cancelEnsClose(); openEns(true); }}
             >
               <Link
                 href="/ensino/educacao-infantil"
@@ -362,9 +371,7 @@ export default function Header() {
         />
         {/* painel */}
         <aside
-          className={`fixed left-0 top-0 z-50 h-full w-[86%] max-w-[360px] transform bg-white shadow-xl transition-transform ${
-            mobileOpen ? "translate-x-0" : "-translate-x-full"
-          }`}
+          className={`fixed left-0 top-0 z-50 h-full w-[86%] max-w-[360px] transform bg-white shadow-xl transition-transform ${mobileOpen ? "translate-x-0" : "-translate-x-full"}`}
           role="dialog"
           aria-modal="true"
         >
