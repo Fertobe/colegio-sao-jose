@@ -5,17 +5,15 @@ const SITE_URL = "https://colegio.artferro.site";
 const SITE_NAME = "Colégio São José";
 
 export const dynamic = "force-static";
-export const revalidate = 60 * 60 * 6; // 6h
+// ❗ literal numérico
+export const revalidate = 21600; // 6h
 
 function rfc1123(d: string | Date) {
   const dt = typeof d === "string" ? new Date(d) : d;
   return isNaN(dt.getTime()) ? new Date().toUTCString() : dt.toUTCString();
 }
 function xmlEscape(s: string) {
-  return s
-    .replace(/&/g, "&amp;")
-    .replace(/</g, "&lt;")
-    .replace(/>/g, "&gt;");
+  return s.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
 }
 
 export async function GET() {

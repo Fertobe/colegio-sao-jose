@@ -4,36 +4,29 @@ import { listNewsMeta } from "@/lib/news";
 const SITE_URL = "https://colegio.artferro.site";
 
 export const dynamic = "force-static";
-export const revalidate = 60 * 60 * 6; // 6h
+// ❗ revalidate deve ser LITERAL numérico (sem 60*60*6)
+export const revalidate = 21600; // 6h
 
 function xmlEscape(s: string) {
-  return s
-    .replace(/&/g, "&amp;")
-    .replace(/</g, "&lt;")
-    .replace(/>/g, "&gt;");
+  return s.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
 }
 
 export async function GET() {
-  // rotas estáticas principais
   const staticPaths = [
     "/", "/contato", "/matriculas", "/agendamento",
     "/institucional/nossa-historia", "/institucional/filosofia",
-    "/institucional/noticias",
-    "/diferenciais/coc",
+    "/institucional/noticias", "/diferenciais/coc",
   ];
 
   const staticUrls = staticPaths.map(
     (p) => `<url><loc>${SITE_URL}${p}</loc></url>`
   );
 
-  // notícias publicadas (vem ordenadas)
-  const posts = (listNewsMeta() || []) as Array<{
-    slug: string; title: string; date?: string;
-  }>;
+  const posts = (listNewsMeta() || []) as Array<{ slug: string; date?: string }>;
 
   const postUrls = posts.map((p) => {
     const loc = `${SITE_URL}/noticias/${p.slug}`;
-    const lastmod = p.date ? new Date(p.date).toISOString() : undefined;
+    const lastmod = p.date ? new Date(p.date).toISOString() : null;
     return `<url>
       <loc>${xmlEscape(loc)}</loc>
       ${lastmod ? `<lastmod>${lastmod}</lastmod>` : ""}
