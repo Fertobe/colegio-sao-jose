@@ -15,6 +15,7 @@
     "postinstall": "next telemetry disable"
   },
   "dependencies": {
+    "@vercel/speed-insights": "^1.2.0",
     "fast-glob": "^3.3.3",
     "lucide-react": "^0.544.0",
     "next": "latest",

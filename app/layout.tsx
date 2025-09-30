@@ -3,6 +3,7 @@ import "./globals.css";
 import type { Metadata, Viewport } from "next";
 import Header from "./components/Header";
 import Footer from "./components/Footer";
+import { SpeedInsights } from "@vercel/speed-insights/next"; // ⬅️ NOVO
 
 /**
  * Defaults do site inteiro (páginas podem sobrescrever).
@@ -48,7 +49,7 @@ const ORG_LD_JSON = {
   "@type": "EducationalOrganization",
   "name": "Colégio São José",
   "url": "https://colegio.artferro.site/",
-  "logo": "/logo.svg", // ⬅️ usar o logo do colégio aqui
+  "logo": "/logo.svg",
   "address": {
     "@type": "PostalAddress",
     "streetAddress": "Rua (preencher) 123",
@@ -73,8 +74,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           type="image/svg+xml"
           fetchPriority="high"
         />
-
-        {/* Opcional — se usar fonte local, descomente e ajuste o caminho
+        {/* Se usar fonte local, descomente e ajuste
         <link
           rel="preload"
           as="font"
@@ -107,6 +107,9 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         </main>
 
         <Footer />
+
+        {/* Vercel Speed Insights */}
+        <SpeedInsights />
       </body>
     </html>
   );
