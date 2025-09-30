@@ -284,7 +284,7 @@ export default function COCPage() {
             <img
               src={DNA_LEFT}
               alt=""
-              className="block h-48 w-auto select-none opacity-50"
+              className="block h-48 w-auto select-none opacity-50 md:opacity-100"
               loading="eager"
               decoding="async"
               draggable={false}
