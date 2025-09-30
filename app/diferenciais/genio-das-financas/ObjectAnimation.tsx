@@ -1,3 +1,4 @@
+// app/diferenciais/genio-das-financas/ObjectAnimation.tsx
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
@@ -39,7 +40,11 @@ export default function ObjectAnimation({ initial = 0 }: { initial?: ID }) {
   // ---- PRELOAD: aquece cache na 1ª montagem (sem mudar layout) ----
   const allStageSrcs = useMemo(() => Object.values(STAGE), []);
   const allIconSrcs = useMemo(() => Object.values(CENTER).map((c) => c.icon), []);
-  const [preloaded, setPreloaded] = useState(false);
+
+  // mapa de carregamento por estágio (evita "sumir" ao trocar)
+  const [loadedByStage, setLoadedByStage] = useState<Record<ID, boolean>>({
+    0: false, 1: false, 2: false, 3: false, 4: false,
+  });
 
   useEffect(() => {
     let alive = true;
@@ -50,7 +55,6 @@ export default function ObjectAnimation({ initial = 0 }: { initial?: ID }) {
         img.decoding = "async";
         img.loading = "eager";
         img.src = src;
-        // decode() evita “flash” quando a gente troca o src depois
         if (typeof img.decode === "function") {
           await img.decode();
         }
@@ -63,19 +67,15 @@ export default function ObjectAnimation({ initial = 0 }: { initial?: ID }) {
       // carrega em paralelo (stages primeiro, depois ícones)
       await Promise.all(allStageSrcs.map(preload));
       await Promise.all(allIconSrcs.map(preload));
-      if (alive) setPreloaded(true);
+      if (!alive) return;
+      // marca todos os estágios como carregados (já estão no cache)
+      setLoadedByStage({ 0: true, 1: true, 2: true, 3: true, 4: true });
     })();
 
     return () => {
       alive = false;
     };
   }, [allStageSrcs, allIconSrcs]);
-
-  // ---- Fade curto quando a imagem do “Stage” terminou de carregar ----
-  const [stageLoaded, setStageLoaded] = useState(false);
-  useEffect(() => {
-    setStageLoaded(false); // sempre que muda de estágio, espera onLoad
-  }, [current]);
 
   return (
     <div
@@ -86,22 +86,26 @@ export default function ObjectAnimation({ initial = 0 }: { initial?: ID }) {
       }}
     >
       <img
+        key={current} // força remontagem da <img> a cada estágio (onLoad garantido)
         src={STAGE[current]}
         alt="Diagrama — estado atual"
         className={`block h-auto w-full transition-opacity duration-200 ${
-          stageLoaded ? "opacity-100" : "opacity-0"
+          loadedByStage[current] ? "opacity-100" : "opacity-0"
         }`}
         draggable={false}
         decoding="async"
-        // prioridade alta só para o estado inicial (evita travadinha no 1º paint)
         loading={current === 0 ? "eager" : "lazy"}
         fetchPriority={current === 0 ? "high" : "auto"}
-        onLoad={() => setStageLoaded(true)}
+        onLoad={() =>
+          setLoadedByStage((prev) =>
+            prev[current] ? prev : { ...prev, [current]: true }
+          )
+        }
       />
 
       {current !== 0 && (
         <div
-          key={current}
+          key={`overlay-${current}`}
           className="overlay pointer-events-none absolute inset-0 z-10 flex items-center justify-center px-6"
           aria-live="polite"
         >
@@ -145,28 +149,14 @@ export default function ObjectAnimation({ initial = 0 }: { initial?: ID }) {
       ))}
 
       <style jsx>{`
-        /* animação suave usada no texto E no ícone */
         @keyframes rise-soft {
-          0% {
-            opacity: 0;
-            transform: translateY(10px);
-          }
-          100% {
-            opacity: 1;
-            transform: translateY(0);
-          }
+          0% { opacity: 0; transform: translateY(10px); }
+          100% { opacity: 1; transform: translateY(0); }
         }
-        .overlay .icon {
-          animation: rise-soft 420ms cubic-bezier(0.22, 0.7, 0.25, 1) both;
-        }
-        .overlay .line {
-          animation: rise-soft 520ms cubic-bezier(0.22, 0.7, 0.25, 1) both;
-        }
+        .overlay .icon { animation: rise-soft 420ms cubic-bezier(0.22, 0.7, 0.25, 1) both; }
+        .overlay .line { animation: rise-soft 520ms cubic-bezier(0.22, 0.7, 0.25, 1) both; }
         @media (prefers-reduced-motion: reduce) {
-          .overlay .icon,
-          .overlay .line {
-            animation: none !important;
-          }
+          .overlay .icon, .overlay .line { animation: none !important; }
         }
       `}</style>
     </div>

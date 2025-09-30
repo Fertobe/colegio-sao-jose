@@ -23,7 +23,7 @@ export default function SectionAnimada({
   objetoHeight = 360,
   objetoWidth,
 }: Props) {
-  // ✅ ref tipado com possibilidade de null
+  // Use HTMLElement (não existe HTMLSectionElement nas libs DOM)
   const ref = useRef<HTMLElement | null>(null);
   const [inView, setInView] = useState(false);
 
@@ -31,22 +31,20 @@ export default function SectionAnimada({
     const el = ref.current;
     if (!el) return;
 
-    // Fallback para navegadores sem IntersectionObserver
-    if (typeof window !== "undefined" && !(window as any).IntersectionObserver) {
+    if (typeof IntersectionObserver === "undefined") {
       setInView(true);
       return;
     }
 
-    // ✅ callback tipado e com checagem de undefined
     const io = new IntersectionObserver(
-      (entries: IntersectionObserverEntry[], observer) => {
+      (entries, observer) => {
         const entry = entries[0];
-        if (entry && entry.isIntersecting) {
+        if (entry?.isIntersecting) {
           setInView(true);
-          observer.disconnect(); // anima só na primeira vez
+          observer.disconnect();
         }
       },
-      { threshold: 0.2 }
+      { threshold: 0.2, rootMargin: "0px 0px -10% 0px" }
     );
 
     io.observe(el);
@@ -54,30 +52,24 @@ export default function SectionAnimada({
   }, []);
 
   return (
-    <section
-      ref={ref}
-      className={bg}
-      // melhora pintura inicial evitando reflow grande
-      style={{ contentVisibility: "auto" as any, containIntrinsicSize: "800px" as any }}
-    >
-      <div className="mx-auto max-w-6xl px-4 py-14 md:py-16 grid gap-10 md:grid-cols-2 items-center">
+    <section ref={ref} className={`${bg} paint-hints`}>
+      <div className="mx-auto grid max-w-6xl items-center gap-10 px-4 py-14 md:grid-cols-2 md:py-16">
         {/* Objeto à esquerda */}
         <div
-          className={`flex justify-center md:justify-start transform transition-all duration-700
+          className={`flex justify-center md:justify-start will-change-transform transition-all duration-700 transform
                       ${inView ? "opacity-100 translate-y-0" : "opacity-0 translate-y-3"}`}
         >
           <img
             src={objetoSrc}
             alt={objetoAlt}
-            style={{ height: objetoHeight }}
+            {...(objetoWidth
+              ? { width: objetoWidth, height: objetoHeight }
+              : { style: { height: objetoHeight } })}
             className="w-auto select-none pointer-events-none"
             loading="lazy"
             decoding="async"
             fetchPriority="low"
             draggable={false}
-            // Se o chamador informar a largura, ajudamos o CLS
-            {...(objetoWidth ? { width: objetoWidth, height: objetoHeight } : {})}
-            // Quando alt vazio, a imagem é decorativa
             aria-hidden={objetoAlt === "" ? true : undefined}
           />
         </div>
@@ -104,6 +96,12 @@ export default function SectionAnimada({
       </div>
 
       <style jsx>{`
+        /* Dicas de pintura (performance) sem "as any" no TS */
+        .paint-hints {
+          content-visibility: auto;
+          contain-intrinsic-size: 800px;
+        }
+
         @media (prefers-reduced-motion: reduce) {
           .transform,
           .transition-all {

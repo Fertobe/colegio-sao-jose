@@ -133,7 +133,6 @@ export default function GenioFinancasPage() {
 
         {/* Texto */}
         <div className="relative z-10 mx-auto max-w-6xl px-4 pt-10 pb-20 md:pt-14 md:pb-24">
-          {/* Mobile: empurra o conteúdo para a direita; Desktop: mantém ml-[52%] como estava */}
           <div
             className="pl-[46%] md:pl-0 md:ml-[52%]"
             style={{ transform: "translateY(var(--text-shift))" }}
