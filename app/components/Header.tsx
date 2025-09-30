@@ -153,6 +153,13 @@ export default function Header() {
               src="/logo.svg"
               alt="Logomarca do Colégio São José"
               className="h-10 w-auto md:h-12"
+              /* ⬇️ ajustes de performance/LCP sem impacto no funcionamento */
+              loading="eager"
+              fetchPriority="high"
+              decoding="sync"
+              width={144}
+              height={48}
+              draggable={false}
             />
             <div className="leading-none">
               <span className="block text-[10px] font-semibold tracking-[0.14em] text-gray-600 md:text-xs">

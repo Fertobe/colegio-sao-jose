@@ -1,6 +1,6 @@
 // app/layout.tsx
 import "./globals.css";
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import Header from "./components/Header";
 import Footer from "./components/Footer";
 
@@ -36,13 +36,19 @@ export const metadata: Metadata = {
   twitter: { card: "summary_large_image" },
 };
 
+/** Viewport/meta globais (melhora UI do navegador no mobile) */
+export const viewport: Viewport = {
+  themeColor: "#0B5DBB",
+  colorScheme: "light",
+};
+
 /** JSON-LD da Organização (invisível; ajuda SEO) */
 const ORG_LD_JSON = {
   "@context": "https://schema.org",
   "@type": "EducationalOrganization",
   "name": "Colégio São José",
   "url": "https://colegio.artferro.site/",
-  "logo": "/og-cover.webp",
+  "logo": "/logo.svg", // ⬅️ usar o logo do colégio aqui
   "address": {
     "@type": "PostalAddress",
     "streetAddress": "Rua (preencher) 123",
@@ -58,6 +64,27 @@ const ORG_LD_JSON = {
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="pt-BR" className="scroll-smooth" suppressHydrationWarning>
+      <head>
+        {/* Preload do logo: ajuda no LCP e evita “piscada” no topo */}
+        <link
+          rel="preload"
+          as="image"
+          href="/logo.svg"
+          type="image/svg+xml"
+          fetchPriority="high"
+        />
+
+        {/* Opcional — se usar fonte local, descomente e ajuste o caminho
+        <link
+          rel="preload"
+          as="font"
+          href="/fonts/inter-var.woff2"
+          type="font/woff2"
+          crossOrigin="anonymous"
+        />
+        */}
+      </head>
+
       <body className="min-h-screen flex flex-col bg-white text-gray-900" suppressHydrationWarning>
         {/* A11y: link para pular direto ao conteúdo */}
         <a
@@ -67,7 +94,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           Pular para o conteúdo
         </a>
 
-        {/* JSON-LD no body */}
+        {/* JSON-LD no body (ok para Google) */}
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(ORG_LD_JSON) }}
