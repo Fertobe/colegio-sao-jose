@@ -33,19 +33,18 @@ function parseTags(val?: string): string[] | undefined {
   if (!val) return undefined;
   let raw = val.trim();
 
-  // Se vier entre aspas simples/duplas e sem colchetes, trata como string simples
   const isQuoted = (s: string) =>
     (s.startsWith('"') && s.endsWith('"')) || (s.startsWith("'") && s.endsWith("'"));
 
   if (raw.startsWith("[") && raw.endsWith("]")) {
     raw = raw.slice(1, -1).trim();
   }
-  // Agora raw é um conteúdo separado por vírgula
+
   const parts = raw
     .split(",")
-    .map(s => s.trim())
+    .map((s) => s.trim())
     .filter(Boolean)
-    .map(s => (isQuoted(s) ? s.slice(1, -1) : s));
+    .map((s) => (isQuoted(s) ? s.slice(1, -1) : s));
 
   return parts.length ? parts : undefined;
 }
@@ -53,7 +52,6 @@ function parseTags(val?: string): string[] | undefined {
 // Data estável (sem variação por fuso local)
 function parseDateISO(d?: string): Date {
   if (!d) return new Date(0);
-  // Ex: "2025-02-18" -> "2025-02-18T00:00:00Z"
   const iso = /^\d{4}-\d{2}-\d{2}$/.test(d) ? `${d}T00:00:00Z` : d;
   const dt = new Date(iso);
   return isNaN(dt.getTime()) ? new Date(0) : dt;
@@ -82,7 +80,10 @@ function parseFrontmatter(md: string): NewsFrontmatter {
     let val = raw.slice(idx + 1).trim();
 
     // remove aspas do início/fim
-    if ((val.startsWith('"') && val.endsWith('"')) || (val.startsWith("'") && val.endsWith("'"))) {
+    if (
+      (val.startsWith('"') && val.endsWith('"')) ||
+      (val.startsWith("'") && val.endsWith("'"))
+    ) {
       val = val.slice(1, -1);
     }
 
@@ -99,15 +100,26 @@ function parseFrontmatter(md: string): NewsFrontmatter {
       case "excerpt":
         obj.excerpt = val;
         break;
+
+      // published/publicado: só atribui se o parser devolver boolean
       case "published":
-        obj.published = parseBool(val);
+      case "publicado": {
+        const b = parseBool(val);
+        if (typeof b === "boolean") obj.published = b; // ✅ evita undefined
         break;
-      case "tags":
-        obj.tags = parseTags(val);
+      }
+
+      // tags: só atribui se veio lista não-vazia
+      case "tags": {
+        const t = parseTags(val);
+        if (t && t.length) obj.tags = t; // ✅ evita undefined
         break;
+      }
+
       case "author":
         obj.author = val;
         break;
+
       default:
         break;
     }
