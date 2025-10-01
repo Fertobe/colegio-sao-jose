@@ -1,0 +1,4 @@
+[35mapp/robots.ts[m[36m:[m[32m19[m[36m:[m      // sem [1;31msitemap[m/host em preview
+[35mapp/robots.ts[m[36m:[m[32m30[m[36m:[m    [1;31msitemap[m: `${base}/[1;31msitemap[m.xml`,
+[35mapp/sitemap.ts[m[36m:[m[32m1[m[36m:[m// app/[1;31msitemap[m.ts
+[35mapp/sitemap.ts[m[36m:[m[32m19[m[36m:[mexport default function [1;31msitemap[m(): MetadataRoute.Sitemap {
