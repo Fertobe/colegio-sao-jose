@@ -93,6 +93,10 @@ export default function Footer() {
             <li>
               <Link href="/institucional/nossa-historia">Sobre</Link>
             </li>
+            {/* ⬇️ novo: link direto para a listagem de notícias */}
+            <li>
+              <Link href="/noticias">Notícias</Link>
+            </li>
             <li>
               <Link href="/politica-de-privacidade">Política de Privacidade</Link>
             </li>
@@ -107,10 +111,20 @@ export default function Footer() {
           <h3 className="font-semibold text-brand-600">Contato</h3>
           <ul className="mt-3 space-y-2 text-sm">
             <li>
-              <a href="mailto:contato@colegiosaojose.com.br">contato@colegiosaojose.com.br</a>
+              <a
+                href="mailto:contato@colegiosaojose.com.br"
+                aria-label="Enviar e-mail para contato@colegiosaojose.com.br"
+              >
+                contato@colegiosaojose.com.br
+              </a>
             </li>
             <li>
-              <a href="tel:+5542998276516">+55 (42) 99827-6516</a>
+              <a
+                href="tel:+5542998276516"
+                aria-label="Ligar para +55 (42) 99827-6516"
+              >
+                +55 (42) 99827-6516
+              </a>
             </li>
             <li>
               <Link href="/contato">Fale conosco</Link>

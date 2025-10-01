@@ -153,7 +153,6 @@ export default function Header() {
               src="/logo.svg"
               alt="Logomarca do Colégio São José"
               className="h-10 w-auto md:h-12"
-              /* ⬇️ ajustes de performance/LCP sem impacto no funcionamento */
               loading="eager"
               fetchPriority="high"
               decoding="sync"
@@ -240,8 +239,9 @@ export default function Header() {
               >
                 Nossa Filosofia
               </Link>
+              {/* ⬇️ AJUSTE: Notícias → /noticias */}
               <Link
-                href="/institucional/noticias"
+                href="/noticias"
                 role="menuitem"
                 data-inst-item="1"
                 className="block rounded-lg px-4 py-2.5 text-[0.95rem] text-gray-800 hover:bg-brand-50 hover:text-brand-700 focus:bg-brand-50 focus:outline-none"
@@ -430,8 +430,9 @@ export default function Header() {
                       Nossa Filosofia
                     </Link>
                   </li>
+                  {/* ⬇️ AJUSTE: Notícias → /noticias */}
                   <li>
-                    <Link href="/institucional/noticias" onClick={closeMobileAnd()} className="block rounded-md px-2 py-2 text-gray-800 hover:bg-gray-100">
+                    <Link href="/noticias" onClick={closeMobileAnd()} className="block rounded-md px-2 py-2 text-gray-800 hover:bg-gray-100">
                       Notícias
                     </Link>
                   </li>

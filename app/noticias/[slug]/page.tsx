@@ -30,10 +30,11 @@ export async function generateMetadata(
   }
 
   const title = post.title;
-  const description =
-    post.excerpt ?? "Leia esta notícia do Colégio São José.";
+  const description = post.excerpt ?? "Leia esta notícia do Colégio São José.";
   const url = `/noticias/${slug}`;
-  const images = post.cover ? [{ url: post.cover, alt: post.title }] : [{ url: "/og-cover.webp", alt: "Colégio São José" }];
+  const images = post.cover
+    ? [{ url: post.cover, alt: post.title }]
+    : [{ url: "/og-cover.webp", alt: "Colégio São José" }];
 
   return {
     title, // o template global do layout acrescenta “ — Colégio São José”
@@ -52,7 +53,7 @@ export async function generateMetadata(
       card: "summary_large_image",
       title,
       description,
-      images: images.map(i => i.url),
+      images: images.map((i) => i.url),
     },
   };
 }
@@ -71,7 +72,7 @@ export default async function NewsPostPage({ params }: Props) {
         <p className="mt-4">Verifique a URL.</p>
         <div className="mt-8">
           <Link
-            href="/institucional/noticias"
+            href="/noticias"
             className="inline-flex items-center gap-2 rounded-full border px-4 py-2 text-sm font-semibold text-brand-700 hover:bg-brand-50"
           >
             ← Voltar para notícias
@@ -85,20 +86,19 @@ export default async function NewsPostPage({ params }: Props) {
   const jsonLd = {
     "@context": "https://schema.org",
     "@type": "BlogPosting",
-    "headline": post.title,
-    ...(post.date ? { "datePublished": post.date } : {}),
-    "image": post.cover,
-    "url": `https://colegio.artferro.site/noticias/${post.slug}`,
-    // opcional: inclua quando tiver autor
-    ...(post.excerpt ? { "description": post.excerpt } : {}),
-    "publisher": {
+    headline: post.title,
+    ...(post.date ? { datePublished: post.date } : {}),
+    image: post.cover,
+    url: `https://colegio.artferro.site/noticias/${post.slug}`,
+    ...(post.excerpt ? { description: post.excerpt } : {}),
+    publisher: {
       "@type": "Organization",
-      "name": "Colégio São José",
-      "logo": {
+      name: "Colégio São José",
+      logo: {
         "@type": "ImageObject",
-        "url": "https://colegio.artferro.site/logo.svg"
-      }
-    }
+        url: "https://colegio.artferro.site/logo.svg",
+      },
+    },
   };
 
   return (
@@ -112,7 +112,7 @@ export default async function NewsPostPage({ params }: Props) {
       {/* ← Voltar */}
       <div className="mb-6">
         <Link
-          href="/institucional/noticias"
+          href="/noticias"
           className="inline-flex items-center gap-2 rounded-full border px-4 py-2 text-sm font-semibold text-brand-700 hover:bg-brand-50"
         >
           ← Voltar para notícias
@@ -136,6 +136,8 @@ export default async function NewsPostPage({ params }: Props) {
               loading="eager"
               decoding="async"
               draggable={false}
+              width={1200}
+              height={675}
             />
           </div>
         )}
@@ -149,7 +151,7 @@ export default async function NewsPostPage({ params }: Props) {
       {/* ← Voltar (no final do post também) */}
       <div className="mt-10">
         <Link
-          href="/institucional/noticias"
+          href="/noticias"
           className="inline-flex items-center gap-2 rounded-full border px-4 py-2 text-sm font-semibold text-brand-700 hover:bg-brand-50"
         >
           ← Voltar para notícias
@@ -165,5 +167,5 @@ export async function generateStaticParams() {
   return posts.map((p) => ({ slug: p.slug }));
 }
 
-// Opcional: revalida as páginas de notícia periodicamente (se você fizer deploys com frequência, pode deixar como estático também).
+// Opcional: revalida as páginas de notícia periodicamente
 export const revalidate = 3600; // 1h
