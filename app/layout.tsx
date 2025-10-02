@@ -4,9 +4,9 @@ import type { Metadata, Viewport } from "next";
 import Header from "./components/Header";
 import Footer from "./components/Footer";
 import { SpeedInsights } from "@vercel/speed-insights/next";
-import { getSiteUrl, assertSiteUrlForEnv } from "@/app/utils/site-url"; // ⬅️ ADICIONADO
+import { getSiteUrl, assertSiteUrlForEnv } from "@/app/utils/site-url"; // ⬅️ util existente
 
-// ⬇️ ADAPTADO para usar o util (sem mexer no resto)
+// Base derivada do util (sem mudar sua lógica)
 const BASE_URL = getSiteUrl();
 assertSiteUrlForEnv();
 
@@ -74,13 +74,31 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           fetchPriority="high"
         />
 
+        {/* ✅ Preload do 1º frame do HERO (mobile e desktop) sem usar props não tipadas */}
+        <link
+          rel="preload"
+          as="image"
+          href="/hero/mobile/aluno-01.webp"
+          type="image/webp"
+          media="(max-width: 767px)"
+          fetchPriority="high"
+        />
+        <link
+          rel="preload"
+          as="image"
+          href="/hero/aluno-01.webp"
+          type="image/webp"
+          media="(min-width: 768px)"
+          fetchPriority="high"
+        />
+
         {/* Perf hints — aceleram WhatsApp e (se usado) Google Fonts */}
         <link rel="dns-prefetch" href="https://wa.me" />
         <link rel="preconnect" href="https://wa.me" crossOrigin="anonymous" />
         <link rel="dns-prefetch" href="https://fonts.gstatic.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
 
-        {/* B2 — Prefetch de rotas quentes */}
+        {/* Prefetch de rotas quentes */}
         <link rel="prefetch" href="/ensino/educacao-infantil" as="document" />
         <link rel="prefetch" href="/ensino/ensino-fundamental" as="document" />
         <link rel="prefetch" href="/ensino/ensino-medio" as="document" />

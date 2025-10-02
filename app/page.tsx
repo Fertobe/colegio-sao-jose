@@ -252,7 +252,7 @@ export default function Home() {
               <div className="rounded-3xl rounded-b-none bg-white/10 px-6 py-4">
                 <div className="flex items-center gap-3">
                   <svg viewBox="0 0 24 24" className="h-6 w-6 text-white" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden="true" role="presentation">
-                    <path d="M3 21v-8l9-5 9 5v8" />
+                    <path d="M3 21v-8l9-5 9 5v 8" />
                     <path d="M9 22v-6h6v6" />
                   </svg>
                   <h3 className="text-base md:text-lg font-semibold">Ensino Médio</h3>
@@ -276,7 +276,7 @@ export default function Home() {
       >
         <div className="mx-auto max-w-6xl px-4 py-12">
           <h2 className="text-xl md:text-2xl font-bold text-brand-700 uppercase">NOSSOS DIFERENCIAIS</h2>
-          {/* linha */}
+        {/* linha */}
           <div className="relative mt-6">
             <div className="h-[3px] w-full rounded-full bg-brand-400" />
             <div className="pointer-events-none absolute inset-x-0 top-1/2 -translate-y-1/2 grid grid-cols-4">

@@ -21,7 +21,8 @@ const nextConfig: NextConfig = {
       {
         // arquivos do /public: imagens, ícones e fontes
         // (cache de 1 ano; seguro pq nomes são estáveis)
-        source: "/:all*(webp|png|jpg|jpeg|svg|gif|ico|woff2|woff|ttf)",
+        // ⬇️ IMPORTANTE: note o ponto antes das extensões
+        source: "/:all*.(webp|avif|png|jpg|jpeg|svg|gif|ico|woff2|woff|ttf)",
         headers: [
           { key: "Cache-Control", value: "public, max-age=31536000, immutable" },
         ],
