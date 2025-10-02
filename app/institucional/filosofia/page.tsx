@@ -3,23 +3,43 @@ import Link from "next/link";
 import type { CSSProperties } from "react";
 import BackToTop from "../../components/BackToTop";
 import type { Metadata } from "next";
+import { getSiteUrl } from "@/app/utils/site-url";
+
+// Página puramente estática → cache/CDN
+export const dynamic = "force-static";
+
+const PAGE_PATH = "/institucional/filosofia";
+const PAGE_TITLE = "Nossa Filosofia | Colégio São José";
+const PAGE_DESC =
+  "Conheça a missão, visão e valores do Colégio São José — princípios que orientam nossa prática pedagógica.";
 
 export const metadata: Metadata = {
-  title: "Nossa Filosofia | Colégio São José",
-  description:
-    "Conheça a missão, visão e valores do Colégio São José — princípios que orientam nossa prática pedagógica.",
+  title: PAGE_TITLE,
+  description: PAGE_DESC,
+  alternates: { canonical: PAGE_PATH },
+  openGraph: {
+    type: "website",
+    title: PAGE_TITLE,
+    description: PAGE_DESC,
+    url: PAGE_PATH, // será resolvido para absoluto pelo metadataBase do layout
+    images: ["/og-cover.webp"],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: PAGE_TITLE,
+    description: PAGE_DESC,
+    images: ["/og-cover.webp"],
+  },
 };
 
 export default function NossaFilosofiaPage() {
-  // ✅ UMA ÚNICA IMAGEM (PNG com transparência)
-  // se quiser um arquivo específico para mobile, coloque em /filosofia/mobile/hero-01.png
+  const SITE_URL = getSiteUrl();
+
+  // ✅ UMA ÚNICA IMAGEM (PNG/WebP com transparência)
   const HERO_DESKTOP = { src: "/filosofia/hero-01.webp", alt: "Estudante — Nossa Filosofia" };
   const HERO_MOBILE  = { src: "/filosofia/hero-01.webp", alt: "Estudante — Nossa Filosofia (mobile)" };
 
   // 🎛️ CONTROLES FINOS (pode mudar estes valores sem tocar no restante)
-  // *-bottom: quanto “cola” na onda (valores negativos descem)
-  // *-ty: empurra para cima/baixo sem mexer na base (px)
-  // *-scale: escala do PNG
   const HERO_VARS: CSSProperties = {
     // Mobile
     ["--hero-m-bottom" as any]: "-10px",
@@ -31,8 +51,36 @@ export default function NossaFilosofiaPage() {
     ["--hero-d-scale" as any]: "0.9",
   };
 
+  // JSON-LD (AboutPage) + Breadcrumbs
+  const jsonLdAbout = {
+    "@context": "https://schema.org",
+    "@type": "AboutPage",
+    name: "Nossa Filosofia — Colégio São José",
+    url: `${SITE_URL}${PAGE_PATH}`,
+    mainEntity: {
+      "@type": "Organization",
+      name: "Colégio São José",
+      url: SITE_URL,
+      logo: `${SITE_URL}/logo.svg`,
+    },
+    description: PAGE_DESC,
+  };
+  const jsonLdBreadcrumbs = {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    itemListElement: [
+      // Mantemos o padrão “Institucional” como primeiro nível (mesma lógica usada em Nossa História)
+      { "@type": "ListItem", position: 1, name: "Institucional", item: `${SITE_URL}/institucional/nossa-historia` },
+      { "@type": "ListItem", position: 2, name: "Nossa Filosofia", item: `${SITE_URL}${PAGE_PATH}` },
+    ],
+  };
+
   return (
     <>
+      {/* JSON-LD (SEO) */}
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLdAbout) }} />
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLdBreadcrumbs) }} />
+
       {/* HERO (texto à esquerda, personagem à direita) */}
       <section className="relative overflow-hidden">
         <div className="absolute inset-0 bg-gradient-to-br from-brand-900 via-brand-800 to-brand-600" />
@@ -56,6 +104,7 @@ export default function NossaFilosofiaPage() {
             <div className="mt-6">
               <Link
                 href="/institucional/nossa-historia"
+                prefetch={false}
                 className="inline-flex rounded-full bg-brand-300 px-5 py-3 font-semibold text-brand-900 shadow-lg transition hover:bg-brand-200"
               >
                 Conheça nossa história
@@ -82,6 +131,7 @@ export default function NossaFilosofiaPage() {
               loading="eager"
               decoding="async"
               fetchPriority="high"
+              sizes="100vw"
               draggable={false}
             />
 
@@ -102,6 +152,7 @@ export default function NossaFilosofiaPage() {
               loading="eager"
               decoding="async"
               fetchPriority="high"
+              sizes="(min-width:1024px) 520px, (min-width:768px) 420px, 320px"
               draggable={false}
             />
           </div>
@@ -113,6 +164,7 @@ export default function NossaFilosofiaPage() {
             viewBox="0 0 1440 140"
             className="h-[90px] w-full md:h-[110px] lg:h-[130px]"
             preserveAspectRatio="none"
+            aria-hidden="true"
           >
             <path d="M0,80 C320,140 920,10 1440,90 L1440,140 L0,140 Z" fill="#fff" />
           </svg>
@@ -146,7 +198,7 @@ export default function NossaFilosofiaPage() {
             {/* Missão */}
             <div className="rounded-3xl bg-brand-700/90 p-6 text-white shadow-lg ring-1 ring-white/10 transition-colors hover:bg-brand-600 focus-within:bg-brand-600">
               <div className="mb-3 flex items-center gap-3">
-                <svg viewBox="0 0 24 24" className="h-6 w-6" fill="none" stroke="currentColor" strokeWidth="2">
+                <svg viewBox="0 0 24 24" className="h-6 w-6" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden="true">
                   <path d="M12 20s-7-4.35-7-10a7 7 0 0 1 14 0c0 5.65-7 10-7 10Z" />
                 </svg>
                 <h3 className="text-lg font-semibold">Missão</h3>
@@ -161,7 +213,7 @@ export default function NossaFilosofiaPage() {
             {/* Visão */}
             <div className="rounded-3xl bg-brand-700/90 p-6 text-white shadow-lg ring-1 ring-white/10 transition-colors hover:bg-brand-600 focus-within:bg-brand-600">
               <div className="mb-3 flex items-center gap-3">
-                <svg viewBox="0 0 24 24" className="h-6 w-6" fill="none" stroke="currentColor" strokeWidth="2">
+                <svg viewBox="0 0 24 24" className="h-6 w-6" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden="true">
                   <path d="M2 12s4-7 10-7 10 7 10 7-4 7-10 7-10-7-10-7Z" />
                   <circle cx="12" cy="12" r="3" />
                 </svg>
@@ -177,7 +229,7 @@ export default function NossaFilosofiaPage() {
             {/* Valores */}
             <div className="rounded-3xl bg-brand-700/90 p-6 text-white shadow-lg ring-1 ring-white/10 transition-colors hover:bg-brand-600 focus-within:bg-brand-600">
               <div className="mb-3 flex items-center gap-3">
-                <svg viewBox="0 0 24 24" className="h-6 w-6" fill="none" stroke="currentColor" strokeWidth="2">
+                <svg viewBox="0 0 24 24" className="h-6 w-6" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden="true">
                   <path d="M20 6 9 17l-5-5" />
                 </svg>
                 <h3 className="text-lg font-semibold">Valores</h3>
@@ -220,13 +272,15 @@ export default function NossaFilosofiaPage() {
                 alt="Fachada do Colégio São José"
                 className="h-full w-full select-none object-cover"
                 loading="lazy"
+                decoding="async"
+                sizes="(min-width:768px) 50vw, 100vw"
                 draggable={false}
               />
             </div>
-            <svg className="pointer-events-none absolute -left-3 -top-3 h-20 w-20 opacity-60" viewBox="0 0 100 100" fill="none">
+            <svg className="pointer-events-none absolute -left-3 -top-3 h-20 w-20 opacity-60" viewBox="0 0 100 100" fill="none" aria-hidden="true">
               <circle cx="50" cy="50" r="40" stroke="#14D3E0" strokeDasharray="4 10" strokeWidth="4" />
             </svg>
-            <svg className="pointer-events-none absolute -right-4 bottom-2 h-16 w-16 opacity-60" viewBox="0 0 100 100" fill="none">
+            <svg className="pointer-events-none absolute -right-4 bottom-2 h-16 w-16 opacity-60" viewBox="0 0 100 100" fill="none" aria-hidden="true">
               <circle cx="50" cy="50" r="28" stroke="#0ea5b7" strokeOpacity="0.35" strokeWidth="6" />
             </svg>
           </div>
