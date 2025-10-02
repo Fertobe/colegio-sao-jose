@@ -31,30 +31,43 @@ export default function EnsinoFundamentalPage() {
     alt: "Estudante do Ensino Fundamental",
   };
 
-  // MOBILE — coloque a versão recortada/transparente aqui
+  // MOBILE — versão recortada/transparente (coloque o arquivo em /public/ensino/fundamental/mobile/hero.webp)
   const heroImgMobile = {
     src: "/ensino/fundamental/mobile/hero.webp",
     alt: "Estudante do Ensino Fundamental (mobile)",
   };
 
   // ===== Tuning do HERO =====
-  // Desktop (inalterado)
   const heroStyleDesktop: CSSProperties = {
     transform: "translateX(-50%) translateY(48px) scale(0.85)",
     transformOrigin: "bottom center",
     willChange: "transform",
   };
-
-  // Mobile (ajuste fino para enquadrar melhor)
   const heroStyleMobile: CSSProperties = {
     transform: "translateX(-50%) translateY(66px) scale(0.92)",
     transformOrigin: "bottom center",
     willChange: "transform",
   };
 
+  // ✅ Breadcrumb JSON-LD (Início → Ensino Fundamental)
+  const breadcrumbLd = {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    "itemListElement": [
+      { "@type": "ListItem", position: 1, name: "Início", item: "https://colegio.artferro.site/" },
+      { "@type": "ListItem", position: 2, name: "Ensino Fundamental", item: "https://colegio.artferro.site/ensino/ensino-fundamental" }
+    ]
+  };
+
   return (
     <>
-      {/* HERO (idêntico ao layout do EM) */}
+      {/* JSON-LD de breadcrumb (invisível; ajuda SEO) */}
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbLd) }}
+      />
+
+      {/* HERO */}
       <section className="relative overflow-hidden">
         <div className="absolute inset-0 bg-gradient-to-br from-brand-900 via-brand-800 to-brand-700" />
 
@@ -74,9 +87,10 @@ export default function EnsinoFundamentalPage() {
                 draggable={false}
                 width={900}
                 height={900}
+                sizes="(max-width: 767px) 320px, 0px"
               />
             </div>
-            {/* DESKTOP/TABLET (inalterado) */}
+            {/* DESKTOP/TABLET */}
             <div className="hidden md:block">
               <img
                 src={heroImgDesktop.src}
@@ -89,6 +103,7 @@ export default function EnsinoFundamentalPage() {
                 draggable={false}
                 width={1200}
                 height={1200}
+                sizes="(min-width: 768px) 520px, 0px"
               />
             </div>
           </div>
@@ -116,20 +131,14 @@ export default function EnsinoFundamentalPage() {
                 rel="noopener noreferrer"
                 className="inline-flex items-center gap-2 rounded-full bg-brand-300 px-5 py-3 font-semibold text-brand-900 shadow-lg transition hover:bg-brand-200"
               >
-                {/* ✅ troca do emoji pelo ícone oficial */}
-                <BrandIcon
-                  name="whatsapp"
-                  color="currentColor"
-                  className="h-[18px] w-[18px]"
-                  title="WhatsApp"
-                />
+                <BrandIcon name="whatsapp" color="currentColor" className="h-[18px] w-[18px]" title="WhatsApp" />
                 Fale com a coordenação
               </a>
             </div>
           </div>
         </div>
 
-        {/* Onda branca inferior (igual ao EM) */}
+        {/* Onda branca inferior */}
         <div className="pointer-events-none absolute inset-x-0 bottom-0 z-30">
           <svg
             viewBox="0 0 1440 140"
@@ -161,33 +170,30 @@ export default function EnsinoFundamentalPage() {
             Práticas pedagógicas interdisciplinares
           </h2>
 
-          <div className="mt-8 grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-            {[
-              {
-                title: "Correlação entre componentes curriculares",
-                desc:
-                  "Integração entre áreas do conhecimento para desenvolver pensamento crítico e interdisciplinar.",
-              },
-              {
-                title: "Proposta de projeto interdisciplinar",
-                desc:
-                  "Cada livro traz um projeto que conecta objetivos e habilidades a situações reais.",
-              },
-              {
-                title: "Organizador visual ao final de cada capítulo",
-                desc:
-                  "Mapas/fluxogramas facilitam revisão e estabelecem conexões entre conceitos.",
-              },
-            ].map((c) => (
-              <div
-                key={c.title}
-                className="rounded-3xl bg-white p-6 shadow-sm ring-1 ring-brand-900/5"
-              >
-                <h3 className="text-lg font-semibold text-brand-800">{c.title}</h3>
-                <p className="mt-2 text-brand-900/80 leading-relaxed">{c.desc}</p>
-              </div>
-            ))}
-          </div>
+        <div className="mt-8 grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+          {[
+            {
+              title: "Correlação entre componentes curriculares",
+              desc:
+                "Integração entre áreas do conhecimento para desenvolver pensamento crítico e interdisciplinar.",
+            },
+            {
+              title: "Proposta de projeto interdisciplinar",
+              desc:
+                "Cada livro traz um projeto que conecta objetivos e habilidades a situações reais.",
+            },
+            {
+              title: "Organizador visual ao final de cada capítulo",
+              desc:
+                "Mapas/fluxogramas facilitam revisão e estabelecem conexões entre conceitos.",
+            },
+          ].map((c) => (
+            <div key={c.title} className="rounded-3xl bg-white p-6 shadow-sm ring-1 ring-brand-900/5">
+              <h3 className="text-lg font-semibold text-brand-800">{c.title}</h3>
+              <p className="mt-2 text-brand-900/80 leading-relaxed">{c.desc}</p>
+            </div>
+          ))}
+        </div>
         </div>
       </section>
 
@@ -214,10 +220,7 @@ export default function EnsinoFundamentalPage() {
                   "Cadernos digitais personalizáveis, conteúdo multimídia interativo e planos/roteiros ao professor.",
               },
             ].map((c) => (
-              <div
-                key={c.title}
-                className="rounded-3xl bg-gray-50 p-6 shadow-sm ring-1 ring-brand-900/5"
-              >
+              <div key={c.title} className="rounded-3xl bg-gray-50 p-6 shadow-sm ring-1 ring-brand-900/5">
                 <h3 className="text-base font-semibold text-brand-800">{c.title}</h3>
                 <p className="mt-2 text-brand-900/80 leading-relaxed">{c.desc}</p>
               </div>

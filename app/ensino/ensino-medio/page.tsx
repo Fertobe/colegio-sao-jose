@@ -31,29 +31,42 @@ export default function EnsinoMedioPage() {
     alt: "Estudante do Ensino Médio",
   };
 
-  // MOBILE — coloque a PNG recortada (transparente) aqui
+  // MOBILE — coloque a PNG/WebP recortada (transparente) aqui
   const heroImgMobile = {
     src: "/ensino/medio/mobile/hero.webp",
     alt: "Estudante do Ensino Médio (mobile)",
   };
 
   // ===== Tuning do HERO =====
-  // Desktop (inalterado)
   const heroStyleDesktop: CSSProperties = {
     transform: "translateX(-50%) translateY(58px) scale(0.8)",
     transformOrigin: "bottom center",
     willChange: "transform",
   };
-
-  // Mobile (ajuste fino para enquadrar sem cortar)
   const heroStyleMobile: CSSProperties = {
     transform: "translateX(-50%) translateY(64px) scale(0.92)",
     transformOrigin: "bottom center",
     willChange: "transform",
   };
 
+  // ✅ Breadcrumb JSON-LD (Início → Ensino Médio)
+  const breadcrumbLd = {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    itemListElement: [
+      { "@type": "ListItem", position: 1, name: "Início", item: "https://colegio.artferro.site/" },
+      { "@type": "ListItem", position: 2, name: "Ensino Médio", item: "https://colegio.artferro.site/ensino/ensino-medio" },
+    ],
+  };
+
   return (
     <>
+      {/* JSON-LD de breadcrumb (invisível; ajuda SEO) */}
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbLd) }}
+      />
+
       {/* HERO (mesmo tamanho e estrutura) */}
       <section className="relative overflow-hidden">
         <div className="absolute inset-0 bg-gradient-to-br from-brand-900 via-brand-800 to-brand-700" />
@@ -74,6 +87,7 @@ export default function EnsinoMedioPage() {
                 draggable={false}
                 width={900}
                 height={900}
+                sizes="(max-width: 767px) 320px, 0px"
               />
             </div>
 
@@ -90,6 +104,7 @@ export default function EnsinoMedioPage() {
                 draggable={false}
                 width={1200}
                 height={1200}
+                sizes="(min-width: 768px) 520px, 0px"
               />
             </div>
           </div>
@@ -121,13 +136,7 @@ export default function EnsinoMedioPage() {
                 rel="noopener noreferrer"
                 className="inline-flex items-center gap-2 rounded-full bg-brand-300 px-5 py-3 font-semibold text-brand-900 shadow-lg transition hover:bg-brand-200"
               >
-                {/* ✅ trocado o emoji pelo ícone oficial */}
-                <BrandIcon
-                  name="whatsapp"
-                  color="currentColor"
-                  className="h-[18px] w-[18px]"
-                  title="WhatsApp"
-                />
+                <BrandIcon name="whatsapp" color="currentColor" className="h-[18px] w-[18px]" title="WhatsApp" />
                 Fale com a coordenação
               </a>
             </div>
@@ -167,43 +176,16 @@ export default function EnsinoMedioPage() {
             De que forma os alunos se preparam para o futuro?
           </h2>
 
-        <div className="mt-8 grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+          <div className="mt-8 grid gap-6 md:grid-cols-2 lg:grid-cols-3">
             {[
-              {
-                title: "Formação Geral Básica (FGB)",
-                desc:
-                  "Conteúdos essenciais com exercícios de diferentes bancas e foco em resultados.",
-              },
-              {
-                title: "Itinerários formativos",
-                desc:
-                  "Trilhas que promovem contextualização e aprofundamento em áreas de interesse.",
-              },
-              {
-                title: "Eletivas (100% digitais)",
-                desc:
-                  "Mais de 40 opções, aplicação presencial ou remota, PBL e flexibilidade de currículo.",
-              },
-              {
-                title: "Projeto de Vida",
-                desc:
-                  "Autoconhecimento, protagonismo e escolhas conscientes para objetivos pessoais.",
-              },
-              {
-                title: "Simulados & Avaliações",
-                desc:
-                  "Ciclos anuais com relatórios completos e comparativos para acompanhamento contínuo.",
-              },
-              {
-                title: "Materiais e trilhas",
-                desc:
-                  "Tarefa • Reforço • Aprofundamento • Lider! — caminhos personalizados de estudo.",
-              },
+              { title: "Formação Geral Básica (FGB)", desc: "Conteúdos essenciais com exercícios de diferentes bancas e foco em resultados." },
+              { title: "Itinerários formativos", desc: "Trilhas que promovem contextualização e aprofundamento em áreas de interesse." },
+              { title: "Eletivas (100% digitais)", desc: "Mais de 40 opções, aplicação presencial ou remota, PBL e flexibilidade de currículo." },
+              { title: "Projeto de Vida", desc: "Autoconhecimento, protagonismo e escolhas conscientes para objetivos pessoais." },
+              { title: "Simulados & Avaliações", desc: "Ciclos anuais com relatórios completos e comparativos para acompanhamento contínuo." },
+              { title: "Materiais e trilhas", desc: "Tarefa • Reforço • Aprofundamento • Lider! — caminhos personalizados de estudo." },
             ].map((c) => (
-              <div
-                key={c.title}
-                className="rounded-3xl bg-white p-6 shadow-sm ring-1 ring-brand-900/5"
-              >
+              <div key={c.title} className="rounded-3xl bg-white p-6 shadow-sm ring-1 ring-brand-900/5">
                 <h3 className="text-lg font-semibold text-brand-800">{c.title}</h3>
                 <p className="mt-2 text-brand-900/80 leading-relaxed">{c.desc}</p>
               </div>
@@ -215,31 +197,14 @@ export default function EnsinoMedioPage() {
       {/* BLOCO: Avaliações e simulados */}
       <section className="bg-white">
         <div className="mx-auto max-w-6xl px-4 py-12">
-          <h2 className="text-2xl font-bold text-brand-700 uppercase">
-            Avaliações e Simulados do COC
-          </h2>
+          <h2 className="text-2xl font-bold text-brand-700 uppercase">Avaliações e Simulados do COC</h2>
 
           <div className="mt-8 grid gap-6 md:grid-cols-2 lg:grid-cols-4">
             {[
-              {
-                title: "Simulado Enem",
-                desc: "Preparatório alinhado à principal porta de entrada para a universidade.",
-              },
-              {
-                title: "Simulados Regionais",
-                desc:
-                  "Exploração de diferentes possibilidades de prova ao longo do ano letivo.",
-              },
-              {
-                title: "Simulado COC",
-                desc:
-                  "Verificação do aprendizado e acompanhamento longitudinal.",
-              },
-              {
-                title: "Avaliação Nacional",
-                desc:
-                  "Análise anual com dados comparativos para a jornada do aluno.",
-              },
+              { title: "Simulado Enem", desc: "Preparatório alinhado à principal porta de entrada para a universidade." },
+              { title: "Simulados Regionais", desc: "Exploração de diferentes possibilidades de prova ao longo do ano letivo." },
+              { title: "Simulado COC", desc: "Verificação do aprendizado e acompanhamento longitudinal." },
+              { title: "Avaliação Nacional", desc: "Análise anual com dados comparativos para a jornada do aluno." },
             ].map((i) => (
               <div key={i.title} className="rounded-3xl bg-gray-50 p-6 shadow-sm ring-1 ring-brand-900/5">
                 <h3 className="text-base font-semibold text-brand-800">{i.title}</h3>
