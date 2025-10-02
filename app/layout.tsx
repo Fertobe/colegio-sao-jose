@@ -4,10 +4,11 @@ import type { Metadata, Viewport } from "next";
 import Header from "./components/Header";
 import Footer from "./components/Footer";
 import { SpeedInsights } from "@vercel/speed-insights/next";
+import { getSiteUrl, assertSiteUrlForEnv } from "@/app/utils/site-url"; // ⬅️ ADICIONADO
 
-const BASE_URL =
-  process.env.NEXT_PUBLIC_SITE_URL?.replace(/\/+$/, "") ||
-  "https://colegio.artferro.site";
+// ⬇️ ADAPTADO para usar o util (sem mexer no resto)
+const BASE_URL = getSiteUrl();
+assertSiteUrlForEnv();
 
 export const metadata: Metadata = {
   title: {
@@ -41,6 +42,7 @@ export const viewport: Viewport = {
   colorScheme: "light",
 };
 
+// JSON-LD da organização (com endereço/CEP corretos)
 const ORG_LD_JSON = {
   "@context": "https://schema.org",
   "@type": "EducationalOrganization",
@@ -49,10 +51,10 @@ const ORG_LD_JSON = {
   logo: `${BASE_URL}/logo.svg`,
   address: {
     "@type": "PostalAddress",
-    streetAddress: "Rua (preencher) 123",
+    streetAddress: "R. Cândido de Abreu, 1636",
     addressLocality: "Prudentópolis",
     addressRegion: "PR",
-    postalCode: "(CEP)",
+    postalCode: "84400-000",
     addressCountry: "BR",
   },
   telephone: "+55 (42) 3446-2212",
@@ -74,11 +76,11 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
 
         {/* Perf hints — aceleram WhatsApp e (se usado) Google Fonts */}
         <link rel="dns-prefetch" href="https://wa.me" />
-        <link rel="preconnect" href="https://wa.me" crossOrigin="" />
+        <link rel="preconnect" href="https://wa.me" crossOrigin="anonymous" />
         <link rel="dns-prefetch" href="https://fonts.gstatic.com" />
-        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="" />
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
 
-        {/* B2 — Prefetch de rotas quentes (inofensivo e barato em ociosidade) */}
+        {/* B2 — Prefetch de rotas quentes */}
         <link rel="prefetch" href="/ensino/educacao-infantil" as="document" />
         <link rel="prefetch" href="/ensino/ensino-fundamental" as="document" />
         <link rel="prefetch" href="/ensino/ensino-medio" as="document" />
