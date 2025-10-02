@@ -103,7 +103,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <link rel="prefetch" href="/ensino/ensino-fundamental" as="document" />
         <link rel="prefetch" href="/ensino/ensino-medio" as="document" />
         <link rel="prefetch" href="/diferenciais/genio-das-financas" as="document" />
-        <link rel="prefetch" href="/diferenciais/coc" as="document" />
+        <link rel="prefetch" href="/diferenciais/sistema-coc" as="document" /> {/* ← corrigido */}
         <link rel="prefetch" href="/noticias" as="document" />
 
         {/* Se usar fonte local, descomente e ajuste

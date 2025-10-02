@@ -10,6 +10,11 @@ import { getSiteUrl } from "@/app/utils/site-url";
  * - zero side effects
  */
 export default function sitemap(): MetadataRoute.Sitemap {
+  // ⬇️ Opcional: não expor sitemap em pré-produção
+  if (process.env.VERCEL_ENV && process.env.VERCEL_ENV !== "production") {
+    return [];
+  }
+
   const base = getSiteUrl();
   const now = new Date();
 
@@ -29,7 +34,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
 
     // Diferenciais
     { url: `${base}/diferenciais/genio-das-financas`, lastModified: now, priority: 0.6 },
-    { url: `${base}/diferenciais/coc`, lastModified: now, priority: 0.6 },
+    { url: `${base}/diferenciais/sistema-coc`, lastModified: now, priority: 0.6 }, // <- corrigido
 
     // Contato / Conversão
     { url: `${base}/agendamento`, lastModified: now, priority: 0.6 },

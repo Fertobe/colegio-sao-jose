@@ -9,12 +9,18 @@ function normalizeBase(u?: string) {
   return s;
 }
 
-// ⬇️ ADIÇÃO: fallback para previews usando VERCEL_URL (sem remover nada do seu código)
+// ⬇️ Fallback para previews usando VERCEL_URL (mantido do seu padrão)
 const rawBase =
   process.env.NEXT_PUBLIC_SITE_URL ||
   (process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : undefined);
 
 const base = normalizeBase(rawBase);
+
+// ⬇️ NOVO: controle “opt-in” para anunciar sitemap/host
+// Ligue em produção com: NEXT_PUBLIC_ENABLE_SITEMAP=1  (ou ENABLE_SITEMAP=true)
+const sitemapEnabled =
+  process.env.NEXT_PUBLIC_ENABLE_SITEMAP === "1" ||
+  process.env.ENABLE_SITEMAP === "true";
 
 export default function robots(): MetadataRoute.Robots {
   // Em previews (Vercel) bloqueia tudo para não indexar staging
@@ -26,13 +32,20 @@ export default function robots(): MetadataRoute.Robots {
   }
 
   // Produção
-  return {
-    rules: [
-      { userAgent: "*", allow: "/" },
-      // evita crawl da rota intermediária que só faz redirect
-      { userAgent: "*", disallow: ["/institucional/noticias"] },
-    ],
-    sitemap: `${base}/sitemap.xml`,
-    host: base,
-  };
+  const rules: MetadataRoute.Robots["rules"] = [
+    { userAgent: "*", allow: "/" },
+    // evita crawl da rota intermediária que só faz redirect
+    { userAgent: "*", disallow: ["/institucional/noticias"] },
+  ];
+
+  // Base sem sitemap (safe por padrão)
+  const out: MetadataRoute.Robots = { rules };
+
+  // Anuncia sitemap/host só quando habilitado por env
+  if (sitemapEnabled) {
+    out.sitemap = `${base}/sitemap.xml`;
+    out.host = base;
+  }
+
+  return out;
 }
