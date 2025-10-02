@@ -9,7 +9,12 @@ function normalizeBase(u?: string) {
   return s;
 }
 
-const base = normalizeBase(process.env.NEXT_PUBLIC_SITE_URL);
+// ⬇️ ADIÇÃO: fallback para previews usando VERCEL_URL (sem remover nada do seu código)
+const rawBase =
+  process.env.NEXT_PUBLIC_SITE_URL ||
+  (process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : undefined);
+
+const base = normalizeBase(rawBase);
 
 export default function robots(): MetadataRoute.Robots {
   // Em previews (Vercel) bloqueia tudo para não indexar staging
