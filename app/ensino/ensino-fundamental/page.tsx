@@ -6,7 +6,7 @@ import BrandIcon from "../../components/icons/BrandIcon"; // ✅ ícone oficial
 
 /** SEO da página (não altera layout) */
 export const metadata: Metadata = {
-  title: "Ensino Fundamental — Colégio São José",
+  title: "Ensino Fundamental", // ⬅️ evita duplicar com o template do layout
   description:
     "Transição cuidadosa, propostas interdisciplinares, recursos digitais e acompanhamento contínuo da aprendizagem no Ensino Fundamental.",
   metadataBase: new URL("https://colegio.artferro.site"),
@@ -202,30 +202,30 @@ export default function EnsinoFundamentalPage() {
         <div className="mx-auto max-w-6xl px-4 py-12">
           <h2 className="text-2xl font-bold text-brand-700 uppercase">Estrutura da coleção</h2>
 
-        <div className="mt-8 grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-          {[
-            {
-              title: "Acompanhamento da aprendizagem",
-              desc:
-                "4 avaliações nacionais por ano (do 2º ano do EF à 2ª série do EM), com relatórios e comparativos.",
-            },
-            {
-              title: "Avaliações",
-              desc:
-                "Plataforma inteligente para criação de provas e relatórios de desempenho entre escolas COC.",
-            },
-            {
-              title: "Coleção Multimodal",
-              desc:
-                "Cadernos digitais personalizáveis, conteúdo multimídia interativo e planos/roteiros ao professor.",
-            },
-          ].map((c) => (
-            <div key={c.title} className="rounded-3xl bg-gray-50 p-6 shadow-sm ring-1 ring-brand-900/5">
-              <h3 className="text-base font-semibold text-brand-800">{c.title}</h3>
-              <p className="mt-2 text-brand-900/80 leading-relaxed">{c.desc}</p>
-            </div>
-          ))}
-        </div>
+          <div className="mt-8 grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+            {[
+              {
+                title: "Acompanhamento da aprendizagem",
+                desc:
+                  "4 avaliações nacionais por ano (do 2º ano do EF à 2ª série do EM), com relatórios e comparativos.",
+              },
+              {
+                title: "Avaliações",
+                desc:
+                  "Plataforma inteligente para criação de provas e relatórios de desempenho entre escolas COC.",
+              },
+              {
+                title: "Coleção Multimodal",
+                desc:
+                  "Cadernos digitais personalizáveis, conteúdo multimídia interativo e planos/roteiros ao professor.",
+              },
+            ].map((c) => (
+              <div key={c.title} className="rounded-3xl bg-gray-50 p-6 shadow-sm ring-1 ring-brand-900/5">
+                <h3 className="text-base font-semibold text-brand-800">{c.title}</h3>
+                <p className="mt-2 text-brand-900/80 leading-relaxed">{c.desc}</p>
+              </div>
+            ))}
+          </div>
         </div>
       </section>
 

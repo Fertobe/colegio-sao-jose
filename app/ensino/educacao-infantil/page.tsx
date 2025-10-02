@@ -6,7 +6,7 @@ import BrandIcon from "../../components/icons/BrandIcon";
 
 /** SEO da página (não altera layout) */
 export const metadata: Metadata = {
-  title: "Educação Infantil — Colégio São José",
+  title: "Educação Infantil", // ⬅️ evita duplicar com o template do layout
   description:
     "Solução completa do Berçário ao Infantil 5 com propostas mão na massa, jogos, trilhas digitais e avaliação contínua.",
   metadataBase: new URL("https://colegio.artferro.site"),

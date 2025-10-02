@@ -6,7 +6,7 @@ import BrandIcon from "../../components/icons/BrandIcon"; // ✅ usa o ícone of
 
 /** SEO da página (não altera layout) */
 export const metadata: Metadata = {
-  title: "Ensino Médio — Colégio São José",
+  title: "Ensino Médio", // ⬅️ evita duplicar com o template do layout
   description:
     "Itinerários formativos, eletivas, projeto de vida e simulados — proposta alinhada ao Novo Ensino Médio, com trilhas e acompanhamento contínuo.",
   metadataBase: new URL("https://colegio.artferro.site"),
@@ -176,21 +176,21 @@ export default function EnsinoMedioPage() {
             De que forma os alunos se preparam para o futuro?
           </h2>
 
-          <div className="mt-8 grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-            {[
-              { title: "Formação Geral Básica (FGB)", desc: "Conteúdos essenciais com exercícios de diferentes bancas e foco em resultados." },
-              { title: "Itinerários formativos", desc: "Trilhas que promovem contextualização e aprofundamento em áreas de interesse." },
-              { title: "Eletivas (100% digitais)", desc: "Mais de 40 opções, aplicação presencial ou remota, PBL e flexibilidade de currículo." },
-              { title: "Projeto de Vida", desc: "Autoconhecimento, protagonismo e escolhas conscientes para objetivos pessoais." },
-              { title: "Simulados & Avaliações", desc: "Ciclos anuais com relatórios completos e comparativos para acompanhamento contínuo." },
-              { title: "Materiais e trilhas", desc: "Tarefa • Reforço • Aprofundamento • Lider! — caminhos personalizados de estudo." },
-            ].map((c) => (
-              <div key={c.title} className="rounded-3xl bg-white p-6 shadow-sm ring-1 ring-brand-900/5">
-                <h3 className="text-lg font-semibold text-brand-800">{c.title}</h3>
-                <p className="mt-2 text-brand-900/80 leading-relaxed">{c.desc}</p>
-              </div>
-            ))}
-          </div>
+        <div className="mt-8 grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+          {[
+            { title: "Formação Geral Básica (FGB)", desc: "Conteúdos essenciais com exercícios de diferentes bancas e foco em resultados." },
+            { title: "Itinerários formativos", desc: "Trilhas que promovem contextualização e aprofundamento em áreas de interesse." },
+            { title: "Eletivas (100% digitais)", desc: "Mais de 40 opções, aplicação presencial ou remota, PBL e flexibilidade de currículo." },
+            { title: "Projeto de Vida", desc: "Autoconhecimento, protagonismo e escolhas conscientes para objetivos pessoais." },
+            { title: "Simulados & Avaliações", desc: "Ciclos anuais com relatórios completos e comparativos para acompanhamento contínuo." },
+            { title: "Materiais e trilhas", desc: "Tarefa • Reforço • Aprofundamento • Lider! — caminhos personalizados de estudo." },
+          ].map((c) => (
+            <div key={c.title} className="rounded-3xl bg-white p-6 shadow-sm ring-1 ring-brand-900/5">
+              <h3 className="text-lg font-semibold text-brand-800">{c.title}</h3>
+              <p className="mt-2 text-brand-900/80 leading-relaxed">{c.desc}</p>
+            </div>
+          ))}
+        </div>
         </div>
       </section>
 
