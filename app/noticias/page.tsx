@@ -2,13 +2,14 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { listNewsMeta } from "@/lib/news";
+import { getSiteUrl } from "@/app/utils/site-url";
 
 // Conteúdo vem do filesystem → pode ser totalmente estático.
 // Se migrar para CMS/DB, troque para "force-dynamic".
 export const dynamic = "force-static";
 
-// ajuste aqui se usar outro domínio em produção
-const SITE_URL = "https://colegio.artferro.site";
+// Base do site (respeita ambiente / previews)
+const SITE_URL = getSiteUrl();
 
 export const metadata: Metadata = {
   title: "Notícias | Colégio São José",
@@ -16,7 +17,7 @@ export const metadata: Metadata = {
     "Acompanhe as últimas notícias, eventos e comunicados do Colégio São José.",
   alternates: {
     canonical: "/noticias",
-    // adiciona <link rel="alternate" type="application/rss+xml" ...> para SEO
+    // <link rel="alternate" type="application/rss+xml" ...> para SEO
     types: { "application/rss+xml": "/rss.xml" },
   },
   openGraph: {
@@ -52,6 +53,15 @@ export default function NoticiasPage() {
     "@type": "Blog",
     name: "Notícias | Colégio São José",
     url: `${SITE_URL}/noticias`,
+    publisher: {
+      "@type": "Organization",
+      name: "Colégio São José",
+      url: SITE_URL,
+      logo: {
+        "@type": "ImageObject",
+        url: `${SITE_URL}/logo.svg`,
+      },
+    },
     blogPost: posts.map((p) => ({
       "@type": "BlogPosting",
       headline: p.title,
@@ -82,7 +92,7 @@ export default function NoticiasPage() {
       <div className="mt-8 grid gap-6 md:grid-cols-2 lg:grid-cols-3">
         {posts.map((p, i) => {
           const headingId = `post-${p.slug}`;
-          const eager = i === 0;
+          const eager = i === 0; // ajuda o LCP do primeiro card
           return (
             <article
               key={p.slug}
@@ -106,6 +116,8 @@ export default function NoticiasPage() {
                     fetchPriority={eager ? "high" : "low"}
                     decoding="async"
                     draggable={false}
+                    // baixa tamanhos coerentes com o grid (3/2/1 colunas)
+                    sizes="(min-width: 1024px) 33vw, (min-width: 768px) 50vw, 100vw"
                   />
                 </div>
 

@@ -2,6 +2,7 @@
 import type { Metadata, ResolvingMetadata } from "next";
 import Link from "next/link";
 import { readNewsBySlug, listNewsMeta } from "@/lib/news";
+import { getSiteUrl } from "@/app/utils/site-url";
 
 // Next 15: params e (opcional) searchParams são Promises
 type Params = { slug: string };
@@ -83,22 +84,47 @@ export default async function NewsPostPage({ params }: Props) {
   }
 
   // JSON-LD por post (melhora SEO para Article/BlogPosting)
-  const jsonLd = {
+  const base = getSiteUrl();
+  const urlAbs = `${base}/noticias/${post.slug}`;
+  const imgAbs = post.cover?.startsWith("http") ? post.cover : `${base}${post.cover}`;
+
+  const jsonLdArticle = {
     "@context": "https://schema.org",
     "@type": "BlogPosting",
     headline: post.title,
     ...(post.date ? { datePublished: post.date } : {}),
-    image: post.cover,
-    url: `https://colegio.artferro.site/noticias/${post.slug}`,
+    image: imgAbs,
+    url: urlAbs,
     ...(post.excerpt ? { description: post.excerpt } : {}),
+    mainEntityOfPage: urlAbs,
     publisher: {
       "@type": "Organization",
       name: "Colégio São José",
       logo: {
         "@type": "ImageObject",
-        url: "https://colegio.artferro.site/logo.svg",
+        url: `${base}/logo.svg`,
       },
     },
+  };
+
+  // Breadcrumbs JSON-LD
+  const jsonLdBreadcrumbs = {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    itemListElement: [
+      {
+        "@type": "ListItem",
+        position: 1,
+        name: "Notícias",
+        item: `${base}/noticias`,
+      },
+      {
+        "@type": "ListItem",
+        position: 2,
+        name: post.title,
+        item: urlAbs,
+      },
+    ],
   };
 
   return (
@@ -106,7 +132,12 @@ export default async function NewsPostPage({ params }: Props) {
       {/* JSON-LD específico do post */}
       <script
         type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLdArticle) }}
+      />
+      {/* JSON-LD Breadcrumbs */}
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLdBreadcrumbs) }}
       />
 
       {/* ← Voltar */}
@@ -138,6 +169,7 @@ export default async function NewsPostPage({ params }: Props) {
               draggable={false}
               width={1200}
               height={675}
+              sizes="(min-width: 768px) 768px, 100vw"
             />
           </div>
         )}
