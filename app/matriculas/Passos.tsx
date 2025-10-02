@@ -3,11 +3,11 @@
 
 import { useCallback, useMemo, useState } from "react";
 import Link from "next/link";
-import BrandIcon from "../components/icons/BrandIcon"; // ⬅️ usa os ícones centralizados
+import BrandIcon from "../components/icons/BrandIcon";
 
 type Props = {
   imgSrc: string;
-  telefone: string;
+  telefone: string;       // Ex.: "+55 (42) 3446-2212"
   whatsappLabel: string;
   whatsappUrl: string;
 };
@@ -22,7 +22,18 @@ export default function Passos({
 }: Props) {
   const [step, setStep] = useState<StepId>(1);
 
-  // ids estáveis para aria-controls / aria-labelledby
+  // href tel: a partir do telefone exibido
+  const telHref = useMemo(() => `tel:${telefone.replace(/\D/g, "")}`, [telefone]);
+
+  // nomes dos passos (alinha com o HowTo da /matriculas)
+  const stepNames: Record<StepId, string> = {
+    1: "Agendar visita",
+    2: "Visita ao colégio",
+    3: "Documentação",
+    4: "Confirmar matrícula",
+  };
+
+  // ids estáveis p/ tabs e painéis
   const tabIds = useMemo(
     () => ({
       1: { tab: "tab-step-1", panel: "panel-step-1" },
@@ -33,21 +44,17 @@ export default function Passos({
     []
   );
 
-  const goRel = useCallback(
-    (delta: -1 | 1) => {
-      setStep((s) => {
-        const next = (s + delta) as StepId;
-        if (next < 1) return 4;
-        if (next > 4) return 1;
-        return next;
-      });
-    },
-    [setStep]
-  );
+  const goRel = useCallback((delta: -1 | 1) => {
+    setStep((s) => {
+      const next = (s + delta) as StepId;
+      if (next < 1) return 4;
+      if (next > 4) return 1;
+      return next;
+    });
+  }, []);
 
   const onKeyNav = useCallback(
     (e: React.KeyboardEvent<HTMLButtonElement>) => {
-      // acessibilidade: setas navegam entre os "tabs"
       if (e.key === "ArrowRight") {
         e.preventDefault();
         goRel(1);
@@ -71,9 +78,11 @@ export default function Passos({
       role="tab"
       aria-selected={step === n}
       aria-controls={tabIds[n].panel}
+      tabIndex={step === n ? 0 : -1}            // roving tabindex
       type="button"
       onKeyDown={onKeyNav}
       onClick={() => setStep(n)}
+      aria-label={`${label}: ${stepNames[n]}`}  // mantém "Passo X" visual + label acessível descritivo
       className={[
         "rounded-full px-5 py-2 text-sm font-semibold transition focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-400",
         step === n
@@ -129,54 +138,24 @@ export default function Passos({
                 "
               >
                 {step === 1 && (
-                  <svg
-                    viewBox="0 0 24 24"
-                    className="h-5 w-5"
-                    fill="none"
-                    stroke="currentColor"
-                    strokeWidth={2}
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    aria-hidden="true"
-                  >
+                  <svg viewBox="0 0 24 24" className="h-5 w-5" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
                     <path d="M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.6l-1-1a5.5 5.5 0 0 0-7.8 7.8l1 1L12 22l7.8-8.6 1-1a5.5 5.5 0 0 0 0-7.8z" />
                     <path d="m9 12 2 2 4-4" />
                   </svg>
                 )}
                 {step === 2 && (
-                  <svg
-                    viewBox="0 0 24 24"
-                    className="h-5 w-5"
-                    fill="none"
-                    stroke="currentColor"
-                    strokeWidth={2}
-                    aria-hidden="true"
-                  >
+                  <svg viewBox="0 0 24 24" className="h-5 w-5" fill="none" stroke="currentColor" strokeWidth={2} aria-hidden="true">
                     <path d="M3 4h18M8 2v4m8-4v4M3 8h18v12a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8Z" />
                   </svg>
                 )}
                 {step === 3 && (
-                  <svg
-                    viewBox="0 0 24 24"
-                    className="h-5 w-5"
-                    fill="none"
-                    stroke="currentColor"
-                    strokeWidth={2}
-                    aria-hidden="true"
-                  >
+                  <svg viewBox="0 0 24 24" className="h-5 w-5" fill="none" stroke="currentColor" strokeWidth={2} aria-hidden="true">
                     <path d="M4 4h16v16H4z" />
                     <path d="M8 9h8M8 13h5" />
                   </svg>
                 )}
                 {step === 4 && (
-                  <svg
-                    viewBox="0 0 24 24"
-                    className="h-5 w-5"
-                    fill="none"
-                    stroke="currentColor"
-                    strokeWidth={2}
-                    aria-hidden="true"
-                  >
+                  <svg viewBox="0 0 24 24" className="h-5 w-5" fill="none" stroke="currentColor" strokeWidth={2} aria-hidden="true">
                     <path d="M20 7 9 18l-5-5" />
                   </svg>
                 )}
@@ -184,47 +163,45 @@ export default function Passos({
 
               {step === 1 && (
                 <h3 className="text-[22px] md:text-[26px] font-extrabold text-brand-900 leading-snug">
-                  Me interessei pelo colégio. <br className="hidden md:block" />
-                  Como eu entro em contato?
+                  {stepNames[1]}
                 </h3>
               )}
               {step === 2 && (
                 <h3 className="text-[22px] md:text-[26px] font-extrabold text-brand-900 leading-snug">
-                  O que acontece na visita?
+                  {stepNames[2]}
                 </h3>
               )}
               {step === 3 && (
                 <h3 className="text-[22px] md:text-[26px] font-extrabold text-brand-900 leading-snug">
-                  Quais documentos levar?
+                  {stepNames[3]}
                 </h3>
               )}
               {step === 4 && (
                 <h3 className="text-[22px] md:text-[26px] font-extrabold text-brand-900 leading-snug">
-                  Como finalizo a matrícula?
+                  {stepNames[4]}
                 </h3>
               )}
             </div>
 
-            {/* Painéis (somente o ativo fica visível). aria-live para leitores de tela */}
-            <div
-              id={tabIds[step].panel}
-              role="tabpanel"
-              aria-labelledby={tabIds[step].tab}
-              aria-live="polite"
-              className="mt-6"
-            >
-              {step === 1 && (
+            {/* Quatro painéis sempre no DOM (acessibilidade de abas) */}
+            <div className="mt-6">
+              {/* Painel 1 */}
+              <div
+                id={tabIds[1].panel}
+                role="tabpanel"
+                aria-labelledby={tabIds[1].tab}
+                aria-hidden={step !== 1}
+                hidden={step !== 1}
+              >
                 <div className="space-y-5 text-brand-800">
-                  {/* Pelo site */}
+                  {/* Site / agendamento */}
                   <div className="flex items-center gap-3">
-                    <BrandIcon
-                      name="globe"
-                      className="h-5 w-5 text-brand-700 shrink-0"
-                      title="Site"
-                    />
+                    <BrandIcon name="globe" className="h-5 w-5 text-brand-700 shrink-0" title="Site" />
                     <span className="text-brand-900 font-semibold">Pelo site,</span>
                     <Link
                       href="/agendamento"
+                      prefetch={false}
+                      aria-label="Agendar visita"
                       className="ml-2 inline-flex items-center justify-center rounded-full bg-brand-700 px-4 py-2 text-sm font-semibold text-white shadow-sm transition hover:bg-brand-600"
                     >
                       clicando aqui
@@ -233,41 +210,30 @@ export default function Passos({
 
                   {/* Presencialmente */}
                   <div className="flex items-center gap-3">
-                    <BrandIcon
-                      name="pinHome"
-                      className="h-5 w-5 text-brand-700 shrink-0"
-                      title="Presencialmente"
-                    />
+                    <BrandIcon name="pinHome" className="h-5 w-5 text-brand-700 shrink-0" title="Presencialmente" />
                     <p>Presencialmente, indo até a unidade de interesse.</p>
                   </div>
 
                   {/* Central (telefone) */}
                   <div className="flex items-center gap-3">
-                    <BrandIcon
-                      name="phone"
-                      className="h-5 w-5 text-brand-700 shrink-0"
-                      title="Telefone"
-                    />
+                    <BrandIcon name="phone" className="h-5 w-5 text-brand-700 shrink-0" title="Telefone" />
                     <p>
-                      Ligando para a Central de Agendamento no número:{" "}
-                      <strong className="text-brand-900">{telefone}</strong>.
+                      Ligando para a Central de Agendamento:&nbsp;
+                      <a href={telHref} className="font-semibold text-brand-900 underline underline-offset-4">
+                        {telefone}
+                      </a>
+                      .
                     </p>
                   </div>
 
                   {/* WhatsApp */}
                   <div className="flex items-center gap-3">
-                    {/* WhatsApp oficial; herda cor via currentColor */}
-                    <BrandIcon
-                      name="whatsapp"
-                      color="currentColor"
-                      className="h-[22px] w-[22px] text-brand-700 shrink-0"
-                      title="WhatsApp"
-                    />
+                    <BrandIcon name="whatsapp" color="currentColor" className="h-[22px] w-[22px] text-brand-700 shrink-0" title="WhatsApp" />
                     <span className="text-brand-900 font-semibold">Pelo WhatsApp:</span>
                     <a
                       href={whatsappUrl}
                       target="_blank"
-                      rel="noreferrer"
+                      rel="noreferrer noopener"
                       aria-label="Abrir WhatsApp"
                       className="ml-2 inline-flex items-center rounded-full bg-brand-700 px-4 py-2 text-sm font-semibold text-white transition hover:bg-brand-600"
                     >
@@ -275,53 +241,74 @@ export default function Passos({
                     </a>
                   </div>
                 </div>
-              )}
+              </div>
 
-              {step === 2 && (
+              {/* Painel 2 */}
+              <div
+                id={tabIds[2].panel}
+                role="tabpanel"
+                aria-labelledby={tabIds[2].tab}
+                aria-hidden={step !== 2}
+                hidden={step !== 2}
+              >
                 <div className="space-y-5 text-brand-800">
                   <p>
                     Na visita presencial, a família conhecerá a{" "}
                     <strong className="text-brand-900">estrutura física</strong> e a{" "}
                     <strong className="text-brand-900">proposta pedagógica</strong> da escola.
-                    Todo o tour é feito com acompanhamento de um profissional do{" "}
-                    <strong className="text-brand-900">Colégio São José</strong>, que passará
+                    Todo o tour é acompanhado por um profissional do{" "}
+                    <strong className="text-brand-900">Colégio São José</strong>, que apresentará
                     as principais informações e esclarecerá as dúvidas da família.
                   </p>
                   <p className="font-semibold text-brand-900">
-                    É uma oportunidade única de vivenciar os espaços e sentir a energia da escola.
+                    É uma oportunidade de vivenciar os espaços e sentir a energia da escola.
                   </p>
                 </div>
-              )}
+              </div>
 
-              {step === 3 && (
+              {/* Painel 3 */}
+              <div
+                id={tabIds[3].panel}
+                role="tabpanel"
+                aria-labelledby={tabIds[3].tab}
+                aria-hidden={step !== 3}
+                hidden={step !== 3}
+              >
                 <div className="space-y-3 text-brand-800">
                   <p>Levar (cópia e original quando possível):</p>
                   <ul className="list-disc pl-5 space-y-2">
-                    <li>CPF (Responsáveis e Aluno);</li>
-                    <li>RG (Responsáveis e Aluno);</li>
-                    <li>Certidão de Nascimento do Aluno;</li>
-                    <li>RG (Aluno);</li>
-                    <li>CPF (Aluno);</li>
-                    <li>Carteira de Vacinação do Aluno;</li>
-                    <li>Comprovante de Residência (COPEL);</li>
-                    <li>Histórico Escolar do Estudante.</li>
+                    <li>RG e CPF do(a) Aluno(a) e dos Responsáveis;</li>
+                    <li>Certidão de Nascimento do(a) Aluno(a);</li>
+                    <li>Carteira de Vacinação do(a) Aluno(a);</li>
+                    <li>Comprovante de Residência (ex.: COPEL);</li>
+                    <li>Histórico Escolar do(a) Estudante.</li>
                   </ul>
                 </div>
-              )}
+              </div>
 
-              {step === 4 && (
+              {/* Painel 4 */}
+              <div
+                id={tabIds[4].panel}
+                role="tabpanel"
+                aria-labelledby={tabIds[4].tab}
+                aria-hidden={step !== 4}
+                hidden={step !== 4}
+              >
                 <div className="space-y-3 text-brand-800">
                   <p>Para finalizar a matrícula, realizamos:</p>
                   <ul className="list-disc pl-5 space-y-2">
-                    <li>Conferência dos documentos.</li>
-                    <li>Assinatura do contrato.</li>
+                    <li>Conferência dos documentos;</li>
+                    <li>Assinatura do contrato;</li>
                     <li>Orientações sobre material e início das aulas.</li>
                   </ul>
                   <p className="text-brand-900 font-semibold">
-                    Dúvidas? Fale com nossa Central: {telefone}.
+                    Dúvidas? Fale com nossa Central:&nbsp;
+                    <a href={telHref} className="underline underline-offset-4">
+                      {telefone}
+                    </a>.
                   </p>
                 </div>
-              )}
+              </div>
             </div>
           </div>
 
@@ -329,15 +316,19 @@ export default function Passos({
           <div className="relative">
             <img
               src={imgSrc}
-              alt="Imagem ilustrativa do passo"
+              alt="Ilustração do processo de matrícula"
               className="h-auto w-full rounded-2xl object-contain ring-1 ring-black/10"
               loading="lazy"
+              decoding="async"
+              width={1200}
+              height={800}
+              sizes="(min-width:1024px) 520px, (min-width:768px) 420px, 100vw"
               draggable={false}
             />
           </div>
         </div>
 
-        {/* Navegação auxiliar (opcional, não altera layout; ajuda no mobile) */}
+        {/* Navegação auxiliar (mobile) */}
         <div className="mt-6 flex justify-center gap-3 md:hidden">
           <button
             type="button"

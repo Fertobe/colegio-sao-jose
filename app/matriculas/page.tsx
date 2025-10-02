@@ -3,12 +3,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import BackToTop from "../components/BackToTop";
 import Passos from "./Passos";
-
-export const metadata: Metadata = {
-  title: "Matrículas | Colégio São José",
-  description:
-    "Estamos felizes com o seu interesse! Agende sua visita e conheça nossa proposta pedagógica. Matrículas abertas.",
-};
+import { getSiteUrl } from "@/app/utils/site-url";
 
 // ==================== CONFIG FÁCIL ====================
 const HERO_IMG = "/matriculas/Hero.webp";
@@ -24,10 +19,85 @@ const WHATSAPP_LABEL = "Matrícula";
 const WHATSAPP_URL = "https://wa.me/5542998276516";
 // =====================================================
 
+// SEO base
+const SITE_URL = getSiteUrl();
+
+export const metadata: Metadata = {
+  title: "Matrículas | Colégio São José",
+  description:
+    "Estamos felizes com o seu interesse! Agende sua visita e conheça nossa proposta pedagógica. Matrículas abertas.",
+  alternates: { canonical: "/matriculas" },
+  openGraph: {
+    type: "website",
+    url: `${SITE_URL}/matriculas`,
+    title: "Matrículas | Colégio São José",
+    description:
+      "Estamos felizes com o seu interesse! Agende sua visita e conheça nossa proposta pedagógica. Matrículas abertas.",
+    images: [{ url: `${SITE_URL}${HERO_IMG}`, alt: "Família conhecendo o colégio para matrícula" }],
+    siteName: "Colégio São José",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Matrículas | Colégio São José",
+    description:
+      "Agende sua visita e conheça a nossa proposta pedagógica. Matrículas abertas.",
+    images: [`${SITE_URL}${HERO_IMG}`],
+  },
+};
+
 export default function MatriculasPage() {
+  // JSON-LD (Breadcrumb + WebPage + HowTo do passo a passo)
+  const breadcrumbLd = {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    itemListElement: [
+      { "@type": "ListItem", position: 1, name: "Início", item: `${SITE_URL}/` },
+      { "@type": "ListItem", position: 2, name: "Matrículas", item: `${SITE_URL}/matriculas` },
+    ],
+  };
+
+  const webPageLd = {
+    "@context": "https://schema.org",
+    "@type": "WebPage",
+    name: "Matrículas — Colégio São José",
+    url: `${SITE_URL}/matriculas`,
+  };
+
+  const howToLd = {
+    "@context": "https://schema.org",
+    "@type": "HowTo",
+    name: "Como realizar sua matrícula",
+    description:
+      "Etapas para efetivar a matrícula no Colégio São José, do agendamento da visita à confirmação.",
+    step: [
+      {
+        "@type": "HowToStep",
+        name: "Agendar visita",
+        url: `${SITE_URL}/agendamento`,
+      },
+      {
+        "@type": "HowToStep",
+        name: "Visitar o colégio e conhecer a proposta",
+      },
+      {
+        "@type": "HowToStep",
+        name: "Entregar documentação necessária",
+      },
+      {
+        "@type": "HowToStep",
+        name: "Confirmar a matrícula",
+      },
+    ],
+  };
+
   return (
     <main className="bg-white">
-      {/* ===== HERO (igual) ===== */}
+      {/* JSON-LD estruturado (SEO) */}
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbLd) }} />
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(webPageLd) }} />
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(howToLd) }} />
+
+      {/* ===== HERO ===== */}
       <section className="relative overflow-hidden">
         <div className="absolute inset-0 bg-gradient-to-br from-brand-900 via-brand-800 to-brand-600" />
         <div className="relative z-10 mx-auto grid max-w-6xl items-center gap-10 px-4 py-16 md:grid-cols-2 md:py-20 lg:py-24">
@@ -47,6 +117,8 @@ export default function MatriculasPage() {
             <div className="mt-6">
               <Link
                 href="/agendamento"
+                prefetch={false}
+                aria-label="Agendar visita ao Colégio São José"
                 className="inline-flex rounded-full bg-brand-300 px-5 py-3 font-semibold text-brand-900 shadow-lg transition hover:bg-brand-200"
               >
                 Agendar visita
@@ -71,19 +143,24 @@ export default function MatriculasPage() {
                 select-none object-contain origin-bottom
                 drop-shadow-[0_25px_40px_rgba(0,0,0,.35)]
               "
+              width={1200}
+              height={1200}
+              sizes="(min-width:1024px) 520px, (min-width:768px) 420px, 320px"
               loading="eager"
+              fetchPriority="high"
+              decoding="async"
               draggable={false}
             />
           </div>
         </div>
         <div className="pointer-events-none absolute inset-x-0 bottom-0 z-30">
-          <svg viewBox="0 0 1440 140" className="h-[90px] w-full md:h-[110px] lg:h-[130px]" preserveAspectRatio="none">
+          <svg viewBox="0 0 1440 140" className="h-[90px] w-full md:h-[110px] lg:h-[130px]" preserveAspectRatio="none" aria-hidden="true" focusable="false">
             <path d="M0,80 C320,140 920,10 1440,90 L1440,140 L0,140 Z" fill="#fff" />
           </svg>
         </div>
       </section>
 
-      {/* ===== PASSO A PASSO (interativo, mantendo o visual) ===== */}
+      {/* ===== PASSO A PASSO ===== */}
       <Passos
         imgSrc={PASSO_IMG}
         telefone={CENTRAL_TELEFONE}
@@ -91,7 +168,7 @@ export default function MatriculasPage() {
         whatsappUrl={WHATSAPP_URL}
       />
 
-      {/* ===== ONDE ESTAMOS (igual, com 1 círculo na régua) ===== */}
+      {/* ===== ONDE ESTAMOS ===== */}
       <section id="onde-estamos" className="bg-white">
         <div className="mx-auto max-w-6xl px-4 pb-16">
           <h2 className="text-2xl font-bold text-brand-700 uppercase">Onde estamos</h2>
@@ -125,7 +202,7 @@ export default function MatriculasPage() {
                 <a
                   href={MAPS_LINK}
                   target="_blank"
-                  rel="noreferrer"
+                  rel="noopener noreferrer"
                   className="inline-flex items-center justify-center rounded-full bg-brand-700 px-5 py-3 font-semibold text-white shadow-sm transition hover:bg-brand-600"
                 >
                   Ver no Google Maps
@@ -136,7 +213,7 @@ export default function MatriculasPage() {
         </div>
       </section>
 
-      {/* Back to Top — azul institucional (somente nesta página) */}
+      {/* Back to Top — azul institucional */}
       <BackToTop
         variant="brand"
         threshold={600}
