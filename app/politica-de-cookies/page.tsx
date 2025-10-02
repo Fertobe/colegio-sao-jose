@@ -2,12 +2,32 @@
 import type { Metadata } from "next";
 import type { CSSProperties } from "react";
 import BackToTop from "../components/BackToTop";
+import { getSiteUrl } from "@/app/utils/site-url";
+
+const BASE = getSiteUrl();
 
 export const metadata: Metadata = {
-  title: "Política de Cookies", // layout aplica “ — Colégio São José”
+  metadataBase: new URL(BASE),
+  title: "Política de Cookies", // o layout aplica “ — Colégio São José”
   description:
     "Entenda como o Colégio São José usa cookies e tecnologias semelhantes para melhorar sua experiência, analisar métricas e personalizar conteúdos.",
   alternates: { canonical: "/politica-de-cookies" },
+  openGraph: {
+    type: "article",
+    siteName: "Colégio São José",
+    title: "Política de Cookies",
+    description:
+      "Entenda como o Colégio São José usa cookies e tecnologias semelhantes para melhorar sua experiência, analisar métricas e personalizar conteúdos.",
+    url: "/politica-de-cookies",
+    images: ["/og-cover.webp"],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Política de Cookies",
+    description:
+      "Entenda como o Colégio São José usa cookies e tecnologias semelhantes para melhorar sua experiência, analisar métricas e personalizar conteúdos.",
+    images: ["/og-cover.webp"],
+  },
 };
 
 // Imagens do HERO
@@ -32,12 +52,36 @@ const heroMobileStyle: CSSProperties = {
   willChange: "transform",
 };
 
+// ⬅️ placeholder — trocamos no final do projeto junto com o domínio final
+const EMAIL_CONTATO = "contato@colegiosaojose.net";
+
 export default function PoliticaDeCookiesPage() {
   const atualizadoEm = "Setembro de 2025";
 
+  // JSON-LD breadcrumb (Início → Política de Cookies)
+  const breadcrumbLd = {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    itemListElement: [
+      { "@type": "ListItem", position: 1, name: "Início", item: `${BASE}/` },
+      {
+        "@type": "ListItem",
+        position: 2,
+        name: "Política de Cookies",
+        item: `${BASE}/politica-de-cookies`,
+      },
+    ],
+  };
+
   return (
     <main className="bg-white">
-      {/* HERO */}
+      {/* JSON-LD (invisível; ajuda SEO) */}
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbLd) }}
+      />
+
+      {/* ===================== HERO ===================== */}
       <section className="relative overflow-hidden">
         <div
           className="absolute inset-0 bg-gradient-to-br from-brand-900 via-brand-800 to-brand-600"
@@ -62,7 +106,7 @@ export default function PoliticaDeCookiesPage() {
             <p className="mt-3 text-sm text-white/80">Última atualização: {atualizadoEm}</p>
           </div>
 
-          {/* Imagem */}
+          {/* Imagem do HERO (desktop/tablet e mobile separadas) */}
           <div className="relative mx-auto aspect-square w-[320px] md:w-[420px] lg:w-[520px]">
             {/* Mobile */}
             <div className="md:hidden">
@@ -75,8 +119,12 @@ export default function PoliticaDeCookiesPage() {
                 decoding="async"
                 fetchPriority="high"
                 draggable={false}
+                width={900}
+                height={900}
+                sizes="(max-width: 767px) 320px, 0px"
               />
             </div>
+
             {/* Desktop/Tablet */}
             <div className="hidden md:block">
               <img
@@ -94,12 +142,15 @@ export default function PoliticaDeCookiesPage() {
                 decoding="async"
                 fetchPriority="high"
                 draggable={false}
+                width={1200}
+                height={1200}
+                sizes="(min-width: 1024px) 520px, (min-width: 768px) 420px, 0px"
               />
             </div>
           </div>
         </div>
 
-        {/* Onda branca */}
+        {/* Onda branca padrão */}
         <div className="pointer-events-none absolute inset-x-0 bottom-0 z-30">
           <svg
             viewBox="0 0 1440 140"
@@ -113,7 +164,7 @@ export default function PoliticaDeCookiesPage() {
         </div>
       </section>
 
-      {/* CONTEÚDO */}
+      {/* ===================== CONTEÚDO ===================== */}
       <section className="bg-white">
         <div className="mx-auto max-w-6xl px-4 py-12 md:py-16">
           {/* O que são cookies */}
@@ -139,7 +190,7 @@ export default function PoliticaDeCookiesPage() {
             </p>
           </section>
 
-          {/* Tipos */}
+          {/* Tipos de cookies */}
           <section id="tipos" className="mt-10">
             <h2 className="text-2xl font-bold text-brand-700 uppercase">Tipos de cookies</h2>
             <div className="mt-6 grid gap-6 md:grid-cols-2 lg:grid-cols-3">
@@ -152,7 +203,7 @@ export default function PoliticaDeCookiesPage() {
                 </p>
               </div>
               <div className="rounded-3xl bg-gray-50 p-6 shadow-sm ring-1 ring-brand-900/5">
-                <h3 className="text-lg font-semibold text-brand-800">Desempenho & análise</h3>
+                <h3 className="text-lg font-semibold text-brand-800">Desempenho &amp; análise</h3>
                 <p className="mt-2 text-brand-900/80 leading-relaxed">
                   Ajudam a medir tráfego, identificar páginas mais/menos acessadas e entender como
                   os usuários interagem, para que possamos melhorar conteúdo e usabilidade.
@@ -183,7 +234,7 @@ export default function PoliticaDeCookiesPage() {
             </div>
           </section>
 
-          {/* Quais usamos */}
+          {/* O que pode aparecer no site */}
           <section id="quais-usamos" className="mt-10">
             <h2 className="text-2xl font-bold text-brand-700 uppercase">Quais cookies podem aparecer neste site?</h2>
             <p className="mt-3 text-brand-900/85 leading-relaxed">
@@ -194,7 +245,7 @@ export default function PoliticaDeCookiesPage() {
             </p>
           </section>
 
-          {/* Preferências */}
+          {/* Como gerenciar */}
           <section id="preferencias" className="mt-10">
             <h2 className="text-2xl font-bold text-brand-700 uppercase">Como gerenciar suas preferências</h2>
             <div className="mt-4 space-y-4 text-brand-900/85 leading-relaxed">
@@ -215,7 +266,7 @@ export default function PoliticaDeCookiesPage() {
             </div>
           </section>
 
-          {/* Base legal */}
+          {/* Base legal & retenção */}
           <section id="base-legal" className="mt-10">
             <h2 className="text-2xl font-bold text-brand-700 uppercase">Base legal e retenção</h2>
             <p className="mt-3 text-brand-900/85 leading-relaxed">
@@ -245,16 +296,18 @@ export default function PoliticaDeCookiesPage() {
               Em caso de dúvidas sobre esta política ou sobre o uso de cookies, entre em contato
               pelo e-mail{" "}
               <a
-                href="mailto:contato@colegiosaojose.net"
+                href={`mailto:${EMAIL_CONTATO}`}
                 className="font-semibold text-brand-700 underline underline-offset-4"
               >
-                contato@colegiosaojose.net
+                {EMAIL_CONTATO}
               </a>
+              .
             </p>
           </section>
         </div>
       </section>
 
+      {/* Botão flutuante “Voltar ao topo” */}
       <BackToTop />
     </main>
   );

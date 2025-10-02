@@ -2,13 +2,15 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import BackToTop from "../components/BackToTop";
-import ContatoForm from "./ContatoForm";
+import ContatoFormMailto from "./ContatoFormMailto";
 import BrandIcon from "../components/icons/BrandIcon";
+import { getSiteUrl } from "@/app/utils/site-url";
 
 export const metadata: Metadata = {
   title: "Contato | Colégio São José",
   description:
     "Fale conosco: telefone, WhatsApp, e-mail, formulário e mapa do Colégio São José.",
+  alternates: { canonical: "/contato" },
 };
 
 // ============ CONFIG ============
@@ -24,7 +26,7 @@ const HERO_MOBILE = {
 const TELEFONE = "+55 (42) 3446-2212";
 const TEL_E164 = "+" + TELEFONE.replace(/\D/g, ""); // tel:+554234462212
 
-// 👉 usa .env quando existir; senão cai no seu Gmail p/ testes
+// ⚠️ E-mail: deixamos igual (env + fallback de testes). Trocaremos no final.
 const EMAIL = process.env.CONTACT_TO_EMAIL || "fernando.tobe@gmail.com";
 
 const WHATSAPP_URL = "https://wa.me/5542998276516";
@@ -35,8 +37,46 @@ const MAPS_LINK =
 // =================================
 
 export default function ContatoPage() {
+  const SITE_URL = getSiteUrl();
+
+  // JSON-LD de ContactPage + Organization/contactPoint
+  const jsonLd = {
+    "@context": "https://schema.org",
+    "@type": "ContactPage",
+    name: "Contato — Colégio São José",
+    url: `${SITE_URL}/contato`,
+    mainEntity: {
+      "@type": "Organization",
+      name: "Colégio São José",
+      url: SITE_URL,
+      logo: `${SITE_URL}/logo.svg`,
+      contactPoint: [
+        {
+          "@type": "ContactPoint",
+          contactType: "customer support",
+          telephone: TEL_E164,
+          areaServed: "BR",
+          availableLanguage: ["pt-BR"],
+        },
+        {
+          "@type": "ContactPoint",
+          contactType: "WhatsApp",
+          url: WHATSAPP_URL,
+          areaServed: "BR",
+          availableLanguage: ["pt-BR"],
+        },
+      ],
+    },
+  };
+
   return (
     <main className="bg-white">
+      {/* JSON-LD estruturado (SEO) */}
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+      />
+
       {/* ===== HERO ===== */}
       <section className="relative overflow-hidden">
         <div
@@ -119,6 +159,7 @@ export default function ContatoPage() {
             <a
               href={`tel:${TEL_E164}`}
               className="group rounded-2xl border border-brand-100 p-5 shadow-sm transition hover:shadow-md"
+              aria-label={`Ligar para ${TELEFONE}`}
             >
               <div className="flex items-center gap-3">
                 <BrandIcon name="phone" className="h-6 w-6 text-brand-700" title="Telefone" />
@@ -133,6 +174,7 @@ export default function ContatoPage() {
               target="_blank"
               rel="noopener noreferrer"
               className="rounded-2xl border border-brand-100 p-5 shadow-sm transition hover:shadow-md"
+              aria-label="Abrir conversa no WhatsApp"
             >
               <div className="flex items-center gap-3">
                 <BrandIcon
@@ -152,6 +194,7 @@ export default function ContatoPage() {
             <a
               href={`mailto:${EMAIL}`}
               className="rounded-2xl border border-brand-100 p-5 shadow-sm transition hover:shadow-md"
+              aria-label={`Enviar e-mail para ${EMAIL}`}
             >
               <div className="flex items-center gap-3">
                 <BrandIcon name="mail" className="h-6 w-6 text-brand-700" title="E-mail" />
@@ -163,7 +206,9 @@ export default function ContatoPage() {
             {/* Agendar visita */}
             <Link
               href="/agendamento"
+              prefetch={false}
               className="rounded-2xl border border-brand-100 p-5 shadow-sm transition hover:shadow-md"
+              aria-label="Ir para a página de agendamento de visita"
             >
               <div className="flex items-center gap-3">
                 <BrandIcon name="calendar" className="h-6 w-6 text-brand-700" title="Agendar visita" />
@@ -187,8 +232,8 @@ export default function ContatoPage() {
                 Preencha os campos e vamos responder o quanto antes. Campos com * são obrigatórios.
               </p>
               <div className="mt-6 rounded-2xl border border-brand-100 p-6 shadow-sm">
-                {/* Seu ContatoForm atual abre o app de e-mail (mailto) — perfeito para testes */}
-                <ContatoForm email={EMAIL} />
+                {/* Abre o app de e-mail (mailto) — perfeito para testes */}
+                <ContatoFormMailto email={EMAIL} />
               </div>
             </div>
 

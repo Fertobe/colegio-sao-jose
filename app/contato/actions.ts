@@ -1,6 +1,7 @@
 // app/contato/actions.ts
 "use server";
 
+import { headers } from "next/headers";
 import { sendMail } from "@/app/utils/mail";
 
 export type ContatoState = {
@@ -9,34 +10,38 @@ export type ContatoState = {
   errors?: Partial<Record<"nome" | "email" | "telefone" | "mensagem", string>>;
 };
 
-const MIN_DWELL_MS = 1200; // tempo mínimo na página p/ evitar bot
+const MIN_DWELL_MS = 1200;
 
 function isEmail(s?: string) {
   if (!s) return false;
   return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(s.trim());
 }
-function clean(s: any) {
+function clean(s: unknown) {
   return typeof s === "string" ? s.trim() : "";
+}
+function limit(s: string, n: number) {
+  return s.length > n ? s.slice(0, n) : s;
+}
+function sanitizeHeader(s: string) {
+  return s.replace(/[\r\n]+/g, " ").trim();
 }
 
 export async function enviarContato(
   _prev: ContatoState,
   formData: FormData
 ): Promise<ContatoState> {
-  // Honeypot: robots preenchem "website"
   const website = clean(formData.get("website"));
   if (website) return { ok: true, message: "Recebido. Obrigado!" };
 
-  // Tempo mínimo (dwell time)
   const tstart = Number(formData.get("tstart") || 0);
   if (tstart && Date.now() - tstart < MIN_DWELL_MS) {
     return { ok: true, message: "Recebido. Obrigado!" };
   }
 
-  const nome = clean(formData.get("nome"));
-  const email = clean(formData.get("email"));
-  const telefone = clean(formData.get("telefone"));
-  const mensagem = clean(formData.get("mensagem"));
+  const nome = limit(clean(formData.get("nome")), 120);
+  const email = limit(clean(formData.get("email")).toLowerCase(), 160);
+  const telefone = limit(clean(formData.get("telefone")), 40);
+  const mensagem = limit(clean(formData.get("mensagem")), 4000);
 
   const errors: ContatoState["errors"] = {};
   if (!nome) errors.nome = "Informe seu nome.";
@@ -48,19 +53,31 @@ export async function enviarContato(
     return { ok: false, message: "Corrija os campos em destaque.", errors };
   }
 
-  const TO = process.env.CONTACT_TO_EMAIL;
-  const FROM =
-    process.env.CONTACT_FROM_EMAIL || "onboarding@resend.dev"; // seguro p/ testes com Resend
+  const TO = String(process.env.CONTACT_TO_EMAIL || "").trim();
+  const FROM = String(process.env.CONTACT_FROM_EMAIL || "onboarding@resend.dev").trim();
 
   if (!TO) {
     return {
       ok: false,
-      message:
-        "Contato indisponível no momento (CONTACT_TO_EMAIL não configurado).",
+      message: "Contato indisponível no momento (CONTACT_TO_EMAIL não configurado).",
     };
   }
 
-  const subject = `Novo contato — ${nome} <${email}>`;
+  // ⬇️ headers() agora é assíncrono no Next 15
+  let ua = "", ip = "", referer = "";
+  try {
+    const hdrs = await headers();
+    ua = hdrs.get("user-agent") ?? "";
+    const xff = hdrs.get("x-forwarded-for") ?? "";
+    ip = xff.split(",")[0]?.trim() || hdrs.get("x-real-ip") || "";
+    referer = hdrs.get("referer") ?? "";
+  } catch {
+    // segue sem metadados se não disponível
+  }
+
+  const subjectRaw = `Novo contato — ${nome} <${email}>`;
+  const subject = sanitizeHeader(limit(subjectRaw, 160));
+
   const text = [
     `Nome: ${nome}`,
     `E-mail: ${email}`,
@@ -68,6 +85,11 @@ export async function enviarContato(
     "",
     "Mensagem:",
     mensagem,
+    "",
+    "-- Metadados --",
+    `IP: ${ip}`,
+    `User-Agent: ${ua}`,
+    `Referer: ${referer}`,
   ].join("\n");
 
   const html = `
@@ -77,23 +99,20 @@ export async function enviarContato(
       <p><strong>E-mail:</strong> ${escapeHtml(email)}</p>
       <p><strong>Telefone:</strong> ${escapeHtml(telefone)}</p>
       <pre style="white-space:pre-wrap;margin-top:16px">${escapeHtml(mensagem)}</pre>
+      <hr style="margin:16px 0;border:none;border-top:1px solid #eee"/>
+      <p style="color:#666;font-size:12px">
+        <strong>IP:</strong> ${escapeHtml(ip)}<br/>
+        <strong>User-Agent:</strong> ${escapeHtml(ua)}<br/>
+        <strong>Referer:</strong> ${escapeHtml(referer)}
+      </p>
     </div>
   `.trim();
 
   try {
-    await sendMail({
-      to: TO,
-      from: FROM,
-      subject,
-      text,
-      html,
-    });
+    await sendMail({ to: TO, from: FROM, subject, text, html } as any);
     return { ok: true, message: "Mensagem enviada com sucesso. Obrigado!" };
   } catch (err: any) {
-    return {
-      ok: false,
-      message: `Falha ao enviar: ${err?.message || "erro desconhecido"}`,
-    };
+    return { ok: false, message: `Falha ao enviar: ${err?.message || "erro desconhecido"}` };
   }
 }
 

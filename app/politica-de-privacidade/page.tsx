@@ -3,12 +3,32 @@ import type { Metadata } from "next";
 import type { CSSProperties } from "react";
 import Link from "next/link";
 import BackToTop from "../components/BackToTop";
+import { getSiteUrl } from "@/app/utils/site-url";
+
+const BASE = getSiteUrl();
 
 export const metadata: Metadata = {
-  title: "Política de Privacidade", // layout aplica “ — Colégio São José”
+  metadataBase: new URL(BASE),
+  title: "Política de Privacidade", // o layout aplica “ — Colégio São José”
   description:
     "Como coletamos, utilizamos e protegemos seus dados pessoais no Colégio São José, em conformidade com a LGPD.",
   alternates: { canonical: "/politica-de-privacidade" },
+  openGraph: {
+    type: "article",
+    siteName: "Colégio São José",
+    title: "Política de Privacidade",
+    description:
+      "Como coletamos, utilizamos e protegemos seus dados pessoais no Colégio São José, em conformidade com a LGPD.",
+    url: "/politica-de-privacidade",
+    images: ["/og-cover.webp"],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Política de Privacidade",
+    description:
+      "Como coletamos, utilizamos e protegemos seus dados pessoais no Colégio São José, em conformidade com a LGPD.",
+    images: ["/og-cover.webp"],
+  },
 };
 
 const HERO_DESKTOP = {
@@ -31,12 +51,34 @@ const heroMobileStyle: CSSProperties = {
   willChange: "transform",
 };
 
+// ⬅️ placeholder — trocamos no final do projeto junto com o domínio final
 const DPO_EMAIL = "privacidade@colegiosaojose.net";
 const LAST_UPDATE = "23/09/2025";
 
 export default function PoliticaPrivacidadePage() {
+  // JSON-LD breadcrumb (Início → Política de Privacidade)
+  const breadcrumbLd = {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    itemListElement: [
+      { "@type": "ListItem", position: 1, name: "Início", item: `${BASE}/` },
+      {
+        "@type": "ListItem",
+        position: 2,
+        name: "Política de Privacidade",
+        item: `${BASE}/politica-de-privacidade`,
+      },
+    ],
+  };
+
   return (
     <main className="bg-white">
+      {/* JSON-LD (invisível; ajuda SEO) */}
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbLd) }}
+      />
+
       {/* HERO */}
       <section className="relative overflow-hidden">
         <div
@@ -99,6 +141,9 @@ export default function PoliticaPrivacidadePage() {
                 decoding="async"
                 fetchPriority="high"
                 draggable={false}
+                width={900}
+                height={900}
+                sizes="(max-width: 767px) 320px, 0px"
               />
             </div>
             {/* Desktop/Tablet */}
@@ -112,6 +157,9 @@ export default function PoliticaPrivacidadePage() {
                 decoding="async"
                 fetchPriority="high"
                 draggable={false}
+                width={1200}
+                height={1200}
+                sizes="(min-width: 1024px) 520px, (min-width: 768px) 420px, 0px"
               />
             </div>
           </div>

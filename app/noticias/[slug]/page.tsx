@@ -4,13 +4,16 @@ import Link from "next/link";
 import { readNewsBySlug, listNewsMeta } from "@/lib/news";
 import { getSiteUrl } from "@/app/utils/site-url";
 
-// Next 15: params e (opcional) searchParams são Promises
+// Next 15: params e (opcional) searchParams podem vir como Promises
 type Params = { slug: string };
 type Props = {
   params: Promise<Params>;
-  // você não usa searchParams aqui; tipamos de forma genérica e segura:
   searchParams?: Promise<Record<string, string | string[] | undefined>>;
 };
+
+// Conteúdo estático + ISR
+export const dynamic = "force-static";
+export const revalidate = 3600; // 1h
 
 /* ========= METADATA DINÂMICA (OG/Twitter/Canonical) ========= */
 export async function generateMetadata(
@@ -19,10 +22,12 @@ export async function generateMetadata(
 ): Promise<Metadata> {
   const { slug } = await params;
   const post = readNewsBySlug(slug);
+  const base = getSiteUrl();
 
   // 404 lógico: evita indexar e aponta canonical da lista
   if (!post) {
     return {
+      metadataBase: new URL(base),
       title: "Notícia não encontrada",
       description: "A notícia informada não foi localizada.",
       robots: { index: false, follow: false },
@@ -32,38 +37,36 @@ export async function generateMetadata(
 
   const title = post.title;
   const description = post.excerpt ?? "Leia esta notícia do Colégio São José.";
-  const url = `/noticias/${slug}`;
-  const images = post.cover
-    ? [{ url: post.cover, alt: post.title }]
-    : [{ url: "/og-cover.webp", alt: "Colégio São José" }];
+  const path = `/noticias/${slug}`;
+  const urlAbs = `${base}${path}`;
+  const imgAbs = post.cover?.startsWith("http") ? post.cover : `${base}${post.cover}`;
 
   return {
+    metadataBase: new URL(base),
     title, // o template global do layout acrescenta “ — Colégio São José”
     description,
-    alternates: { canonical: url },
+    alternates: { canonical: path },
     openGraph: {
       type: "article",
-      url,
+      url: urlAbs,
       title,
       description,
       siteName: "Colégio São José",
-      images,
+      images: [{ url: imgAbs, alt: post.title }],
       ...(post.date ? { publishedTime: post.date } : {}),
     },
     twitter: {
       card: "summary_large_image",
       title,
       description,
-      images: images.map((i) => i.url),
+      images: [imgAbs],
     },
   };
 }
 
 /* ========= PÁGINA ========= */
 export default async function NewsPostPage({ params }: Props) {
-  // Desempacota o slug a partir da Promise
   const { slug } = await params;
-
   const post = readNewsBySlug(slug);
 
   if (!post) {
@@ -100,10 +103,7 @@ export default async function NewsPostPage({ params }: Props) {
     publisher: {
       "@type": "Organization",
       name: "Colégio São José",
-      logo: {
-        "@type": "ImageObject",
-        url: `${base}/logo.svg`,
-      },
+      logo: { "@type": "ImageObject", url: `${base}/logo.svg` },
     },
   };
 
@@ -112,20 +112,17 @@ export default async function NewsPostPage({ params }: Props) {
     "@context": "https://schema.org",
     "@type": "BreadcrumbList",
     itemListElement: [
-      {
-        "@type": "ListItem",
-        position: 1,
-        name: "Notícias",
-        item: `${base}/noticias`,
-      },
-      {
-        "@type": "ListItem",
-        position: 2,
-        name: post.title,
-        item: urlAbs,
-      },
+      { "@type": "ListItem", position: 1, name: "Notícias", item: `${base}/noticias` },
+      { "@type": "ListItem", position: 2, name: post.title, item: urlAbs },
     ],
   };
+
+  // Data segura (não quebra se vier inválida)
+  let dateLabel: string | null = null;
+  if (post.date) {
+    const d = new Date(post.date);
+    if (!isNaN(d.getTime())) dateLabel = d.toLocaleDateString("pt-BR");
+  }
 
   return (
     <main className="mx-auto max-w-3xl px-4 py-10">
@@ -152,9 +149,9 @@ export default async function NewsPostPage({ params }: Props) {
 
       <article>
         <h1 className="text-3xl font-extrabold text-gray-900">{post.title}</h1>
-        {post.date && (
+        {dateLabel && (
           <p className="mt-2 text-sm text-gray-500">
-            {new Date(post.date).toLocaleDateString("pt-BR")}
+            <time dateTime={post.date}>{dateLabel}</time>
           </p>
         )}
 
@@ -198,6 +195,3 @@ export async function generateStaticParams() {
   const posts = listNewsMeta();
   return posts.map((p) => ({ slug: p.slug }));
 }
-
-// Opcional: revalida as páginas de notícia periodicamente
-export const revalidate = 3600; // 1h

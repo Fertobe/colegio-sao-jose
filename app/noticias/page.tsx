@@ -12,6 +12,7 @@ export const dynamic = "force-static";
 const SITE_URL = getSiteUrl();
 
 export const metadata: Metadata = {
+  metadataBase: new URL(SITE_URL),
   title: "Notícias | Colégio São José",
   description:
     "Acompanhe as últimas notícias, eventos e comunicados do Colégio São José.",
@@ -26,12 +27,14 @@ export const metadata: Metadata = {
       "Acompanhe as últimas notícias, eventos e comunicados do Colégio São José.",
     url: `${SITE_URL}/noticias`,
     type: "website",
+    images: [{ url: `${SITE_URL}/og-cover.webp` }],
   },
   twitter: {
     card: "summary_large_image",
     title: "Notícias | Colégio São José",
     description:
       "Acompanhe as últimas notícias, eventos e comunicados do Colégio São José.",
+    images: [`${SITE_URL}/og-cover.webp`],
   },
 };
 
@@ -39,13 +42,16 @@ type Post = {
   slug: string;
   title: string;
   date?: string;
-  cover: string;
+  cover: string;   // pode vir "/capa.jpg" ou "https://..."
   excerpt?: string;
 };
 
 export default function NoticiasPage() {
   // já vem ordenado (mais recentes primeiro) e filtrado por published
   const posts = listNewsMeta() as Post[];
+
+  // Helper para imagem absoluta
+  const toAbs = (u: string) => (u.startsWith("http") ? u : `${SITE_URL}${u}`);
 
   // JSON-LD (listagem de posts). Usa URLs absolutas e imagem absoluta.
   const jsonLd = {
@@ -67,7 +73,7 @@ export default function NoticiasPage() {
       headline: p.title,
       ...(p.date ? { datePublished: p.date } : {}),
       url: `${SITE_URL}/noticias/${p.slug}`,
-      image: `${SITE_URL}${p.cover}`,
+      image: toAbs(p.cover),
       ...(p.excerpt ? { description: p.excerpt } : {}),
     })),
   };
@@ -93,6 +99,16 @@ export default function NoticiasPage() {
         {posts.map((p, i) => {
           const headingId = `post-${p.slug}`;
           const eager = i === 0; // ajuda o LCP do primeiro card
+
+          // Data segura (não quebra se vier inválida)
+          let dateLabel: string | null = null;
+          if (p.date) {
+            const d = new Date(p.date);
+            if (!isNaN(d.getTime())) {
+              dateLabel = d.toLocaleDateString("pt-BR");
+            }
+          }
+
           return (
             <article
               key={p.slug}
@@ -126,11 +142,9 @@ export default function NoticiasPage() {
                     {p.title}
                   </h2>
 
-                  {p.date && (
+                  {dateLabel && (
                     <p className="mt-1 text-xs text-gray-500">
-                      <time dateTime={p.date}>
-                        {new Date(p.date).toLocaleDateString("pt-BR")}
-                      </time>
+                      <time dateTime={p.date}>{dateLabel}</time>
                     </p>
                   )}
 
