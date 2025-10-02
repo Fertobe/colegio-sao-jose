@@ -1,10 +1,24 @@
+// app/components/Header.tsx
 "use client";
 
 import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 import BrandIcon from "./icons/BrandIcon";
 
 export default function Header() {
+  // rota atual para marcar item ativo
+  const pathname = usePathname() || "/";
+
+  const isActive = (href: string) =>
+    pathname === href || pathname.startsWith(href + "/");
+
+  const isGroupActive = (prefixes: string[]) =>
+    prefixes.some((p) => pathname === p || pathname.startsWith(p + "/"));
+
+  const ensinoAtivo = isGroupActive(["/ensino"]);
+  const instAtivo = isGroupActive(["/institucional", "/noticias"]);
+
   // ===== Desktop dropdowns =====
   const [instOpen, setInstOpen] = useState(false);
   const [ensOpen, setEnsOpen] = useState(false);
@@ -46,10 +60,14 @@ export default function Header() {
     setEnsOpen(false);
     setInstOpen(value);
   };
+  const openEns = (value: boolean) => {
+    setInstOpen(false);
+    setEnsOpen(value);
+    if (value) warmEnsinoHeros(); // dispara o preload ao abrir o dropdown
+  };
 
   // ===== PRELOAD dos HEROS do ENSINO (1ª visita mais rápida) =====
   const preloadedEnsino = useRef(false);
-
   const ENSINO_HERO_MOBILE = [
     "/ensino/infantil/mobile/hero.webp",
     "/ensino/fundamental/mobile/hero.webp",
@@ -60,7 +78,6 @@ export default function Header() {
     "/ensino/fundamental/hero.webp",
     "/ensino/medio/hero.webp",
   ];
-
   const warmEnsinoHeros = () => {
     if (preloadedEnsino.current) return;
     preloadedEnsino.current = true;
@@ -88,12 +105,6 @@ export default function Header() {
     } else {
       setTimeout(run, 120);
     }
-  };
-
-  const openEns = (value: boolean) => {
-    setInstOpen(false);
-    setEnsOpen(value);
-    if (value) warmEnsinoHeros(); // dispara o preload ao abrir o dropdown
   };
 
   // ===== Mobile menu (drawer) =====
@@ -166,14 +177,10 @@ export default function Header() {
 
   // Foco primeiro item (desktop) com ↓
   const focusFirstInst = () => {
-    instMenuRef.current
-      ?.querySelector<HTMLElement>('[data-inst-item="1"]')
-      ?.focus();
+    instMenuRef.current?.querySelector<HTMLElement>('[data-inst-item="1"]')?.focus();
   };
   const focusFirstEns = () => {
-    ensMenuRef.current
-      ?.querySelector<HTMLElement>('[data-ens-item="1"]')
-      ?.focus();
+    ensMenuRef.current?.querySelector<HTMLElement>('[data-ens-item="1"]')?.focus();
   };
 
   // Helper: fechar drawer ao navegar
@@ -186,6 +193,13 @@ export default function Header() {
   useEffect(() => {
     if (mobileEnsOpen) warmEnsinoHeros();
   }, [mobileEnsOpen]);
+
+  // classes utilitárias para "ativo"
+  const activeLink =
+    "text-brand-700 font-semibold underline underline-offset-4 decoration-brand-300";
+  const triggerBase =
+    "inline-flex items-center gap-1 rounded hover:text-brand-600 focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-400/40";
+  const triggerActive = instAtivo || ensinoAtivo ? activeLink : "";
 
   return (
     <header className="border-b bg-white">
@@ -238,6 +252,7 @@ export default function Header() {
             onMouseEnter={closeAll}
             onFocus={closeAll}
             onClick={closeMobileAnd()}
+            aria-current={isActive("/") ? "page" : undefined}
           >
             <img
               src="/logo.svg"
@@ -262,10 +277,7 @@ export default function Header() {
         </div>
 
         {/* ===== NAV DESKTOP (centro/direita) ===== */}
-        <nav
-          aria-label="principal"
-          className="hidden items-center gap-6 text-sm md:flex"
-        >
+        <nav aria-label="principal" className="hidden items-center gap-6 text-sm md:flex">
           {/* DROPDOWN: INSTITUCIONAL */}
           <div
             className="relative"
@@ -275,8 +287,7 @@ export default function Header() {
             }}
             onMouseLeave={scheduleInstClose}
             onBlur={(e) => {
-              if (!e.currentTarget.contains(e.relatedTarget as Node))
-                setInstOpen(false);
+              if (!e.currentTarget.contains(e.relatedTarget as Node)) setInstOpen(false);
             }}
           >
             <button
@@ -285,7 +296,7 @@ export default function Header() {
               aria-haspopup="menu"
               aria-expanded={instOpen}
               aria-controls="menu-institucional"
-              className="inline-flex items-center gap-1 rounded hover:text-brand-600 focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-400/40"
+              className={`${triggerBase} ${instAtivo ? activeLink : ""}`}
               onClick={() => openInst(!instOpen)}
               onFocus={() => openInst(true)}
               onKeyDown={(e) => {
@@ -298,9 +309,7 @@ export default function Header() {
             >
               Institucional
               <svg
-                className={`h-4 w-4 transition-transform ${
-                  instOpen ? "rotate-180" : ""
-                }`}
+                className={`h-4 w-4 transition-transform ${instOpen ? "rotate-180" : ""}`}
                 viewBox="0 0 20 20"
                 fill="currentColor"
                 aria-hidden="true"
@@ -322,9 +331,7 @@ export default function Header() {
               aria-label="submenu institucional"
               tabIndex={-1}
               className={`absolute left-0 top-full z-50 mt-2 w-64 rounded-2xl border bg-white p-2 shadow-lg transition ${
-                instOpen
-                  ? "pointer-events-auto opacity-100"
-                  : "pointer-events-none opacity-0"
+                instOpen ? "pointer-events-auto opacity-100" : "pointer-events-none opacity-0"
               }`}
               onMouseEnter={() => {
                 cancelInstClose();
@@ -337,6 +344,7 @@ export default function Header() {
                 role="menuitem"
                 data-inst-item="1"
                 className="block rounded-lg px-4 py-2.5 text-[0.95rem] text-gray-800 hover:bg-brand-50 hover:text-brand-700 focus:bg-brand-50 focus:outline-none"
+                aria-current={isActive("/institucional/nossa-historia") ? "page" : undefined}
               >
                 Nossa História
               </Link>
@@ -344,18 +352,19 @@ export default function Header() {
                 href="/institucional/filosofia"
                 prefetch={false}
                 role="menuitem"
-                data-inst-item="1"
+                data-inst-item="2"
                 className="block rounded-lg px-4 py-2.5 text-[0.95rem] text-gray-800 hover:bg-brand-50 hover:text-brand-700 focus:bg-brand-50 focus:outline-none"
+                aria-current={isActive("/institucional/filosofia") ? "page" : undefined}
               >
                 Nossa Filosofia
               </Link>
-              {/* ⬇️ AJUSTE: Notícias → /noticias */}
               <Link
                 href="/noticias"
                 prefetch={false}
                 role="menuitem"
-                data-inst-item="1"
+                data-inst-item="3"
                 className="block rounded-lg px-4 py-2.5 text-[0.95rem] text-gray-800 hover:bg-brand-50 hover:text-brand-700 focus:bg-brand-50 focus:outline-none"
+                aria-current={isActive("/noticias") ? "page" : undefined}
               >
                 Notícias
               </Link>
@@ -371,8 +380,7 @@ export default function Header() {
             }}
             onMouseLeave={scheduleEnsClose}
             onBlur={(e) => {
-              if (!e.currentTarget.contains(e.relatedTarget as Node))
-                setEnsOpen(false);
+              if (!e.currentTarget.contains(e.relatedTarget as Node)) setEnsOpen(false);
             }}
           >
             <button
@@ -381,7 +389,7 @@ export default function Header() {
               aria-haspopup="menu"
               aria-expanded={ensOpen}
               aria-controls="menu-ensino"
-              className="inline-flex items-center gap-1 rounded hover:text-brand-600 focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-400/40"
+              className={`${triggerBase} ${ensinoAtivo ? activeLink : ""}`}
               onClick={() => openEns(!ensOpen)}
               onFocus={() => openEns(true)}
               onKeyDown={(e) => {
@@ -394,9 +402,7 @@ export default function Header() {
             >
               Ensino
               <svg
-                className={`h-4 w-4 transition-transform ${
-                  ensOpen ? "rotate-180" : ""
-                }`}
+                className={`h-4 w-4 transition-transform ${ensOpen ? "rotate-180" : ""}`}
                 viewBox="0 0 20 20"
                 fill="currentColor"
                 aria-hidden="true"
@@ -418,9 +424,7 @@ export default function Header() {
               aria-label="submenu ensino"
               tabIndex={-1}
               className={`absolute left-0 top-full z-50 mt-2 w-64 rounded-2xl border bg-white p-2 shadow-lg transition ${
-                ensOpen
-                  ? "pointer-events-auto opacity-100"
-                  : "pointer-events-none opacity-0"
+                ensOpen ? "pointer-events-auto opacity-100" : "pointer-events-none opacity-0"
               }`}
               onMouseEnter={() => {
                 cancelEnsClose();
@@ -433,6 +437,7 @@ export default function Header() {
                 role="menuitem"
                 data-ens-item="1"
                 className="block rounded-lg px-4 py-2.5 text-[0.95rem] text-gray-800 hover:bg-brand-50 hover:text-brand-700 focus:bg-brand-50 focus:outline-none"
+                aria-current={isActive("/ensino/educacao-infantil") ? "page" : undefined}
               >
                 Educação Infantil
               </Link>
@@ -440,8 +445,9 @@ export default function Header() {
                 href="/ensino/ensino-fundamental"
                 prefetch={false}
                 role="menuitem"
-                data-ens-item="1"
+                data-ens-item="2"
                 className="block rounded-lg px-4 py-2.5 text-[0.95rem] text-gray-800 hover:bg-brand-50 hover:text-brand-700 focus:bg-brand-50 focus:outline-none"
+                aria-current={isActive("/ensino/ensino-fundamental") ? "page" : undefined}
               >
                 Ensino Fundamental
               </Link>
@@ -449,8 +455,9 @@ export default function Header() {
                 href="/ensino/ensino-medio"
                 prefetch={false}
                 role="menuitem"
-                data-ens-item="1"
+                data-ens-item="3"
                 className="block rounded-lg px-4 py-2.5 text-[0.95rem] text-gray-800 hover:bg-brand-50 hover:text-brand-700 focus:bg-brand-50 focus:outline-none"
+                aria-current={isActive("/ensino/ensino-medio") ? "page" : undefined}
               >
                 Ensino Médio
               </Link>
@@ -461,27 +468,30 @@ export default function Header() {
           <Link
             href="/matriculas"
             prefetch={false}
-            className="hover:text-brand-600"
+            className={`hover:text-brand-600 ${isActive("/matriculas") ? activeLink : ""}`}
             onMouseEnter={closeAll}
             onFocus={closeAll}
+            aria-current={isActive("/matriculas") ? "page" : undefined}
           >
             Matrículas
           </Link>
           <Link
             href="/agendamento"
             prefetch={false}
-            className="hover:text-brand-600"
+            className={`hover:text-brand-600 ${isActive("/agendamento") ? activeLink : ""}`}
             onMouseEnter={closeAll}
             onFocus={closeAll}
+            aria-current={isActive("/agendamento") ? "page" : undefined}
           >
             Agendamento
           </Link>
           <Link
             href="/contato"
             prefetch={false}
-            className="hover:text-brand-600"
+            className={`hover:text-brand-600 ${isActive("/contato") ? activeLink : ""}`}
             onMouseEnter={closeAll}
             onFocus={closeAll}
+            aria-current={isActive("/contato") ? "page" : undefined}
           >
             Contato
           </Link>
@@ -501,7 +511,7 @@ export default function Header() {
           </a>
         </nav>
 
-        {/* ===== Ação à direita no mobile: WhatsApp (fora da sanfona) ===== */}
+        {/* ===== Ação à direita no mobile: WhatsApp ===== */}
         <a
           href="https://wa.me/5542998276516"
           target="_blank"
@@ -565,7 +575,9 @@ export default function Header() {
                 aria-expanded={mobileInstOpen}
                 onClick={() => setMobileInstOpen((v) => !v)}
               >
-                <span>Institucional</span>
+                <span className={`${instAtivo ? "text-brand-700 font-semibold" : ""}`}>
+                  Institucional
+                </span>
                 <svg
                   className={`h-5 w-5 transition-transform ${
                     mobileInstOpen ? "rotate-180" : ""
@@ -594,7 +606,10 @@ export default function Header() {
                       href="/institucional/nossa-historia"
                       prefetch={false}
                       onClick={closeMobileAnd()}
-                      className="block rounded-md px-2 py-2 text-gray-800 hover:bg-gray-100"
+                      className={`block rounded-md px-2 py-2 hover:bg-gray-100 ${
+                        isActive("/institucional/nossa-historia") ? "text-brand-700 font-semibold" : "text-gray-800"
+                      }`}
+                      aria-current={isActive("/institucional/nossa-historia") ? "page" : undefined}
                     >
                       Nossa História
                     </Link>
@@ -604,18 +619,23 @@ export default function Header() {
                       href="/institucional/filosofia"
                       prefetch={false}
                       onClick={closeMobileAnd()}
-                      className="block rounded-md px-2 py-2 text-gray-800 hover:bg-gray-100"
+                      className={`block rounded-md px-2 py-2 hover:bg-gray-100 ${
+                        isActive("/institucional/filosofia") ? "text-brand-700 font-semibold" : "text-gray-800"
+                      }`}
+                      aria-current={isActive("/institucional/filosofia") ? "page" : undefined}
                     >
                       Nossa Filosofia
                     </Link>
                   </li>
-                  {/* ⬇️ AJUSTE: Notícias → /noticias */}
                   <li>
                     <Link
                       href="/noticias"
                       prefetch={false}
                       onClick={closeMobileAnd()}
-                      className="block rounded-md px-2 py-2 text-gray-800 hover:bg-gray-100"
+                      className={`block rounded-md px-2 py-2 hover:bg-gray-100 ${
+                        isActive("/noticias") ? "text-brand-700 font-semibold" : "text-gray-800"
+                      }`}
+                      aria-current={isActive("/noticias") ? "page" : undefined}
                     >
                       Notícias
                     </Link>
@@ -632,7 +652,9 @@ export default function Header() {
                 aria-expanded={mobileEnsOpen}
                 onClick={() => setMobileEnsOpen((v) => !v)}
               >
-                <span>Ensino</span>
+                <span className={`${ensinoAtivo ? "text-brand-700 font-semibold" : ""}`}>
+                  Ensino
+                </span>
                 <svg
                   className={`h-5 w-5 transition-transform ${
                     mobileEnsOpen ? "rotate-180" : ""
@@ -661,7 +683,10 @@ export default function Header() {
                       href="/ensino/educacao-infantil"
                       prefetch={false}
                       onClick={closeMobileAnd()}
-                      className="block rounded-md px-2 py-2 text-gray-800 hover:bg-gray-100"
+                      className={`block rounded-md px-2 py-2 hover:bg-gray-100 ${
+                        isActive("/ensino/educacao-infantil") ? "text-brand-700 font-semibold" : "text-gray-800"
+                      }`}
+                      aria-current={isActive("/ensino/educacao-infantil") ? "page" : undefined}
                     >
                       Educação Infantil
                     </Link>
@@ -671,7 +696,10 @@ export default function Header() {
                       href="/ensino/ensino-fundamental"
                       prefetch={false}
                       onClick={closeMobileAnd()}
-                      className="block rounded-md px-2 py-2 text-gray-800 hover:bg-gray-100"
+                      className={`block rounded-md px-2 py-2 hover:bg-gray-100 ${
+                        isActive("/ensino/ensino-fundamental") ? "text-brand-700 font-semibold" : "text-gray-800"
+                      }`}
+                      aria-current={isActive("/ensino/ensino-fundamental") ? "page" : undefined}
                     >
                       Ensino Fundamental
                     </Link>
@@ -681,7 +709,10 @@ export default function Header() {
                       href="/ensino/ensino-medio"
                       prefetch={false}
                       onClick={closeMobileAnd()}
-                      className="block rounded-md px-2 py-2 text-gray-800 hover:bg-gray-100"
+                      className={`block rounded-md px-2 py-2 hover:bg-gray-100 ${
+                        isActive("/ensino/ensino-medio") ? "text-brand-700 font-semibold" : "text-gray-800"
+                      }`}
+                      aria-current={isActive("/ensino/ensino-medio") ? "page" : undefined}
                     >
                       Ensino Médio
                     </Link>
@@ -696,7 +727,10 @@ export default function Header() {
                 href="/matriculas"
                 prefetch={false}
                 onClick={closeMobileAnd()}
-                className="block rounded-md px-2 py-2 text-gray-800 hover:bg-gray-100"
+                className={`block rounded-md px-2 py-2 hover:bg-gray-100 ${
+                  isActive("/matriculas") ? "text-brand-700 font-semibold" : "text-gray-800"
+                }`}
+                aria-current={isActive("/matriculas") ? "page" : undefined}
               >
                 Matrículas
               </Link>
@@ -704,7 +738,10 @@ export default function Header() {
                 href="/agendamento"
                 prefetch={false}
                 onClick={closeMobileAnd()}
-                className="block rounded-md px-2 py-2 text-gray-800 hover:bg-gray-100"
+                className={`block rounded-md px-2 py-2 hover:bg-gray-100 ${
+                  isActive("/agendamento") ? "text-brand-700 font-semibold" : "text-gray-800"
+                }`}
+                aria-current={isActive("/agendamento") ? "page" : undefined}
               >
                 Agendamento
               </Link>
@@ -712,7 +749,10 @@ export default function Header() {
                 href="/contato"
                 prefetch={false}
                 onClick={closeMobileAnd()}
-                className="block rounded-md px-2 py-2 text-gray-800 hover:bg-gray-100"
+                className={`block rounded-md px-2 py-2 hover:bg-gray-100 ${
+                  isActive("/contato") ? "text-brand-700 font-semibold" : "text-gray-800"
+                }`}
+                aria-current={isActive("/contato") ? "page" : undefined}
               >
                 Contato
               </Link>

@@ -4,12 +4,13 @@ import type { CSSProperties } from "react";
 import BackToTop from "../components/BackToTop";
 
 export const metadata: Metadata = {
-  title: "Política de Cookies | Colégio São José",
+  title: "Política de Cookies", // layout aplica “ — Colégio São José”
   description:
     "Entenda como o Colégio São José usa cookies e tecnologias semelhantes para melhorar sua experiência, analisar métricas e personalizar conteúdos.",
+  alternates: { canonical: "/politica-de-cookies" },
 };
 
-// ⬇️ Imagem do HERO (troque quando subir as artes definitivas)
+// Imagens do HERO
 const HERO_DESKTOP = {
   src: "/cookies/hero.webp",
   alt: "Ilustração relacionada à Política de Cookies",
@@ -19,7 +20,7 @@ const HERO_MOBILE = {
   alt: "Ilustração relacionada à Política de Cookies (mobile)",
 };
 
-// ⬇️ Ajustes finos de posição/escala (pode editar à vontade)
+// Ajustes finos
 const heroDesktopStyle: CSSProperties = {
   transform: "translateX(-50%) translateY(0px) scale(1.1)",
   transformOrigin: "bottom center",
@@ -36,7 +37,7 @@ export default function PoliticaDeCookiesPage() {
 
   return (
     <main className="bg-white">
-      {/* ===================== HERO ===================== */}
+      {/* HERO */}
       <section className="relative overflow-hidden">
         <div
           className="absolute inset-0 bg-gradient-to-br from-brand-900 via-brand-800 to-brand-600"
@@ -61,7 +62,7 @@ export default function PoliticaDeCookiesPage() {
             <p className="mt-3 text-sm text-white/80">Última atualização: {atualizadoEm}</p>
           </div>
 
-          {/* Imagem do HERO (desktop/tablet e mobile separadas) */}
+          {/* Imagem */}
           <div className="relative mx-auto aspect-square w-[320px] md:w-[420px] lg:w-[520px]">
             {/* Mobile */}
             <div className="md:hidden">
@@ -76,7 +77,6 @@ export default function PoliticaDeCookiesPage() {
                 draggable={false}
               />
             </div>
-
             {/* Desktop/Tablet */}
             <div className="hidden md:block">
               <img
@@ -99,7 +99,7 @@ export default function PoliticaDeCookiesPage() {
           </div>
         </div>
 
-        {/* Onda branca padrão */}
+        {/* Onda branca */}
         <div className="pointer-events-none absolute inset-x-0 bottom-0 z-30">
           <svg
             viewBox="0 0 1440 140"
@@ -113,7 +113,7 @@ export default function PoliticaDeCookiesPage() {
         </div>
       </section>
 
-      {/* ===================== CONTEÚDO ===================== */}
+      {/* CONTEÚDO */}
       <section className="bg-white">
         <div className="mx-auto max-w-6xl px-4 py-12 md:py-16">
           {/* O que são cookies */}
@@ -139,7 +139,7 @@ export default function PoliticaDeCookiesPage() {
             </p>
           </section>
 
-          {/* Tipos de cookies */}
+          {/* Tipos */}
           <section id="tipos" className="mt-10">
             <h2 className="text-2xl font-bold text-brand-700 uppercase">Tipos de cookies</h2>
             <div className="mt-6 grid gap-6 md:grid-cols-2 lg:grid-cols-3">
@@ -183,7 +183,7 @@ export default function PoliticaDeCookiesPage() {
             </div>
           </section>
 
-          {/* O que pode aparecer no site */}
+          {/* Quais usamos */}
           <section id="quais-usamos" className="mt-10">
             <h2 className="text-2xl font-bold text-brand-700 uppercase">Quais cookies podem aparecer neste site?</h2>
             <p className="mt-3 text-brand-900/85 leading-relaxed">
@@ -194,7 +194,7 @@ export default function PoliticaDeCookiesPage() {
             </p>
           </section>
 
-          {/* Como gerenciar */}
+          {/* Preferências */}
           <section id="preferencias" className="mt-10">
             <h2 className="text-2xl font-bold text-brand-700 uppercase">Como gerenciar suas preferências</h2>
             <div className="mt-4 space-y-4 text-brand-900/85 leading-relaxed">
@@ -215,7 +215,7 @@ export default function PoliticaDeCookiesPage() {
             </div>
           </section>
 
-          {/* Base legal & retenção */}
+          {/* Base legal */}
           <section id="base-legal" className="mt-10">
             <h2 className="text-2xl font-bold text-brand-700 uppercase">Base legal e retenção</h2>
             <p className="mt-3 text-brand-900/85 leading-relaxed">
@@ -245,17 +245,16 @@ export default function PoliticaDeCookiesPage() {
               Em caso de dúvidas sobre esta política ou sobre o uso de cookies, entre em contato
               pelo e-mail{" "}
               <a
-                href="mailto:contato@colegiosaojese.net"
+                href="mailto:contato@colegiosaojose.net"
                 className="font-semibold text-brand-700 underline underline-offset-4"
               >
-                contato@colegiosaojese.net
+                contato@colegiosaojose.net
               </a>
             </p>
           </section>
         </div>
       </section>
 
-      {/* Botão flutuante “Voltar ao topo” */}
       <BackToTop />
     </main>
   );

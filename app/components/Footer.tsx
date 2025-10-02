@@ -3,6 +3,22 @@ import Link from "next/link";
 
 const YEAR = new Date().getFullYear();
 
+/** 
+ * Vars de ambiente (podem ser ajustadas no final do projeto):
+ * - NEXT_PUBLIC_CONTATO_EMAIL
+ * - NEXT_PUBLIC_CONTATO_TEL_E164 (ex: +5542998276516)
+ * - NEXT_PUBLIC_CONTATO_TEL_DISPLAY (ex: +55 (42) 99827-6516)
+ * - NEXT_PUBLIC_SOCIAL_YOUTUBE / _INSTAGRAM / _FACEBOOK / _TIKTOK
+ */
+const EMAIL = process.env.NEXT_PUBLIC_CONTATO_EMAIL ?? "contato@colegiosaojose.com.br";
+const TEL_E164 = process.env.NEXT_PUBLIC_CONTATO_TEL_E164 ?? "+5542998276516";
+const TEL_DISPLAY = process.env.NEXT_PUBLIC_CONTATO_TEL_DISPLAY ?? "+55 (42) 99827-6516";
+
+const YOUTUBE = process.env.NEXT_PUBLIC_SOCIAL_YOUTUBE ?? "https://www.youtube.com/";
+const INSTAGRAM = process.env.NEXT_PUBLIC_SOCIAL_INSTAGRAM ?? "https://www.instagram.com/";
+const FACEBOOK = process.env.NEXT_PUBLIC_SOCIAL_FACEBOOK ?? "https://www.facebook.com/";
+const TIKTOK = process.env.NEXT_PUBLIC_SOCIAL_TIKTOK ?? "https://www.tiktok.com/";
+
 export default function Footer() {
   return (
     <footer className="border-t bg-white">
@@ -26,48 +42,32 @@ export default function Footer() {
             Colégio São José — Educação para a vida.
           </p>
 
-          {/* Redes sociais (trocar URLs quando tiver os links oficiais) */}
+          {/* Redes sociais */}
           <div className="mt-4 flex items-center gap-3">
             {/* YouTube */}
             <a
-              href="https://www.youtube.com/" // TODO: trocar pelo link real
+              href={YOUTUBE}
               target="_blank"
               rel="noopener noreferrer"
               aria-label="YouTube do Colégio São José"
               className="group inline-flex h-10 w-10 items-center justify-center rounded-full bg-brand-800 ring-2 ring-brand-300 text-brand-200 transition
                          hover:-translate-y-0.5 hover:shadow-md focus:outline-none focus:ring-4 focus:ring-brand-200/80"
             >
-              <svg
-                viewBox="0 0 24 24"
-                className="h-5 w-5"
-                fill="currentColor"
-                aria-hidden="true"
-                focusable="false"
-                role="presentation"
-              >
+              <svg viewBox="0 0 24 24" className="h-5 w-5" fill="currentColor" aria-hidden="true">
                 <path d="M23.5 6.2a4 4 0 0 0-2.8-2.8C18.7 3 12 3 12 3s-6.7 0-8.7.4A4 4 0 0 0 .5 6.2 40.6 40.6 0 0 0 0 12a40.6 40.6 0 0 0 .5 5.8 4 4 0 0 0 2.8 2.8C5.3 21 12 21 12 21s6.7 0 8.7-.4a4 4 0 0 0 2.8-2.8c.3-1.9.5-3.8.5-5.8s-.2-3.9-.5-5.8ZM9.8 15.5V8.5L15.5 12l-5.7 3.5Z"/>
               </svg>
             </a>
 
             {/* Instagram */}
             <a
-              href="https://www.instagram.com/" // TODO: trocar pelo link real
+              href={INSTAGRAM}
               target="_blank"
               rel="noopener noreferrer"
               aria-label="Instagram do Colégio São José"
               className="group inline-flex h-10 w-10 items-center justify-center rounded-full bg-brand-800 ring-2 ring-brand-300 text-brand-200 transition
                          hover:-translate-y-0.5 hover:shadow-md focus:outline-none focus:ring-4 focus:ring-brand-200/80"
             >
-              <svg
-                viewBox="0 0 24 24"
-                className="h-5 w-5"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="2"
-                aria-hidden="true"
-                focusable="false"
-                role="presentation"
-              >
+              <svg viewBox="0 0 24 24" className="h-5 w-5" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden="true">
                 <rect x="3" y="3" width="18" height="18" rx="5" />
                 <circle cx="12" cy="12" r="3.5" />
                 <circle cx="17.2" cy="6.8" r="1.2" fill="currentColor" stroke="none" />
@@ -76,42 +76,28 @@ export default function Footer() {
 
             {/* Facebook */}
             <a
-              href="https://www.facebook.com/" // TODO: trocar pelo link real
+              href={FACEBOOK}
               target="_blank"
               rel="noopener noreferrer"
               aria-label="Facebook do Colégio São José"
               className="group inline-flex h-10 w-10 items-center justify-center rounded-full bg-brand-800 ring-2 ring-brand-300 text-brand-200 transition
                          hover:-translate-y-0.5 hover:shadow-md focus:outline-none focus:ring-4 focus:ring-brand-200/80"
             >
-              <svg
-                viewBox="0 0 24 24"
-                className="h-5 w-5"
-                fill="currentColor"
-                aria-hidden="true"
-                focusable="false"
-                role="presentation"
-              >
+              <svg viewBox="0 0 24 24" className="h-5 w-5" fill="currentColor" aria-hidden="true">
                 <path d="M13.5 21v-7h2.4l.4-3h-2.8V9.2c0-.9.3-1.5 1.6-1.5H16V5.1c-.3 0-1.2-.1-2.2-.1-2.2 0-3.7 1.3-3.7 3.8V11H8v3h2.1v7h3.4Z"/>
               </svg>
             </a>
 
             {/* TikTok */}
             <a
-              href="https://www.tiktok.com/" // TODO: trocar pelo link real
+              href={TIKTOK}
               target="_blank"
               rel="noopener noreferrer"
               aria-label="TikTok do Colégio São José"
               className="group inline-flex h-10 w-10 items-center justify-center rounded-full bg-brand-800 ring-2 ring-brand-300 text-brand-200 transition
                          hover:-translate-y-0.5 hover:shadow-md focus:outline-none focus:ring-4 focus:ring-brand-200/80"
             >
-              <svg
-                viewBox="0 0 24 24"
-                className="h-5 w-5"
-                fill="currentColor"
-                aria-hidden="true"
-                focusable="false"
-                role="presentation"
-              >
+              <svg viewBox="0 0 24 24" className="h-5 w-5" fill="currentColor" aria-hidden="true">
                 <path d="M21 8.6a6.9 6.9 0 0 1-4.6-1.7v6.2a5.9 5.9 0 1 1-5.9-5.9c.3 0 .6 0 .9.1v3a3 3 0 1 0 2.1 2.9V2h3a6.9 6.9 0 0 0 4.5 4.1V8.6Z"/>
               </svg>
             </a>
@@ -125,7 +111,6 @@ export default function Footer() {
             <li>
               <Link href="/institucional/nossa-historia" prefetch={false}>Sobre</Link>
             </li>
-            {/* ⬇️ link direto para a listagem de notícias */}
             <li>
               <Link href="/noticias" prefetch={false}>Notícias</Link>
             </li>
@@ -141,21 +126,15 @@ export default function Footer() {
         {/* Coluna 3 — Contato */}
         <div>
           <h3 className="font-semibold text-brand-600">Contato</h3>
-        <ul className="mt-3 space-y-2 text-sm">
+          <ul className="mt-3 space-y-2 text-sm">
             <li>
-              <a
-                href="mailto:contato@colegiosaojose.com.br"
-                aria-label="Enviar e-mail para contato@colegiosaojose.com.br"
-              >
-                contato@colegiosaojose.com.br
+              <a href={`mailto:${EMAIL}`} aria-label={`Enviar e-mail para ${EMAIL}`}>
+                {EMAIL}
               </a>
             </li>
             <li>
-              <a
-                href="tel:+5542998276516"
-                aria-label="Ligar para +55 (42) 99827-6516"
-              >
-                +55 (42) 99827-6516
+              <a href={`tel:${TEL_E164}`} aria-label={`Ligar para ${TEL_DISPLAY}`}>
+                {TEL_DISPLAY}
               </a>
             </li>
             <li>

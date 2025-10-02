@@ -5,12 +5,12 @@ import Link from "next/link";
 import BackToTop from "../components/BackToTop";
 
 export const metadata: Metadata = {
-  title: "Política de Privacidade | Colégio São José",
+  title: "Política de Privacidade", // layout aplica “ — Colégio São José”
   description:
     "Como coletamos, utilizamos e protegemos seus dados pessoais no Colégio São José, em conformidade com a LGPD.",
+  alternates: { canonical: "/politica-de-privacidade" },
 };
 
-// ============ CONFIG ============
 const HERO_DESKTOP = {
   src: "/privacidade/hero.webp",
   alt: "Estudantes do Colégio São José",
@@ -20,9 +20,8 @@ const HERO_MOBILE = {
   alt: "Estudantes do Colégio São José (mobile)",
 };
 
-// Tuning fino do hero (escala/posição)
 const heroDesktopStyle: CSSProperties = {
-  transform: "translateX(-50%) translateY(20px) scale(1.0)", // ✅ fechou o parêntese
+  transform: "translateX(-50%) translateY(20px) scale(1.0)",
   transformOrigin: "bottom center",
   willChange: "transform",
 };
@@ -34,12 +33,11 @@ const heroMobileStyle: CSSProperties = {
 
 const DPO_EMAIL = "privacidade@colegiosaojose.net";
 const LAST_UPDATE = "23/09/2025";
-// =================================
 
 export default function PoliticaPrivacidadePage() {
   return (
     <main className="bg-white">
-      {/* ===== HERO (com imagem, padrão do site) ===== */}
+      {/* HERO */}
       <section className="relative overflow-hidden">
         <div
           className="absolute inset-0 bg-gradient-to-br from-brand-900 via-brand-800 to-brand-600"
@@ -78,7 +76,7 @@ export default function PoliticaPrivacidadePage() {
                 <Link
                   key={id}
                   href={`#${id}`}
-                  className="rounded-full bg-white/15 px-3 py-1 text-xs font-semibold text-white backdrop-blur transition hover:bg白/25 hover:bg-white/25"
+                  className="rounded-full bg-white/15 px-3 py-1 text-xs font-semibold text-white backdrop-blur transition hover:bg-white/25"
                 >
                   {label}
                 </Link>
@@ -88,7 +86,7 @@ export default function PoliticaPrivacidadePage() {
             <p className="mt-3 text-xs text-white/80">Última atualização: {LAST_UPDATE}</p>
           </div>
 
-          {/* Imagem (duas versões) */}
+          {/* Imagem */}
           <div className="relative mx-auto aspect-square w-[320px] md:w-[420px] lg:w-[520px]">
             {/* Mobile */}
             <div className="md:hidden">
@@ -119,7 +117,7 @@ export default function PoliticaPrivacidadePage() {
           </div>
         </div>
 
-        {/* Onda branca padrão */}
+        {/* Onda branca */}
         <div className="pointer-events-none absolute inset-x-0 bottom-0 z-30">
           <svg
             viewBox="0 0 1440 140"
@@ -133,7 +131,7 @@ export default function PoliticaPrivacidadePage() {
         </div>
       </section>
 
-      {/* ===== SEÇÕES ===== */}
+      {/* SEÇÕES */}
       <section className="bg-white">
         <div className="mx-auto max-w-6xl px-4 py-12 md:py-16">
           {/* Escopo */}
@@ -269,7 +267,7 @@ export default function PoliticaPrivacidadePage() {
             </p>
           </div>
 
-          {/* Contato do DPO / Canal do Titular */}
+          {/* Contato do DPO */}
           <div id="contato" className="mt-10 scroll-mt-28">
             <h2 className="text-2xl font-bold text-brand-700 uppercase">Canal do Titular</h2>
             <p className="mt-3 text-brand-900/85">
@@ -287,7 +285,6 @@ export default function PoliticaPrivacidadePage() {
         </div>
       </section>
 
-      {/* Botão flutuante “Voltar ao topo” — azul/brand */}
       <BackToTop
         variant="brand"
         threshold={600}
