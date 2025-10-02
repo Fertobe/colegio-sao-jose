@@ -22,7 +22,11 @@ const HERO_MOBILE = {
 };
 
 const TELEFONE = "+55 (42) 3446-2212";
-const EMAIL = "contato@colegiosaojose.net";
+const TEL_E164 = "+" + TELEFONE.replace(/\D/g, ""); // tel:+554234462212
+
+// 👉 usa .env quando existir; senão cai no seu Gmail p/ testes
+const EMAIL = process.env.CONTACT_TO_EMAIL || "fernando.tobe@gmail.com";
+
 const WHATSAPP_URL = "https://wa.me/5542998276516";
 const MAPS_EMBED =
   "https://www.google.com/maps?q=R.+C%C3%A2ndido+de+Abreu,+1636+-+Prudent%C3%B3polis,+PR,+84400-000&output=embed";
@@ -113,7 +117,7 @@ export default function ContatoPage() {
           <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
             {/* Telefone */}
             <a
-              href={`tel:+${TELEFONE.replace(/\D/g, "")}`} // ✅ mantém o "+" (E.164)
+              href={`tel:${TEL_E164}`}
               className="group rounded-2xl border border-brand-100 p-5 shadow-sm transition hover:shadow-md"
             >
               <div className="flex items-center gap-3">
@@ -127,7 +131,7 @@ export default function ContatoPage() {
             <a
               href={WHATSAPP_URL}
               target="_blank"
-              rel="noreferrer"
+              rel="noopener noreferrer"
               className="rounded-2xl border border-brand-100 p-5 shadow-sm transition hover:shadow-md"
             >
               <div className="flex items-center gap-3">
@@ -183,6 +187,7 @@ export default function ContatoPage() {
                 Preencha os campos e vamos responder o quanto antes. Campos com * são obrigatórios.
               </p>
               <div className="mt-6 rounded-2xl border border-brand-100 p-6 shadow-sm">
+                {/* Seu ContatoForm atual abre o app de e-mail (mailto) — perfeito para testes */}
                 <ContatoForm email={EMAIL} />
               </div>
             </div>
@@ -205,14 +210,14 @@ export default function ContatoPage() {
                   loading="lazy"
                   allowFullScreen
                   referrerPolicy="no-referrer-when-downgrade"
-                  title="Mapa do Colégio São José" // ✅ a11y
+                  title="Mapa do Colégio São José"
                 />
               </div>
               <div className="mt-4">
                 <a
                   href={MAPS_LINK}
                   target="_blank"
-                  rel="noreferrer"
+                  rel="noopener noreferrer"
                   className="inline-flex items-center justify-center rounded-full bg-brand-700 px-5 py-3 font-semibold text-white shadow-sm transition hover:bg-brand-600"
                 >
                   Ver no Google Maps

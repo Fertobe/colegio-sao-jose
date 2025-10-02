@@ -15,13 +15,14 @@
     "incremental": true,
     "plugins": [{ "name": "next" }],
 
-    "baseUrl": ".",                  // ⬅️ ADICIONADO
+    "baseUrl": ".",
     "paths": { "@/*": ["./*"] },
 
-    // ✅ Regras adicionais (mais rígidas, ajudam a pegar bugs cedo)
     "forceConsistentCasingInFileNames": true,
     "exactOptionalPropertyTypes": true,
-    "noUncheckedIndexedAccess": true
+    "noUncheckedIndexedAccess": true,
+
+    "allowImportingTsExtensions": true
   },
   "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts"],
   "exclude": ["node_modules"]
