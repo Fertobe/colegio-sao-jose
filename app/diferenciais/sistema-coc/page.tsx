@@ -68,10 +68,11 @@ export default function COCPage() {
             alt="Tradição, resultados e inovação — Sistema COC"
             className="h-full w-full object-cover"
             loading="eager"
-            decoding="sync"
+            decoding="async"
             fetchPriority="high"
             width={1920}
             height={700}
+            sizes="100vw"
             draggable={false}
           />
         </div>

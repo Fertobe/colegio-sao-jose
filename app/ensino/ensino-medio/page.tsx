@@ -104,7 +104,7 @@ export default function EnsinoMedioPage() {
                 draggable={false}
                 width={1200}
                 height={1200}
-                sizes="(min-width: 768px) 520px, 0px"
+                sizes="(min-width: 1024px) 520px, (min-width: 768px) 420px, 0px"
               />
             </div>
           </div>
@@ -143,8 +143,8 @@ export default function EnsinoMedioPage() {
           </div>
         </div>
 
-        {/* Onda branca inferior */}
-        <div className="pointer-events-none absolute inset-x-0 bottom-0 z-30">
+        {/* Onda branca inferior (decorativa) */}
+        <div className="pointer-events-none absolute inset-x-0 bottom-0 z-30" aria-hidden="true" role="presentation">
           <svg
             viewBox="0 0 1440 140"
             xmlns="http://www.w3.org/2000/svg"

@@ -31,7 +31,7 @@ export default function EnsinoFundamentalPage() {
     alt: "Estudante do Ensino Fundamental",
   };
 
-  // MOBILE — versão recortada/transparente (coloque o arquivo em /public/ensino/fundamental/mobile/hero.webp)
+  // MOBILE — versão recortada/transparente
   const heroImgMobile = {
     src: "/ensino/fundamental/mobile/hero.webp",
     alt: "Estudante do Ensino Fundamental (mobile)",
@@ -53,10 +53,10 @@ export default function EnsinoFundamentalPage() {
   const breadcrumbLd = {
     "@context": "https://schema.org",
     "@type": "BreadcrumbList",
-    "itemListElement": [
+    itemListElement: [
       { "@type": "ListItem", position: 1, name: "Início", item: "https://colegio.artferro.site/" },
-      { "@type": "ListItem", position: 2, name: "Ensino Fundamental", item: "https://colegio.artferro.site/ensino/ensino-fundamental" }
-    ]
+      { "@type": "ListItem", position: 2, name: "Ensino Fundamental", item: "https://colegio.artferro.site/ensino/ensino-fundamental" },
+    ],
   };
 
   return (
@@ -103,7 +103,7 @@ export default function EnsinoFundamentalPage() {
                 draggable={false}
                 width={1200}
                 height={1200}
-                sizes="(min-width: 768px) 520px, 0px"
+                sizes="(min-width: 1024px) 520px, (min-width: 768px) 420px, 0px"
               />
             </div>
           </div>
@@ -138,8 +138,8 @@ export default function EnsinoFundamentalPage() {
           </div>
         </div>
 
-        {/* Onda branca inferior */}
-        <div className="pointer-events-none absolute inset-x-0 bottom-0 z-30">
+        {/* Onda branca inferior (decorativa) */}
+        <div className="pointer-events-none absolute inset-x-0 bottom-0 z-30" aria-hidden="true" role="presentation">
           <svg
             viewBox="0 0 1440 140"
             xmlns="http://www.w3.org/2000/svg"
@@ -170,30 +170,30 @@ export default function EnsinoFundamentalPage() {
             Práticas pedagógicas interdisciplinares
           </h2>
 
-        <div className="mt-8 grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-          {[
-            {
-              title: "Correlação entre componentes curriculares",
-              desc:
-                "Integração entre áreas do conhecimento para desenvolver pensamento crítico e interdisciplinar.",
-            },
-            {
-              title: "Proposta de projeto interdisciplinar",
-              desc:
-                "Cada livro traz um projeto que conecta objetivos e habilidades a situações reais.",
-            },
-            {
-              title: "Organizador visual ao final de cada capítulo",
-              desc:
-                "Mapas/fluxogramas facilitam revisão e estabelecem conexões entre conceitos.",
-            },
-          ].map((c) => (
-            <div key={c.title} className="rounded-3xl bg-white p-6 shadow-sm ring-1 ring-brand-900/5">
-              <h3 className="text-lg font-semibold text-brand-800">{c.title}</h3>
-              <p className="mt-2 text-brand-900/80 leading-relaxed">{c.desc}</p>
-            </div>
-          ))}
-        </div>
+          <div className="mt-8 grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+            {[
+              {
+                title: "Correlação entre componentes curriculares",
+                desc:
+                  "Integração entre áreas do conhecimento para desenvolver pensamento crítico e interdisciplinar.",
+              },
+              {
+                title: "Proposta de projeto interdisciplinar",
+                desc:
+                  "Cada livro traz um projeto que conecta objetivos e habilidades a situações reais.",
+              },
+              {
+                title: "Organizador visual ao final de cada capítulo",
+                desc:
+                  "Mapas/fluxogramas facilitam revisão e estabelecem conexões entre conceitos.",
+              },
+            ].map((c) => (
+              <div key={c.title} className="rounded-3xl bg-white p-6 shadow-sm ring-1 ring-brand-900/5">
+                <h3 className="text-lg font-semibold text-brand-800">{c.title}</h3>
+                <p className="mt-2 text-brand-900/80 leading-relaxed">{c.desc}</p>
+              </div>
+            ))}
+          </div>
         </div>
       </section>
 
@@ -202,30 +202,30 @@ export default function EnsinoFundamentalPage() {
         <div className="mx-auto max-w-6xl px-4 py-12">
           <h2 className="text-2xl font-bold text-brand-700 uppercase">Estrutura da coleção</h2>
 
-          <div className="mt-8 grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-            {[
-              {
-                title: "Acompanhamento da aprendizagem",
-                desc:
-                  "4 avaliações nacionais por ano (do 2º ano do EF à 2ª série do EM), com relatórios e comparativos.",
-              },
-              {
-                title: "Avaliações",
-                desc:
-                  "Plataforma inteligente para criação de provas e relatórios de desempenho entre escolas COC.",
-              },
-              {
-                title: "Coleção Multimodal",
-                desc:
-                  "Cadernos digitais personalizáveis, conteúdo multimídia interativo e planos/roteiros ao professor.",
-              },
-            ].map((c) => (
-              <div key={c.title} className="rounded-3xl bg-gray-50 p-6 shadow-sm ring-1 ring-brand-900/5">
-                <h3 className="text-base font-semibold text-brand-800">{c.title}</h3>
-                <p className="mt-2 text-brand-900/80 leading-relaxed">{c.desc}</p>
-              </div>
-            ))}
-          </div>
+        <div className="mt-8 grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+          {[
+            {
+              title: "Acompanhamento da aprendizagem",
+              desc:
+                "4 avaliações nacionais por ano (do 2º ano do EF à 2ª série do EM), com relatórios e comparativos.",
+            },
+            {
+              title: "Avaliações",
+              desc:
+                "Plataforma inteligente para criação de provas e relatórios de desempenho entre escolas COC.",
+            },
+            {
+              title: "Coleção Multimodal",
+              desc:
+                "Cadernos digitais personalizáveis, conteúdo multimídia interativo e planos/roteiros ao professor.",
+            },
+          ].map((c) => (
+            <div key={c.title} className="rounded-3xl bg-gray-50 p-6 shadow-sm ring-1 ring-brand-900/5">
+              <h3 className="text-base font-semibold text-brand-800">{c.title}</h3>
+              <p className="mt-2 text-brand-900/80 leading-relaxed">{c.desc}</p>
+            </div>
+          ))}
+        </div>
         </div>
       </section>
 

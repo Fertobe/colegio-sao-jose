@@ -3,12 +3,8 @@ import "./globals.css";
 import type { Metadata, Viewport } from "next";
 import Header from "./components/Header";
 import Footer from "./components/Footer";
-import { SpeedInsights } from "@vercel/speed-insights/next"; // ⬅️ NOVO
+import { SpeedInsights } from "@vercel/speed-insights/next";
 
-/**
- * Defaults do site inteiro (páginas podem sobrescrever).
- * Não altera nada no layout/visual.
- */
 export const metadata: Metadata = {
   title: {
     default: "Colégio São José",
@@ -21,12 +17,11 @@ export const metadata: Metadata = {
     type: "website",
     siteName: "Colégio São José",
     url: "https://colegio.artferro.site/",
-    images: ["/og-cover.webp"], // ajuste se a capa estiver noutro caminho
+    images: ["/og-cover.webp"],
   },
   robots: {
     index: true,
     follow: true,
-    // 👇 chaves com hífen precisam estar como string
     "max-image-preview": "large",
     googleBot: {
       index: true,
@@ -37,13 +32,11 @@ export const metadata: Metadata = {
   twitter: { card: "summary_large_image" },
 };
 
-/** Viewport/meta globais (melhora UI do navegador no mobile) */
 export const viewport: Viewport = {
   themeColor: "#0B5DBB",
   colorScheme: "light",
 };
 
-/** JSON-LD da Organização (invisível; ajuda SEO) */
 const ORG_LD_JSON = {
   "@context": "https://schema.org",
   "@type": "EducationalOrganization",
@@ -74,6 +67,13 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           type="image/svg+xml"
           fetchPriority="high"
         />
+
+        {/* Perf hints — aceleram WhatsApp e (se usado) Google Fonts */}
+        <link rel="dns-prefetch" href="https://wa.me" />
+        <link rel="preconnect" href="https://wa.me" crossOrigin="" />
+        <link rel="dns-prefetch" href="https://fonts.gstatic.com" />
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="" />
+
         {/* Se usar fonte local, descomente e ajuste
         <link
           rel="preload"

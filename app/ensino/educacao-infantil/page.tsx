@@ -53,10 +53,10 @@ export default function EducacaoInfantilPage() {
   const breadcrumbLd = {
     "@context": "https://schema.org",
     "@type": "BreadcrumbList",
-    "itemListElement": [
+    itemListElement: [
       { "@type": "ListItem", position: 1, name: "Início", item: "https://colegio.artferro.site/" },
-      { "@type": "ListItem", position: 2, name: "Educação Infantil", item: "https://colegio.artferro.site/ensino/educacao-infantil" }
-    ]
+      { "@type": "ListItem", position: 2, name: "Educação Infantil", item: "https://colegio.artferro.site/ensino/educacao-infantil" },
+    ],
   };
 
   return (
@@ -87,6 +87,7 @@ export default function EducacaoInfantilPage() {
                 draggable={false}
                 width={900}
                 height={900}
+                // B1.3: slot ideal para mobile
                 sizes="(max-width: 767px) 320px, 0px"
               />
             </div>
@@ -104,7 +105,8 @@ export default function EducacaoInfantilPage() {
                 draggable={false}
                 width={1200}
                 height={1200}
-                sizes="(min-width: 768px) 520px, 0px"
+                // B1.3: slots por breakpoint (md=420px, lg=520px)
+                sizes="(min-width: 1024px) 520px, (min-width: 768px) 420px, 0px"
               />
             </div>
           </div>
@@ -139,8 +141,8 @@ export default function EducacaoInfantilPage() {
           </div>
         </div>
 
-        {/* Onda branca inferior */}
-        <div className="pointer-events-none absolute inset-x-0 bottom-0 z-30">
+        {/* Onda branca inferior (decorativa) */}
+        <div className="pointer-events-none absolute inset-x-0 bottom-0 z-30" aria-hidden="true" role="presentation">
           <svg
             viewBox="0 0 1440 140"
             xmlns="http://www.w3.org/2000/svg"

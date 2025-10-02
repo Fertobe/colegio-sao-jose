@@ -46,6 +46,7 @@ export default function GenioFinancasPage() {
           draggable={false}
           width={1920}
           height={900}
+          sizes="100vw" // ⬅️ B1: ajuda LCP/CLS sem alterar visual
         />
         <div className="pointer-events-none absolute inset-x-0 bottom-0" aria-hidden="true">
           <svg
@@ -114,12 +115,14 @@ export default function GenioFinancasPage() {
           </svg>
         </div>
 
-        {/* Menina encostada */}
+        {/* Menina encostada (decorativa) */}
         <div className="absolute inset-x-0 bottom-0 z-20">
           <div className="mx-auto max-w-6xl px-2">
             <img
               src="/genio/kid.webp"
               alt=""
+              aria-hidden="true"
+              role="presentation"
               className="pointer-events-none select-none block w-auto h-[300px] md:h-[300px] lg:h-[450px]
                          translate-y-[1px] md:translate-y-[1.5px] lg:translate-y-[0.5px]"
               loading="lazy"
