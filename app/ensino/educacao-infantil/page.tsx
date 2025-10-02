@@ -2,7 +2,7 @@
 import type { CSSProperties } from "react";
 import type { Metadata } from "next";
 import BackToTop from "../../components/BackToTop";
-import BrandIcon from "../../components/icons/BrandIcon"; // ✅ ícone oficial do WhatsApp
+import BrandIcon from "../../components/icons/BrandIcon";
 
 /** SEO da página (não altera layout) */
 export const metadata: Metadata = {
@@ -20,51 +20,59 @@ export const metadata: Metadata = {
     url: "https://colegio.artferro.site/ensino/educacao-infantil",
     images: ["/ensino/infantil/hero.webp"],
   },
-  robots: {
-    index: true,
-    follow: true,
-    "max-image-preview": "large",
-  },
+  robots: { index: true, follow: true, "max-image-preview": "large" },
   twitter: { card: "summary_large_image" },
 };
 
 export default function EducacaoInfantilPage() {
-  // Desktop: imagem original (sem mudanças)
+  // Desktop: imagem original
   const heroImgDesktop = {
     src: "/ensino/infantil/hero.webp",
     alt: "Estudante da Educação Infantil",
   };
 
-  // Mobile: coloque a versão com transparência em /public/ensino/infantil/mobile/hero.webp
+  // Mobile: versão com transparência
   const heroImgMobile = {
     src: "/ensino/infantil/mobile/hero.webp",
     alt: "Estudante da Educação Infantil (mobile)",
   };
 
   // ===== Tuning do HERO =====
-  // Desktop (igual estava)
   const heroStyleDesktop: CSSProperties = {
     transform: "translateX(-50%) translateY(68px) scale(0.78)",
     transformOrigin: "bottom center",
     willChange: "transform",
   };
-
-  // Mobile (pode ajustar depois, a imagem tem fundo transparente)
-  // → levemente mais baixa e um pouco maior para dar presença
   const heroStyleMobile: CSSProperties = {
     transform: "translateX(-50%) translateY(64px) scale(0.86)",
     transformOrigin: "bottom center",
     willChange: "transform",
   };
 
+  // Breadcrumb JSON-LD (Início -> Educação Infantil)
+  const breadcrumbLd = {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    "itemListElement": [
+      { "@type": "ListItem", position: 1, name: "Início", item: "https://colegio.artferro.site/" },
+      { "@type": "ListItem", position: 2, name: "Educação Infantil", item: "https://colegio.artferro.site/ensino/educacao-infantil" }
+    ]
+  };
+
   return (
     <>
+      {/* JSON-LD de breadcrumb (invisível; ajuda SEO) */}
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbLd) }}
+      />
+
       {/* HERO */}
       <section className="relative overflow-hidden">
         <div className="absolute inset-0 bg-gradient-to-br from-brand-900 via-brand-800 to-brand-700" />
 
         <div className="relative z-10 mx-auto grid max-w-6xl items-center gap-10 px-4 py-16 md:grid-cols-2 md:py-20 lg:py-24">
-          {/* IMAGEM — duas versões para controlar o mobile sem alterar o desktop */}
+          {/* IMAGEM — duas versões */}
           <div className="relative mx-auto aspect-square w-[320px] md:w-[420px] lg:w-[520px]">
             {/* MOBILE */}
             <div className="md:hidden">
@@ -79,10 +87,11 @@ export default function EducacaoInfantilPage() {
                 draggable={false}
                 width={900}
                 height={900}
+                sizes="(max-width: 767px) 320px, 0px"
               />
             </div>
 
-            {/* DESKTOP/TABLET (inalterado) */}
+            {/* DESKTOP/TABLET */}
             <div className="hidden md:block">
               <img
                 src={heroImgDesktop.src}
@@ -95,6 +104,7 @@ export default function EducacaoInfantilPage() {
                 draggable={false}
                 width={1200}
                 height={1200}
+                sizes="(min-width: 768px) 520px, 0px"
               />
             </div>
           </div>
@@ -122,13 +132,7 @@ export default function EducacaoInfantilPage() {
                 rel="noopener noreferrer"
                 className="inline-flex items-center gap-2 rounded-full bg-brand-300 px-5 py-3 font-semibold text-brand-900 shadow-lg transition hover:bg-brand-200"
               >
-                {/* ✅ troca do emoji pelo ícone oficial */}
-                <BrandIcon
-                  name="whatsapp"
-                  color="currentColor"
-                  className="h-[18px] w-[18px]"
-                  title="WhatsApp"
-                />
+                <BrandIcon name="whatsapp" color="currentColor" className="h-[18px] w-[18px]" title="WhatsApp" />
                 Fale com a coordenação
               </a>
             </div>
@@ -188,10 +192,7 @@ export default function EducacaoInfantilPage() {
                   "Rotina de ensino mais leve, desenvolvimento integral e participação próxima no acompanhamento das crianças.",
               },
             ].map((c) => (
-              <div
-                key={c.title}
-                className="rounded-3xl bg-gray-50 p-7 shadow-sm ring-1 ring-brand-900/5"
-              >
+              <div key={c.title} className="rounded-3xl bg-gray-50 p-7 shadow-sm ring-1 ring-brand-900/5">
                 <h3 className="text-lg md:text-xl font-semibold text-brand-800">{c.title}</h3>
                 <p className="mt-3 text-base leading-relaxed text-brand-900/80">{c.desc}</p>
               </div>
