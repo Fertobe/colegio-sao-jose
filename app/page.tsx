@@ -106,6 +106,8 @@ export default function Home() {
                     width={800}
                     height={800}
                     draggable={false}
+                    /* B2: slot ideal para mobile */
+                    sizes="(max-width: 767px) 320px, 0px"
                   />
                 );
               })}
@@ -131,6 +133,8 @@ export default function Home() {
                     width={1000}
                     height={1000}
                     draggable={false}
+                    /* B2: slots por breakpoint (md=420px, lg=520px) */
+                    sizes="(min-width: 1024px) 520px, (min-width: 768px) 420px, 0px"
                   />
                 );
               })}
@@ -168,8 +172,8 @@ export default function Home() {
           </div>
         </div>
 
-        {/* Onda branca de transição — por cima das fotos */}
-        <div className="pointer-events-none absolute inset-x-0 bottom-0 z-30">
+        {/* Onda branca de transição — por cima das fotos (decorativa) */}
+        <div className="pointer-events-none absolute inset-x-0 bottom-0 z-30" aria-hidden="true" role="presentation">
           <svg
             viewBox="0 0 1440 140"
             xmlns="http://www.w3.org/2000/svg"
@@ -208,7 +212,7 @@ export default function Home() {
             >
               <div className="rounded-3xl rounded-b-none bg-white/10 px-6 py-4">
                 <div className="flex items-center gap-3">
-                  <svg viewBox="0 0 24 24" className="h-6 w-6 text-white" fill="none" stroke="currentColor" strokeWidth="2">
+                  <svg viewBox="0 0 24 24" className="h-6 w-6 text-white" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden="true" role="presentation">
                     <path d="M12 3l9 6-9 6-9-6 9-6Z" />
                     <path d="M3 10.5V18l9 6 9-6v-7.5" />
                   </svg>
@@ -228,7 +232,7 @@ export default function Home() {
             >
               <div className="rounded-3xl rounded-b-none bg-white/10 px-6 py-4">
                 <div className="flex items-center gap-3">
-                  <svg viewBox="0 0 24 24" className="h-6 w-6 text-white" fill="none" stroke="currentColor" strokeWidth="2">
+                  <svg viewBox="0 0 24 24" className="h-6 w-6 text-white" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden="true" role="presentation">
                     <path d="M4 19h16M4 8h16M8 3h8M8 13h8" />
                   </svg>
                   <h3 className="text-base md:text-lg font-semibold">Ensino Fundamental</h3>
@@ -247,7 +251,7 @@ export default function Home() {
             >
               <div className="rounded-3xl rounded-b-none bg-white/10 px-6 py-4">
                 <div className="flex items-center gap-3">
-                  <svg viewBox="0 0 24 24" className="h-6 w-6 text-white" fill="none" stroke="currentColor" strokeWidth="2">
+                  <svg viewBox="0 0 24 24" className="h-6 w-6 text-white" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden="true" role="presentation">
                     <path d="M3 21v-8l9-5 9 5v8" />
                     <path d="M9 22v-6h6v6" />
                   </svg>
@@ -291,7 +295,7 @@ export default function Home() {
             >
               <div className="rounded-3xl rounded-b-none bg-white/10 px-6 py-4">
                 <div className="flex items-center gap-3">
-                  <svg viewBox="0 0 24 24" className="h-6 w-6 text-white" fill="none" stroke="currentColor" strokeWidth="2">
+                  <svg viewBox="0 0 24 24" className="h-6 w-6 text-white" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden="true" role="presentation">
                     <path d="M12 20s-7-4.35-7-10a7 7 0 0 1 14 0c0 5.65-7 10-7 10Z" />
                   </svg>
                   <h3 className="text-base md:text-lg font-semibold">Educação Socioemocional</h3>
@@ -310,7 +314,7 @@ export default function Home() {
             >
               <div className="rounded-3xl rounded-b-none bg-white/10 px-6 py-4">
                 <div className="flex items-center gap-3">
-                  <svg viewBox="0 0 24 24" className="h-6 w-6 text-white" fill="none" stroke="currentColor" strokeWidth="2">
+                  <svg viewBox="0 0 24 24" className="h-6 w-6 text-white" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden="true" role="presentation">
                     <path d="M4 6h16v12H4Z" />
                     <path d="M8 10h8M8 14h5" />
                   </svg>
@@ -330,7 +334,7 @@ export default function Home() {
             >
               <div className="rounded-3xl rounded-b-none bg-white/10 px-6 py-4">
                 <div className="flex items-center gap-3">
-                  <svg viewBox="0 0 24 24" className="h-6 w-6 text-white" fill="none" stroke="currentColor" strokeWidth="2">
+                  <svg viewBox="0 0 24 24" className="h-6 w-6 text-white" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden="true" role="presentation">
                     <path d="M3 10h18M3 14h18" />
                     <path d="M12 6v12" />
                   </svg>
@@ -350,7 +354,7 @@ export default function Home() {
             >
               <div className="rounded-3xl rounded-b-none bg-white/10 px-6 py-4">
                 <div className="flex items-center gap-3">
-                  <svg viewBox="0 0 24 24" className="h-6 w-6 text-white" fill="none" stroke="currentColor" strokeWidth="2">
+                  <svg viewBox="0 0 24 24" className="h-6 w-6 text-white" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden="true" role="presentation">
                     <path d="M12 3v3M12 18v3M3 12h3M18 12h3" />
                     <path d="M7.8 7.8l2.1 2.1M14.1 14.1l2.1 2.1M7.8 16.2l2.1-2.1M14.1 9.9l2.1-2.1" />
                   </svg>
@@ -374,8 +378,8 @@ export default function Home() {
           className="relative overflow-hidden bg-gray-200 scroll-mt-24 md:scroll-mt-28"
           style={{ contentVisibility: "auto" as any, containIntrinsicSize: "900px" as any }}
         >
-          {/* Onda superior */}
-          <div className="pointer-events-none absolute inset-x-0 top-0">
+          {/* Onda superior (decorativa) */}
+          <div className="pointer-events-none absolute inset-x-0 top-0" aria-hidden="true" role="presentation">
             <svg
               viewBox="0 0 1440 120"
               xmlns="http://www.w3.org/2000/svg"
@@ -414,8 +418,8 @@ export default function Home() {
             </Link>
           </div>
 
-          {/* Onda inferior */}
-          <div className="pointer-events-none absolute inset-x-0 bottom-0">
+          {/* Onda inferior (decorativa) */}
+          <div className="pointer-events-none absolute inset-x-0 bottom-0" aria-hidden="true" role="presentation">
             <svg
               viewBox="0 0 1440 120"
               xmlns="http://www.w3.org/2000/svg"
@@ -452,7 +456,7 @@ export default function Home() {
         className="relative overflow-hidden bg-gradient-to-br from-brand-900 via-brand-800 to-brand-700"
         style={{ contentVisibility: "auto" as any, containIntrinsicSize: "700px" as any }}
       >
-        <div className="pointer-events-none absolute inset-x-0 top-0">
+        <div className="pointer-events-none absolute inset-x-0 top-0" aria-hidden="true" role="presentation">
           <svg
             viewBox="0 0 1440 120"
             xmlns="http://www.w3.org/2000/svg"
@@ -514,13 +518,15 @@ export default function Home() {
                   width={1200}
                   height={800}
                   draggable={false}
+                  /* B2: informar slot previsto melhora escolhas de resolução */
+                  sizes="(min-width: 768px) 800px, 100vw"
                 />
               </div>
 
-              <svg className="pointer-events-none absolute -left-3 -top-3 h-20 w-20 opacity-60" viewBox="0 0 100 100" fill="none">
+              <svg className="pointer-events-none absolute -left-3 -top-3 h-20 w-20 opacity-60" viewBox="0 0 100 100" fill="none" aria-hidden="true" role="presentation">
                 <circle cx="50" cy="50" r="40" stroke="#14D3E0" strokeDasharray="4 10" strokeWidth="4" />
               </svg>
-              <svg className="pointer-events-none absolute -right-4 bottom-2 h-16 w-16 opacity-60" viewBox="0 0 100 100" fill="none">
+              <svg className="pointer-events-none absolute -right-4 bottom-2 h-16 w-16 opacity-60" viewBox="0 0 100 100" fill="none" aria-hidden="true" role="presentation">
                 <circle cx="50" cy="50" r="28" stroke="#ffffff" strokeOpacity="0.35" strokeWidth="6" />
               </svg>
             </div>

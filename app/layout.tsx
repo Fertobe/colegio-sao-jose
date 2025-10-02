@@ -5,18 +5,22 @@ import Header from "./components/Header";
 import Footer from "./components/Footer";
 import { SpeedInsights } from "@vercel/speed-insights/next";
 
+const BASE_URL =
+  process.env.NEXT_PUBLIC_SITE_URL?.replace(/\/+$/, "") ||
+  "https://colegio.artferro.site";
+
 export const metadata: Metadata = {
   title: {
     default: "Colégio São José",
     template: "%s — Colégio São José",
   },
   description: "Tradição e inovação para preparar estudantes para a vida real.",
-  metadataBase: new URL("https://colegio.artferro.site"),
+  metadataBase: new URL(BASE_URL),
   alternates: { canonical: "/" },
   openGraph: {
     type: "website",
     siteName: "Colégio São José",
-    url: "https://colegio.artferro.site/",
+    url: `${BASE_URL}/`,
     images: ["/og-cover.webp"],
   },
   robots: {
@@ -40,20 +44,20 @@ export const viewport: Viewport = {
 const ORG_LD_JSON = {
   "@context": "https://schema.org",
   "@type": "EducationalOrganization",
-  "name": "Colégio São José",
-  "url": "https://colegio.artferro.site/",
-  "logo": "/logo.svg",
-  "address": {
+  name: "Colégio São José",
+  url: `${BASE_URL}/`,
+  logo: `${BASE_URL}/logo.svg`,
+  address: {
     "@type": "PostalAddress",
-    "streetAddress": "Rua (preencher) 123",
-    "addressLocality": "Prudentópolis",
-    "addressRegion": "PR",
-    "postalCode": "(CEP)",
-    "addressCountry": "BR"
+    streetAddress: "Rua (preencher) 123",
+    addressLocality: "Prudentópolis",
+    addressRegion: "PR",
+    postalCode: "(CEP)",
+    addressCountry: "BR",
   },
-  "telephone": "+55 (42) 3446-2212",
-  "sameAs": ["https://wa.me/5542998276516"]
-};
+  telephone: "+55 (42) 3446-2212",
+  sameAs: ["https://wa.me/5542998276516"],
+} as const;
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
@@ -73,6 +77,14 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <link rel="preconnect" href="https://wa.me" crossOrigin="" />
         <link rel="dns-prefetch" href="https://fonts.gstatic.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="" />
+
+        {/* B2 — Prefetch de rotas quentes (inofensivo e barato em ociosidade) */}
+        <link rel="prefetch" href="/ensino/educacao-infantil" as="document" />
+        <link rel="prefetch" href="/ensino/ensino-fundamental" as="document" />
+        <link rel="prefetch" href="/ensino/ensino-medio" as="document" />
+        <link rel="prefetch" href="/diferenciais/genio-das-financas" as="document" />
+        <link rel="prefetch" href="/diferenciais/coc" as="document" />
+        <link rel="prefetch" href="/noticias" as="document" />
 
         {/* Se usar fonte local, descomente e ajuste
         <link
