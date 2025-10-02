@@ -46,9 +46,54 @@ export default function Header() {
     setEnsOpen(false);
     setInstOpen(value);
   };
+
+  // ===== PRELOAD dos HEROS do ENSINO (1ª visita mais rápida) =====
+  const preloadedEnsino = useRef(false);
+
+  const ENSINO_HERO_MOBILE = [
+    "/ensino/infantil/mobile/hero.webp",
+    "/ensino/fundamental/mobile/hero.webp",
+    "/ensino/medio/mobile/hero.webp",
+  ];
+  const ENSINO_HERO_DESKTOP = [
+    "/ensino/infantil/hero.webp",
+    "/ensino/fundamental/hero.webp",
+    "/ensino/medio/hero.webp",
+  ];
+
+  const warmEnsinoHeros = () => {
+    if (preloadedEnsino.current) return;
+    preloadedEnsino.current = true;
+
+    const isMobile =
+      typeof window !== "undefined" &&
+      window.matchMedia?.("(max-width: 767px)")?.matches;
+
+    const urls = isMobile ? ENSINO_HERO_MOBILE : ENSINO_HERO_DESKTOP;
+
+    const run = () => {
+      urls.forEach((u) => {
+        const img = new Image();
+        img.decoding = "async";
+        img.src = u;
+      });
+    };
+
+    const ric = (window as any).requestIdleCallback as
+      | ((cb: () => void, opts?: { timeout?: number }) => void)
+      | undefined;
+
+    if (typeof ric === "function") {
+      ric(run, { timeout: 800 });
+    } else {
+      setTimeout(run, 120);
+    }
+  };
+
   const openEns = (value: boolean) => {
     setInstOpen(false);
     setEnsOpen(value);
+    if (value) warmEnsinoHeros(); // dispara o preload ao abrir o dropdown
   };
 
   // ===== Mobile menu (drawer) =====
@@ -136,6 +181,11 @@ export default function Header() {
     toggleMobile(false);
     fn?.();
   };
+
+  // Quando abrir a sanfona "Ensino" no mobile, pré-carrega também
+  useEffect(() => {
+    if (mobileEnsOpen) warmEnsinoHeros();
+  }, [mobileEnsOpen]);
 
   return (
     <header className="border-b bg-white">
