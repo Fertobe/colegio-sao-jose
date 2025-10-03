@@ -1,3 +1,4 @@
+// app/agendamento/AgendamentoClient.tsx
 "use client";
 
 import { useMemo, useState } from "react";
@@ -217,12 +218,7 @@ export default function AgendamentoClient() {
               Venha conhecer nossos espaços e conversar com nossa equipe. O processo é simples:
               preencha seus dados, escolha o melhor horário e nós confirmamos com você.
             </p>
-
-            {!AGENDAMENTO_ATIVO && (
-              <p className="mt-3 inline-block rounded-full bg-white/15 px-3 py-1 text-xs font-semibold text-white/90">
-                Envio temporariamente via {FALLBACK === "email" ? "e-mail" : "WhatsApp"}.
-              </p>
-            )}
+            {/* frase de “envio temporariamente via …” removida */}
           </div>
 
           {/* DIREITA: imagem */}
