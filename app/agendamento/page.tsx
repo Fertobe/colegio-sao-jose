@@ -1,7 +1,7 @@
 // app/agendamento/page.tsx
 import type { Metadata } from "next";
-import NextDynamic from "next/dynamic"; // ⬅️ renomeado para evitar conflito
 import { getSiteUrl } from "@/app/utils/site-url";
+import AgendamentoClient from "./AgendamentoClient.tsx"; // importa direto o componente client
 
 // Mantém a página estática; o formulário roda no client
 export const dynamic = "force-static";
@@ -30,17 +30,6 @@ export const metadata: Metadata = {
   },
 };
 
-// Import dinâmico do client component (sem SSR)
-const AgendamentoClient = NextDynamic(() => import("./AgendamentoClient"), {
-  ssr: false,
-  loading: () => (
-    <main className="mx-auto max-w-6xl px-4 py-16">
-      <div className="h-6 w-40 rounded bg-gray-200" />
-      <div className="mt-6 h-48 rounded-2xl border border-gray-200" />
-    </main>
-  ),
-});
-
 export default function AgendamentoPage() {
   // JSON-LD: migalhas (Home > Agendamento)
   const breadcrumbLd = {
@@ -60,10 +49,26 @@ export default function AgendamentoPage() {
     description:
       "Passo a passo para solicitar e confirmar sua visita ao Colégio São José.",
     step: [
-      { "@type": "HowToStep", name: "Preencha seus dados", text: "Informe nome, contato e o segmento de interesse no formulário." },
-      { "@type": "HowToStep", name: "Escolha dia/horário", text: "Selecione a data disponível que melhor se encaixa na sua agenda." },
-      { "@type": "HowToStep", name: "Confirmação", text: "Você receberá a confirmação por WhatsApp ou e-mail com as instruções." },
-      { "@type": "HowToStep", name: "Visite o colégio", text: "Compareça no horário combinado para conhecer a estrutura e a proposta pedagógica." },
+      {
+        "@type": "HowToStep",
+        name: "Preencha seus dados",
+        text: "Informe nome, contato e o segmento de interesse no formulário.",
+      },
+      {
+        "@type": "HowToStep",
+        name: "Escolha dia/horário",
+        text: "Selecione a data disponível que melhor se encaixa na sua agenda.",
+      },
+      {
+        "@type": "HowToStep",
+        name: "Confirmação",
+        text: "Você receberá a confirmação por WhatsApp ou e-mail com as instruções.",
+      },
+      {
+        "@type": "HowToStep",
+        name: "Visite o colégio",
+        text: "Compareça no horário combinado para conhecer a estrutura e a proposta pedagógica.",
+      },
     ],
   };
 
