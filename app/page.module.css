@@ -287,6 +287,18 @@ a.secondary {
 .heroDelay2{ animation-delay: 4s; }
 .heroDelay3{ animation-delay: 8s; }
 
+/* Acessibilidade: desliga animações para quem prefere menos movimento */
 @media (prefers-reduced-motion: reduce){
-  .heroFade{ animation-timing-function: linear; }
+  /* Crossfade do herói */
+  .heroFade{
+    animation: none !important;
+    opacity: 1 !important;           /* garante que a imagem fique visível */
+  }
+
+  /* Remove transições relacionadas ao herói (mantém posicionamento/transform) */
+  .heroCtl,
+  .heroDock,
+  .heroFiloCtl{
+    transition: none !important;
+  }
 }

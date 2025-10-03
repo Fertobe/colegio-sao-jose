@@ -1,4 +1,3 @@
-// app/page.tsx
 import type { CSSProperties } from "react";
 import type { Metadata } from "next";
 import Link from "next/link";
@@ -27,6 +26,10 @@ export const metadata: Metadata = {
   robots: { index: true, follow: true, "max-image-preview": "large" },
   twitter: { card: "summary_large_image" },
 };
+
+/* ⬇️ Geração estática + revalidação (sem tornar a página dinâmica) */
+export const dynamic = "force-static";
+export const revalidate = 3600; // 1h
 
 export default function Home() {
   // === HERO DESKTOP ========================================================
@@ -77,8 +80,58 @@ export default function Home() {
     return { src: `/conquistas/${n}.webp`, alt: `Conquista ${n}` };
   });
 
+  /* ⬇️ JSON-LD (Website + EducationalOrganization) */
+  const jsonLdWebsite = {
+    "@context": "https://schema.org",
+    "@type": "WebSite",
+    name: "Colégio São José",
+    url: "https://colegio.artferro.site/",
+  };
+
+  const jsonLdOrg = {
+    "@context": "https://schema.org",
+    "@type": "EducationalOrganization",
+    name: "Colégio São José",
+    url: "https://colegio.artferro.site/",
+    logo: "https://colegio.artferro.site/logo.svg",
+    address: {
+      "@type": "PostalAddress",
+      streetAddress: "R. Cândido de Abreu, 1636",
+      addressLocality: "Prudentópolis",
+      addressRegion: "PR",
+      postalCode: "84400-000",
+      addressCountry: "BR",
+    },
+    contactPoint: [
+      {
+        "@type": "ContactPoint",
+        contactType: "customer support",
+        telephone: "+554234462212",
+        areaServed: "BR",
+        availableLanguage: ["pt-BR"],
+      },
+      {
+        "@type": "ContactPoint",
+        contactType: "WhatsApp",
+        url: "https://wa.me/5542998276516",
+        areaServed: "BR",
+        availableLanguage: ["pt-BR"],
+      },
+    ],
+  };
+
   return (
     <>
+      {/* JSON-LD (SEO) */}
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLdWebsite) }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLdOrg) }}
+      />
+
       {/* HERO */}
       <section className="relative overflow-hidden">
         <div className="absolute inset-0 bg-gradient-to-br from-brand-900 via-brand-800 to-brand-600" />
@@ -375,6 +428,7 @@ export default function Home() {
       {news.length > 0 && (
         <section
           id="noticias"
+          aria-labelledby="noticias-heading"
           className="relative overflow-hidden bg-gray-200 scroll-mt-24 md:scroll-mt-28"
           style={{ contentVisibility: "auto" as any, containIntrinsicSize: "900px" as any }}
         >
@@ -393,7 +447,7 @@ export default function Home() {
           {/* Container relativo para o botão absoluto */}
           <div className="relative mx-auto max-w-6xl px-4 pt-16 pb-24">
             <div className="translate-y-6 md:translate-y-8 lg:translate-y-10">
-              <h2 className="text-xl md:text-2xl font-bold text-brand-700 uppercase">
+              <h2 id="noticias-heading" className="text-xl md:text-2xl font-bold text-brand-700 uppercase">
                 NOTÍCIAS SOBRE O COLÉGIO
               </h2>
 
@@ -433,9 +487,13 @@ export default function Home() {
       )}
 
       {/* CONQUISTAS */}
-      <section className="bg-white" style={{ contentVisibility: "auto" as any, containIntrinsicSize: "900px" as any }}>
+      <section
+        aria-labelledby="conquistas-heading"
+        className="bg-white"
+        style={{ contentVisibility: "auto" as any, containIntrinsicSize: "900px" as any }}
+      >
         <div className="mx-auto max-w-6xl px-4 py-12">
-          <h2 className="text-xl md:text-2xl font-bold text-brand-700 uppercase">
+          <h2 id="conquistas-heading" className="text-xl md:text-2xl font-bold text-brand-700 uppercase">
             CONHEÇA AS NOSSAS CONQUISTAS
           </h2>
         </div>
