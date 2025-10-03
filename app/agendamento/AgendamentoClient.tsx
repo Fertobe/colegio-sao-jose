@@ -218,7 +218,7 @@ export default function AgendamentoClient() {
               Venha conhecer nossos espaços e conversar com nossa equipe. O processo é simples:
               preencha seus dados, escolha o melhor horário e nós confirmamos com você.
             </p>
-            {/* frase de “envio temporariamente via …” removida */}
+            {/* frase “envio temporariamente via …” permanece removida */}
           </div>
 
           {/* DIREITA: imagem */}
@@ -260,7 +260,13 @@ export default function AgendamentoClient() {
 
         {/* Onda branca */}
         <div className="pointer-events-none absolute inset-x-0 bottom-0 z-30">
-          <svg viewBox="0 0 1440 140" className="h-[90px] w-full md:h-[110px] lg:h-[130px]" preserveAspectRatio="none">
+          <svg
+            viewBox="0 0 1440 140"
+            className="h-[90px] w-full md:h-[110px] lg:h-[130px]"
+            preserveAspectRatio="none"
+            aria-hidden="true"
+            role="presentation"
+          >
             <path d="M0,80 C320,140 920,10 1440,90 L1440,140 L0,140 Z" fill="#fff" />
           </svg>
         </div>
@@ -426,16 +432,19 @@ export default function AgendamentoClient() {
                     {enviando ? "Enviando…" : AGENDAMENTO_ATIVO ? "Agendar" : "Enviar pedido"}
                   </button>
 
-                  {ok === "ok" && (
-                    <p className="text-sm font-semibold text-emerald-600">
-                      Pedido enviado! Em breve entraremos em contato.
-                    </p>
-                  )}
-                  {ok === "erro" && (
-                    <p className="text-sm font-semibold text-rose-600">
-                      Verifique os campos obrigatórios ou tente novamente.
-                    </p>
-                  )}
+                  {/* A11y: status anunciado por leitores de tela */}
+                  <div role="status" aria-live="polite">
+                    {ok === "ok" && (
+                      <p className="text-sm font-semibold text-emerald-600">
+                        Pedido enviado! Em breve entraremos em contato.
+                      </p>
+                    )}
+                    {ok === "erro" && (
+                      <p className="text-sm font-semibold text-rose-600">
+                        Verifique os campos obrigatórios ou tente novamente.
+                      </p>
+                    )}
+                  </div>
                 </div>
               )}
             </div>

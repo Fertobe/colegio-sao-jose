@@ -4,7 +4,7 @@ import type { Metadata, Viewport } from "next";
 import Header from "./components/Header";
 import Footer from "./components/Footer";
 import { SpeedInsights } from "@vercel/speed-insights/next";
-import { getSiteUrl, assertSiteUrlForEnv } from "@/app/utils/site-url"; // ⬅️ util existente
+import { getSiteUrl, assertSiteUrlForEnv } from "@/app/utils/site-url"; // util existente
 
 // Base derivada do util (sem mudar sua lógica)
 const BASE_URL = getSiteUrl();
@@ -17,12 +17,12 @@ export const metadata: Metadata = {
   },
   description: "Tradição e inovação para preparar estudantes para a vida real.",
   metadataBase: new URL(BASE_URL),
-  alternates: { canonical: "/" },
+  // ❌ Removido: canonical global "/" — cada página define o seu quando necessário
   openGraph: {
     type: "website",
     siteName: "Colégio São José",
     url: `${BASE_URL}/`,
-    images: ["/og-cover.webp"],
+    images: ["/og-cover.webp"], // resolvido para absoluto via metadataBase
   },
   robots: {
     index: true,
@@ -57,7 +57,7 @@ const ORG_LD_JSON = {
     postalCode: "84400-000",
     addressCountry: "BR",
   },
-  telephone: "+55 (42) 3446-2212",
+  telephone: "+55 42 3446-2212",
   sameAs: ["https://wa.me/5542998276516"],
 } as const;
 
@@ -74,7 +74,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           fetchPriority="high"
         />
 
-        {/* ✅ Preload do 1º frame do HERO (mobile e desktop) sem usar props não tipadas */}
+        {/* ✅ Preload do 1º frame do HERO (mobile e desktop) */}
         <link
           rel="preload"
           as="image"
@@ -92,9 +92,14 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           fetchPriority="high"
         />
 
-        {/* Perf hints — aceleram WhatsApp e (se usado) Google Fonts */}
+        {/* Perf hints — WhatsApp e Google Fonts */}
         <link rel="dns-prefetch" href="https://wa.me" />
         <link rel="preconnect" href="https://wa.me" crossOrigin="anonymous" />
+
+        {/* 👇 adicionados para o domínio de CSS das fontes */}
+        <link rel="dns-prefetch" href="https://fonts.googleapis.com" />
+        <link rel="preconnect" href="https://fonts.googleapis.com" crossOrigin="anonymous" />
+
         <link rel="dns-prefetch" href="https://fonts.gstatic.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
 
@@ -103,10 +108,10 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <link rel="prefetch" href="/ensino/ensino-fundamental" as="document" />
         <link rel="prefetch" href="/ensino/ensino-medio" as="document" />
         <link rel="prefetch" href="/diferenciais/genio-das-financas" as="document" />
-        <link rel="prefetch" href="/diferenciais/sistema-coc" as="document" /> {/* ← corrigido */}
+        <link rel="prefetch" href="/diferenciais/sistema-coc" as="document" />
         <link rel="prefetch" href="/noticias" as="document" />
 
-        {/* Se usar fonte local, descomente e ajuste
+        {/* Se usar fonte local, descomente
         <link
           rel="preload"
           as="font"
