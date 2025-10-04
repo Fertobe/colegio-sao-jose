@@ -8,6 +8,8 @@ const SITE_NAME = "Colégio São José";
 export const dynamic = "force-static";
 // ❗ literal numérico
 export const revalidate = 21600; // 6h
+// ✅ garante execução em Node.js (bom se listNewsMeta usa filesystem)
+export const runtime = "nodejs";
 
 function rfc1123(d: string | Date) {
   const dt = typeof d === "string" ? new Date(d) : d;
