@@ -58,8 +58,9 @@ export default function MaraltoPage() {
       </section>
 
       {/* BLOCO — o que o programa oferece */}
+      {/* ⬇️ relative z-20 cria um stacking context acima de elementos absolutos de seções vizinhas */}
       <section
-        className="bg-white"
+        className="relative z-20 bg-white"
         style={{ contentVisibility: "auto" as any, containIntrinsicSize: "900px" as any }}
       >
         <div className="mx-auto max-w-6xl px-4 py-14">
@@ -109,9 +110,10 @@ export default function MaraltoPage() {
               </p>
             </div>
 
-            {/* Botão Voltar para Diferenciais (mantém como estava) */}
+            {/* Botão Voltar para Diferenciais */}
             <div className="md:col-span-3">
-              <div className="mt-10">
+              {/* ⬇️ reforço local de stacking acima de qualquer overlay da galeria */}
+              <div className="mt-10 relative z-30">
                 <Link
                   href="/#diferenciais"
                   className="rounded-full border border-teal-600/20 bg-teal-50 px-5 py-3 font-semibold text-teal-800 transition hover:bg-teal-100"

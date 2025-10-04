@@ -29,6 +29,8 @@ export const metadata: Metadata = {
       "Como coletamos, utilizamos e protegemos seus dados pessoais no Colégio São José, em conformidade com a LGPD.",
     images: ["/og-cover.webp"],
   },
+  // ✅ alinhado às demais páginas
+  robots: { index: true, follow: true, "max-image-preview": "large" },
 };
 
 const HERO_DESKTOP = {

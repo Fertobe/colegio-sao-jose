@@ -65,11 +65,13 @@ export default function NossaHistoriaPage() {
     },
     description: PAGE_DESC,
   };
+
+  // ✅ Ajuste: Breadcrumb simples e correto (Início → Nossa História)
   const jsonLdBreadcrumbs = {
     "@context": "https://schema.org",
     "@type": "BreadcrumbList",
     itemListElement: [
-      { "@type": "ListItem", position: 1, name: "Institucional", item: `${SITE_URL}/institucional/nossa-historia` },
+      { "@type": "ListItem", position: 1, name: "Início", item: `${SITE_URL}/` },
       { "@type": "ListItem", position: 2, name: "Nossa História", item: `${SITE_URL}${PAGE_PATH}` },
     ],
   };
@@ -168,10 +170,10 @@ export default function NossaHistoriaPage() {
               />
             </div>
             {/* ornamentos leves */}
-            <svg aria-hidden className="pointer-events-none absolute -left-3 -top-3 h-20 w-20 opacity-60" viewBox="0 0 100 100" fill="none">
+            <svg aria-hidden className="pointer-events-none absolute -left-3 -top-3 h-20 w-20 opacity-60" viewBox="0 0 100 100" fill="none" role="presentation">
               <circle cx="50" cy="50" r="40" stroke="#14D3E0" strokeDasharray="4 10" strokeWidth="4" />
             </svg>
-            <svg aria-hidden className="pointer-events-none absolute -right-4 bottom-2 h-16 w-16 opacity-60" viewBox="0 0 100 100" fill="none">
+            <svg aria-hidden className="pointer-events-none absolute -right-4 bottom-2 h-16 w-16 opacity-60" viewBox="0 0 100 100" fill="none" role="presentation">
               <circle cx="50" cy="50" r="28" stroke="#0ea5b7" strokeOpacity="0.35" strokeWidth="6" />
             </svg>
           </div>

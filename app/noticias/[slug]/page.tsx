@@ -47,6 +47,7 @@ export async function generateMetadata(
     title, // o template global do layout acrescenta “ — Colégio São José”
     description,
     alternates: { canonical: path },
+    robots: { index: true, follow: true, "max-image-preview": "large" },
     openGraph: {
       type: "article",
       url: urlAbs,
@@ -106,11 +107,15 @@ export default async function NewsPostPage({ params }: Props) {
     ],
   };
 
-  // Data segura (não quebra se vier inválida)
+  // Data segura (label pt-BR e ISO para dateTime)
   let dateLabel: string | null = null;
+  let dateIso: string | undefined;
   if (post.date) {
     const d = new Date(post.date);
-    if (!isNaN(d.getTime())) dateLabel = d.toLocaleDateString("pt-BR");
+    if (!isNaN(d.getTime())) {
+      dateLabel = d.toLocaleDateString("pt-BR");
+      dateIso = d.toISOString();
+    }
   }
 
   return (
@@ -140,7 +145,7 @@ export default async function NewsPostPage({ params }: Props) {
         <h1 className="text-3xl font-extrabold text-gray-900">{post.title}</h1>
         {dateLabel && (
           <p className="mt-2 text-sm text-gray-500">
-            <time dateTime={post.date}>{dateLabel}</time>
+            <time dateTime={dateIso}>{dateLabel}</time>
           </p>
         )}
 

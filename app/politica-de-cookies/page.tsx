@@ -28,6 +28,8 @@ export const metadata: Metadata = {
       "Entenda como o Colégio São José usa cookies e tecnologias semelhantes para melhorar sua experiência, analisar métricas e personalizar conteúdos.",
     images: ["/og-cover.webp"],
   },
+  // ✅ alinhado às demais páginas
+  robots: { index: true, follow: true, "max-image-preview": "large" },
 };
 
 // Imagens do HERO

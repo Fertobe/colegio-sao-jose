@@ -46,7 +46,7 @@ export default function GenioFinancasPage() {
           draggable={false}
           width={1920}
           height={900}
-          sizes="100vw" // ⬅️ B1: ajuda LCP/CLS sem alterar visual
+          sizes="100vw"
         />
         <div className="pointer-events-none absolute inset-x-0 bottom-0" aria-hidden="true">
           <svg
@@ -100,8 +100,9 @@ export default function GenioFinancasPage() {
       </section>
 
       {/* =========== FAIXA VERMELHA (estatística) — MANTIDA =========== */}
+      {/* ⬇️ overflow-hidden no mobile evita “invadir” seções abaixo; md+ mantém o visual original */}
       <section
-        className="relative bg-[#E24635] text-white isolate overflow-visible"
+        className="relative bg-[#E24635] text-white isolate overflow-hidden md:overflow-visible"
         style={redVars}
       >
         <div className="pointer-events-none absolute inset-x-0 top-0 z-0" aria-hidden="true">
@@ -233,7 +234,8 @@ export default function GenioFinancasPage() {
       </section>
 
       {/* ===================== VOLTAR ===================== */}
-      <section className="bg-white">
+      {/* ⬇️ z-10 garante que fique acima de qualquer resquício visual anterior */}
+      <section className="relative z-10 bg-white">
         <div className="mx-auto max-w-6xl px-4 pb-12 pt-8">
           <Link
             href="/#diferenciais"

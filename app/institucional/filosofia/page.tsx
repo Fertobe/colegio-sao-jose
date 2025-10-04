@@ -65,12 +65,13 @@ export default function NossaFilosofiaPage() {
     },
     description: PAGE_DESC,
   };
+
+  // ✅ Alinhado ao padrão: Início → Nossa Filosofia
   const jsonLdBreadcrumbs = {
     "@context": "https://schema.org",
     "@type": "BreadcrumbList",
     itemListElement: [
-      // Mantemos o padrão “Institucional” como primeiro nível (mesma lógica usada em Nossa História)
-      { "@type": "ListItem", position: 1, name: "Institucional", item: `${SITE_URL}/institucional/nossa-historia` },
+      { "@type": "ListItem", position: 1, name: "Início", item: `${SITE_URL}/` },
       { "@type": "ListItem", position: 2, name: "Nossa Filosofia", item: `${SITE_URL}${PAGE_PATH}` },
     ],
   };

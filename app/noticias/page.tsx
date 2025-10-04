@@ -7,6 +7,7 @@ import { getSiteUrl } from "@/app/utils/site-url";
 // Conteúdo vem do filesystem → pode ser totalmente estático.
 // Se migrar para CMS/DB, troque para "force-dynamic".
 export const dynamic = "force-static";
+export const revalidate = 3600; // 1h (opcional, não altera o layout)
 
 // Base do site (respeita ambiente / previews)
 const SITE_URL = getSiteUrl();
@@ -36,13 +37,15 @@ export const metadata: Metadata = {
       "Acompanhe as últimas notícias, eventos e comunicados do Colégio São José.",
     images: [`${SITE_URL}/og-cover.webp`],
   },
+  // ✅ alinhado ao restante do site
+  robots: { index: true, follow: true, "max-image-preview": "large" },
 };
 
 type Post = {
   slug: string;
   title: string;
   date?: string;
-  cover: string;   // pode vir "/capa.jpg" ou "https://..."
+  cover: string; // pode vir "/capa.jpg" ou "https://..."
   excerpt?: string;
 };
 
@@ -50,7 +53,7 @@ export default function NoticiasPage() {
   // já vem ordenado (mais recentes primeiro) e filtrado por published
   const posts = listNewsMeta() as Post[];
 
-  // Helper para imagem absoluta
+  // Helper para imagem absoluta (JSON-LD)
   const toAbs = (u: string) => (u.startsWith("http") ? u : `${SITE_URL}${u}`);
 
   // JSON-LD (listagem de posts). Usa URLs absolutas e imagem absoluta.
@@ -100,12 +103,14 @@ export default function NoticiasPage() {
           const headingId = `post-${p.slug}`;
           const eager = i === 0; // ajuda o LCP do primeiro card
 
-          // Data segura (não quebra se vier inválida)
+          // Data segura (ISO para o atributo dateTime; label legível em pt-BR)
           let dateLabel: string | null = null;
+          let dateIso: string | undefined = undefined;
           if (p.date) {
             const d = new Date(p.date);
             if (!isNaN(d.getTime())) {
               dateLabel = d.toLocaleDateString("pt-BR");
+              dateIso = d.toISOString();
             }
           }
 
@@ -144,7 +149,7 @@ export default function NoticiasPage() {
 
                   {dateLabel && (
                     <p className="mt-1 text-xs text-gray-500">
-                      <time dateTime={p.date}>{dateLabel}</time>
+                      <time dateTime={dateIso}>{dateLabel}</time>
                     </p>
                   )}
 
