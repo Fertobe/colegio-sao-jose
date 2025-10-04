@@ -2,23 +2,30 @@
 import type { CSSProperties } from "react";
 import type { Metadata } from "next";
 import BackToTop from "../../components/BackToTop";
-import BrandIcon from "../../components/icons/BrandIcon"; // ✅ ícone oficial
+import BrandIcon from "../../components/icons/BrandIcon";
+import { getSiteUrl } from "@/app/utils/site-url";
+
+/** Página totalmente estática (rápida) */
+export const dynamic = "force-static";
+export const revalidate = 3600; // 1h
+
+const SITE_URL = getSiteUrl();
 
 /** SEO da página (não altera layout) */
 export const metadata: Metadata = {
-  title: "Ensino Fundamental", // ⬅️ evita duplicar com o template do layout
+  title: "Ensino Fundamental",
   description:
     "Transição cuidadosa, propostas interdisciplinares, recursos digitais e acompanhamento contínuo da aprendizagem no Ensino Fundamental.",
-  metadataBase: new URL("https://colegio.artferro.site"),
+  metadataBase: new URL(SITE_URL),
   alternates: { canonical: "/ensino/ensino-fundamental" },
   openGraph: {
-    type: "article",
+    type: "website",
     siteName: "Colégio São José",
     title: "Ensino Fundamental — Colégio São José",
     description:
       "Base forte para os próximos desafios: práticas interdisciplinares, tecnologia e avaliação contínua.",
-    url: "https://colegio.artferro.site/ensino/ensino-fundamental",
-    images: ["/ensino/fundamental/hero.webp"],
+    url: `${SITE_URL}/ensino/ensino-fundamental`,
+    images: ["/ensino/fundamental/hero.webp"], // resolvido p/ absoluto via metadataBase
   },
   robots: { index: true, follow: true, "max-image-preview": "large" },
   twitter: { card: "summary_large_image" },
@@ -49,13 +56,13 @@ export default function EnsinoFundamentalPage() {
     willChange: "transform",
   };
 
-  // ✅ Breadcrumb JSON-LD (Início → Ensino Fundamental)
+  // Breadcrumb JSON-LD (Início → Ensino Fundamental)
   const breadcrumbLd = {
     "@context": "https://schema.org",
     "@type": "BreadcrumbList",
     itemListElement: [
-      { "@type": "ListItem", position: 1, name: "Início", item: "https://colegio.artferro.site/" },
-      { "@type": "ListItem", position: 2, name: "Ensino Fundamental", item: "https://colegio.artferro.site/ensino/ensino-fundamental" },
+      { "@type": "ListItem", position: 1, name: "Início", item: `${SITE_URL}/` },
+      { "@type": "ListItem", position: 2, name: "Ensino Fundamental", item: `${SITE_URL}/ensino/ensino-fundamental` },
     ],
   };
 

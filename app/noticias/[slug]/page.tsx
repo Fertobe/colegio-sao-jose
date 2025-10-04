@@ -1,6 +1,7 @@
 // app/noticias/[slug]/page.tsx
 import type { Metadata, ResolvingMetadata } from "next";
 import Link from "next/link";
+import { notFound } from "next/navigation";
 import { readNewsBySlug, listNewsMeta } from "@/lib/news";
 import { getSiteUrl } from "@/app/utils/site-url";
 
@@ -69,21 +70,9 @@ export default async function NewsPostPage({ params }: Props) {
   const { slug } = await params;
   const post = readNewsBySlug(slug);
 
+  // Retorna 404 real (usa app/not-found.tsx e status correto)
   if (!post) {
-    return (
-      <main className="mx-auto max-w-3xl px-4 py-10">
-        <h1 className="text-2xl font-bold">Notícia não encontrada</h1>
-        <p className="mt-4">Verifique a URL.</p>
-        <div className="mt-8">
-          <Link
-            href="/noticias"
-            className="inline-flex items-center gap-2 rounded-full border px-4 py-2 text-sm font-semibold text-brand-700 hover:bg-brand-50"
-          >
-            ← Voltar para notícias
-          </Link>
-        </div>
-      </main>
-    );
+    notFound();
   }
 
   // JSON-LD por post (melhora SEO para Article/BlogPosting)
@@ -162,6 +151,7 @@ export default async function NewsPostPage({ params }: Props) {
               alt={post.title}
               className="h-auto w-full object-cover"
               loading="eager"
+              fetchPriority="high"
               decoding="async"
               draggable={false}
               width={1200}

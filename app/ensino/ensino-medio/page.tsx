@@ -2,23 +2,30 @@
 import type { CSSProperties } from "react";
 import type { Metadata } from "next";
 import BackToTop from "../../components/BackToTop";
-import BrandIcon from "../../components/icons/BrandIcon"; // ✅ usa o ícone oficial
+import BrandIcon from "../../components/icons/BrandIcon";
+import { getSiteUrl } from "@/app/utils/site-url";
+
+/** Página totalmente estática (rápida) */
+export const dynamic = "force-static";
+export const revalidate = 3600; // 1h
+
+const SITE_URL = getSiteUrl();
 
 /** SEO da página (não altera layout) */
 export const metadata: Metadata = {
-  title: "Ensino Médio", // ⬅️ evita duplicar com o template do layout
+  title: "Ensino Médio",
   description:
     "Itinerários formativos, eletivas, projeto de vida e simulados — proposta alinhada ao Novo Ensino Médio, com trilhas e acompanhamento contínuo.",
-  metadataBase: new URL("https://colegio.artferro.site"),
+  metadataBase: new URL(SITE_URL),
   alternates: { canonical: "/ensino/ensino-medio" },
   openGraph: {
-    type: "article",
+    type: "website",
     siteName: "Colégio São José",
     title: "Ensino Médio — Colégio São José",
     description:
       "Base forte para o futuro: trilhas, eletivas, projeto de vida e simulados alinhados ao Novo Ensino Médio.",
-    url: "https://colegio.artferro.site/ensino/ensino-medio",
-    images: ["/ensino/medio/hero.webp"],
+    url: `${SITE_URL}/ensino/ensino-medio`,
+    images: ["/ensino/medio/hero.webp"], // resolvido p/ absoluto via metadataBase
   },
   robots: { index: true, follow: true, "max-image-preview": "large" },
   twitter: { card: "summary_large_image" },
@@ -31,7 +38,7 @@ export default function EnsinoMedioPage() {
     alt: "Estudante do Ensino Médio",
   };
 
-  // MOBILE — coloque a PNG/WebP recortada (transparente) aqui
+  // MOBILE — versão recortada/transparente
   const heroImgMobile = {
     src: "/ensino/medio/mobile/hero.webp",
     alt: "Estudante do Ensino Médio (mobile)",
@@ -49,13 +56,13 @@ export default function EnsinoMedioPage() {
     willChange: "transform",
   };
 
-  // ✅ Breadcrumb JSON-LD (Início → Ensino Médio)
+  // Breadcrumb JSON-LD (Início → Ensino Médio)
   const breadcrumbLd = {
     "@context": "https://schema.org",
     "@type": "BreadcrumbList",
     itemListElement: [
-      { "@type": "ListItem", position: 1, name: "Início", item: "https://colegio.artferro.site/" },
-      { "@type": "ListItem", position: 2, name: "Ensino Médio", item: "https://colegio.artferro.site/ensino/ensino-medio" },
+      { "@type": "ListItem", position: 1, name: "Início", item: `${SITE_URL}/` },
+      { "@type": "ListItem", position: 2, name: "Ensino Médio", item: `${SITE_URL}/ensino/ensino-medio` },
     ],
   };
 
@@ -176,21 +183,21 @@ export default function EnsinoMedioPage() {
             De que forma os alunos se preparam para o futuro?
           </h2>
 
-        <div className="mt-8 grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-          {[
-            { title: "Formação Geral Básica (FGB)", desc: "Conteúdos essenciais com exercícios de diferentes bancas e foco em resultados." },
-            { title: "Itinerários formativos", desc: "Trilhas que promovem contextualização e aprofundamento em áreas de interesse." },
-            { title: "Eletivas (100% digitais)", desc: "Mais de 40 opções, aplicação presencial ou remota, PBL e flexibilidade de currículo." },
-            { title: "Projeto de Vida", desc: "Autoconhecimento, protagonismo e escolhas conscientes para objetivos pessoais." },
-            { title: "Simulados & Avaliações", desc: "Ciclos anuais com relatórios completos e comparativos para acompanhamento contínuo." },
-            { title: "Materiais e trilhas", desc: "Tarefa • Reforço • Aprofundamento • Lider! — caminhos personalizados de estudo." },
-          ].map((c) => (
-            <div key={c.title} className="rounded-3xl bg-white p-6 shadow-sm ring-1 ring-brand-900/5">
-              <h3 className="text-lg font-semibold text-brand-800">{c.title}</h3>
-              <p className="mt-2 text-brand-900/80 leading-relaxed">{c.desc}</p>
-            </div>
-          ))}
-        </div>
+          <div className="mt-8 grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+            {[
+              { title: "Formação Geral Básica (FGB)", desc: "Conteúdos essenciais com exercícios de diferentes bancas e foco em resultados." },
+              { title: "Itinerários formativos", desc: "Trilhas que promovem contextualização e aprofundamento em áreas de interesse." },
+              { title: "Eletivas (100% digitais)", desc: "Mais de 40 opções, aplicação presencial ou remota, PBL e flexibilidade de currículo." },
+              { title: "Projeto de Vida", desc: "Autoconhecimento, protagonismo e escolhas conscientes para objetivos pessoais." },
+              { title: "Simulados & Avaliações", desc: "Ciclos anuais com relatórios completos e comparativos para acompanhamento contínuo." },
+              { title: "Materiais e trilhas", desc: "Tarefa • Reforço • Aprofundamento • Lider! — caminhos personalizados de estudo." },
+            ].map((c) => (
+              <div key={c.title} className="rounded-3xl bg-white p-6 shadow-sm ring-1 ring-brand-900/5">
+                <h3 className="text-lg font-semibold text-brand-800">{c.title}</h3>
+                <p className="mt-2 text-brand-900/80 leading-relaxed">{c.desc}</p>
+              </div>
+            ))}
+          </div>
         </div>
       </section>
 
@@ -199,19 +206,19 @@ export default function EnsinoMedioPage() {
         <div className="mx-auto max-w-6xl px-4 py-12">
           <h2 className="text-2xl font-bold text-brand-700 uppercase">Avaliações e Simulados do COC</h2>
 
-          <div className="mt-8 grid gap-6 md:grid-cols-2 lg:grid-cols-4">
-            {[
-              { title: "Simulado Enem", desc: "Preparatório alinhado à principal porta de entrada para a universidade." },
-              { title: "Simulados Regionais", desc: "Exploração de diferentes possibilidades de prova ao longo do ano letivo." },
-              { title: "Simulado COC", desc: "Verificação do aprendizado e acompanhamento longitudinal." },
-              { title: "Avaliação Nacional", desc: "Análise anual com dados comparativos para a jornada do aluno." },
-            ].map((i) => (
-              <div key={i.title} className="rounded-3xl bg-gray-50 p-6 shadow-sm ring-1 ring-brand-900/5">
-                <h3 className="text-base font-semibold text-brand-800">{i.title}</h3>
-                <p className="mt-2 text-brand-900/80 leading-relaxed">{i.desc}</p>
-              </div>
-            ))}
-          </div>
+        <div className="mt-8 grid gap-6 md:grid-cols-2 lg:grid-cols-4">
+          {[
+            { title: "Simulado Enem", desc: "Preparatório alinhado à principal porta de entrada para a universidade." },
+            { title: "Simulados Regionais", desc: "Exploração de diferentes possibilidades de prova ao longo do ano letivo." },
+            { title: "Simulado COC", desc: "Verificação do aprendizado e acompanhamento longitudinal." },
+            { title: "Avaliação Nacional", desc: "Análise anual com dados comparativos para a jornada do aluno." },
+          ].map((i) => (
+            <div key={i.title} className="rounded-3xl bg-gray-50 p-6 shadow-sm ring-1 ring-brand-900/5">
+              <h3 className="text-base font-semibold text-brand-800">{i.title}</h3>
+              <p className="mt-2 text-brand-900/80 leading-relaxed">{i.desc}</p>
+            </div>
+          ))}
+        </div>
         </div>
       </section>
 

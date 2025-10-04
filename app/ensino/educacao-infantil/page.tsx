@@ -3,22 +3,29 @@ import type { CSSProperties } from "react";
 import type { Metadata } from "next";
 import BackToTop from "../../components/BackToTop";
 import BrandIcon from "../../components/icons/BrandIcon";
+import { getSiteUrl } from "@/app/utils/site-url";
+
+/** Página totalmente estática (rápida) */
+export const dynamic = "force-static";
+export const revalidate = 3600; // 1h
+
+const SITE_URL = getSiteUrl();
 
 /** SEO da página (não altera layout) */
 export const metadata: Metadata = {
-  title: "Educação Infantil", // ⬅️ evita duplicar com o template do layout
+  title: "Educação Infantil", // evita duplicar com o template do layout
   description:
     "Solução completa do Berçário ao Infantil 5 com propostas mão na massa, jogos, trilhas digitais e avaliação contínua.",
-  metadataBase: new URL("https://colegio.artferro.site"),
+  metadataBase: new URL(SITE_URL),
   alternates: { canonical: "/ensino/educacao-infantil" },
   openGraph: {
-    type: "article",
+    type: "website",
     siteName: "Colégio São José",
     title: "Educação Infantil — Colégio São José",
     description:
       "Um começo lúdico, afetivo e intencional: do Berçário ao Infantil 5, com projetos, tecnologia e avaliação contínua.",
-    url: "https://colegio.artferro.site/ensino/educacao-infantil",
-    images: ["/ensino/infantil/hero.webp"],
+    url: `${SITE_URL}/ensino/educacao-infantil`,
+    images: ["/ensino/infantil/hero.webp"], // resolvido p/ absoluto via metadataBase
   },
   robots: { index: true, follow: true, "max-image-preview": "large" },
   twitter: { card: "summary_large_image" },
@@ -54,8 +61,8 @@ export default function EducacaoInfantilPage() {
     "@context": "https://schema.org",
     "@type": "BreadcrumbList",
     itemListElement: [
-      { "@type": "ListItem", position: 1, name: "Início", item: "https://colegio.artferro.site/" },
-      { "@type": "ListItem", position: 2, name: "Educação Infantil", item: "https://colegio.artferro.site/ensino/educacao-infantil" },
+      { "@type": "ListItem", position: 1, name: "Início", item: `${SITE_URL}/` },
+      { "@type": "ListItem", position: 2, name: "Educação Infantil", item: `${SITE_URL}/ensino/educacao-infantil` },
     ],
   };
 
@@ -87,7 +94,6 @@ export default function EducacaoInfantilPage() {
                 draggable={false}
                 width={900}
                 height={900}
-                // B1.3: slot ideal para mobile
                 sizes="(max-width: 767px) 320px, 0px"
               />
             </div>
@@ -105,7 +111,6 @@ export default function EducacaoInfantilPage() {
                 draggable={false}
                 width={1200}
                 height={1200}
-                // B1.3: slots por breakpoint (md=420px, lg=520px)
                 sizes="(min-width: 1024px) 520px, (min-width: 768px) 420px, 0px"
               />
             </div>
