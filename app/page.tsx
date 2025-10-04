@@ -1,14 +1,17 @@
 import type { CSSProperties } from "react";
 import type { Metadata } from "next";
 import Link from "next/link";
-import NewsCarousel from "./components/NewsCarousel";
-import ConquistasCarousel from "./components/ConquistasCarousel";
+import NextDynamic from "next/dynamic"; // ⬅️ alias para evitar conflito com export const dynamic
 import BackToTop from "./components/BackToTop";
 import styles from "./page.module.css";
 import { getLatestNewsForCarousel } from "@/lib/news";
 import BrandIcon from "./components/icons/BrandIcon";
 
-/** === HEAD/SEO da Home — App Router (sem <Head/>) ======================== */
+// Carrosséis com hidratação adiada (melhora LCP/TBT)
+const NewsCarousel = NextDynamic(() => import("./components/NewsCarousel"), { ssr: false });
+const ConquistasCarousel = NextDynamic(() => import("./components/ConquistasCarousel"), { ssr: false });
+
+/** === HEAD/SEO da Home — App Router ======================== */
 export const metadata: Metadata = {
   title: "Colégio São José — Educação Infantil ao Ensino Médio",
   description:
@@ -27,7 +30,7 @@ export const metadata: Metadata = {
   twitter: { card: "summary_large_image" },
 };
 
-/* ⬇️ Geração estática + revalidação (sem tornar a página dinâmica) */
+/* ⬇️ Geração estática + revalidação */
 export const dynamic = "force-static";
 export const revalidate = 3600; // 1h
 
@@ -80,44 +83,12 @@ export default function Home() {
     return { src: `/conquistas/${n}.webp`, alt: `Conquista ${n}` };
   });
 
-  /* ⬇️ JSON-LD (Website + EducationalOrganization) */
+  /* ⬇️ JSON-LD (apenas WebSite — org já está no layout) */
   const jsonLdWebsite = {
     "@context": "https://schema.org",
     "@type": "WebSite",
     name: "Colégio São José",
     url: "https://colegio.artferro.site/",
-  };
-
-  const jsonLdOrg = {
-    "@context": "https://schema.org",
-    "@type": "EducationalOrganization",
-    name: "Colégio São José",
-    url: "https://colegio.artferro.site/",
-    logo: "https://colegio.artferro.site/logo.svg",
-    address: {
-      "@type": "PostalAddress",
-      streetAddress: "R. Cândido de Abreu, 1636",
-      addressLocality: "Prudentópolis",
-      addressRegion: "PR",
-      postalCode: "84400-000",
-      addressCountry: "BR",
-    },
-    contactPoint: [
-      {
-        "@type": "ContactPoint",
-        contactType: "customer support",
-        telephone: "+554234462212",
-        areaServed: "BR",
-        availableLanguage: ["pt-BR"],
-      },
-      {
-        "@type": "ContactPoint",
-        contactType: "WhatsApp",
-        url: "https://wa.me/5542998276516",
-        areaServed: "BR",
-        availableLanguage: ["pt-BR"],
-      },
-    ],
   };
 
   return (
@@ -126,10 +97,6 @@ export default function Home() {
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLdWebsite) }}
-      />
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLdOrg) }}
       />
 
       {/* HERO */}
@@ -159,7 +126,6 @@ export default function Home() {
                     width={800}
                     height={800}
                     draggable={false}
-                    /* B2: slot ideal para mobile */
                     sizes="(max-width: 767px) 320px, 0px"
                   />
                 );
@@ -186,7 +152,6 @@ export default function Home() {
                     width={1000}
                     height={1000}
                     draggable={false}
-                    /* B2: slots por breakpoint (md=420px, lg=520px) */
                     sizes="(min-width: 1024px) 520px, (min-width: 768px) 420px, 0px"
                   />
                 );
@@ -225,7 +190,7 @@ export default function Home() {
           </div>
         </div>
 
-        {/* Onda branca de transição — por cima das fotos (decorativa) */}
+        {/* Onda branca de transição */}
         <div className="pointer-events-none absolute inset-x-0 bottom-0 z-30" aria-hidden="true" role="presentation">
           <svg
             viewBox="0 0 1440 140"
@@ -241,11 +206,14 @@ export default function Home() {
       {/* SEGMENTOS */}
       <section
         id="segmentos"
+        aria-labelledby="segmentos-heading"
         className="scroll-mt-24 md:scroll-mt-28"
         style={{ contentVisibility: "auto" as any, containIntrinsicSize: "1000px" as any }}
       >
         <div className="mx-auto max-w-6xl px-4 py-12">
-          <h2 className="text-xl md:text-2xl font-bold text-brand-700 uppercase">NOSSOS SEGMENTOS</h2>
+          <h2 id="segmentos-heading" className="text-xl md:text-2xl font-bold text-brand-700 uppercase">
+            NOSSOS SEGMENTOS
+          </h2>
           {/* linha */}
           <div className="relative mt-6">
             <div className="h-[3px] w-full rounded-full bg-brand-400" />
@@ -324,11 +292,14 @@ export default function Home() {
       {/* DIFERENCIAIS */}
       <section
         id="diferenciais"
+        aria-labelledby="diferenciais-heading"
         className="bg-white scroll-mt-24 md:scroll-mt-28"
         style={{ contentVisibility: "auto" as any, containIntrinsicSize: "1000px" as any }}
       >
         <div className="mx-auto max-w-6xl px-4 py-12">
-          <h2 className="text-xl md:text-2xl font-bold text-brand-700 uppercase">NOSSOS DIFERENCIAIS</h2>
+          <h2 id="diferenciais-heading" className="text-xl md:text-2xl font-bold text-brand-700 uppercase">
+            NOSSOS DIFERENCIAIS
+          </h2>
           {/* linha */}
           <div className="relative mt-6">
             <div className="h-[3px] w-full rounded-full bg-brand-400" />
@@ -497,7 +468,7 @@ export default function Home() {
           </h2>
         </div>
 
-        {/* Carrossel sem clique (componente já está com disableLinks=true por padrão) */}
+        {/* Carrossel sem clique */}
         <div className={`mx-auto max-w-6xl px-4 md:hidden ${styles.conquistasHoverSoft}`}>
           <ConquistasCarousel items={conquistas} perPage={1} />
         </div>
@@ -574,7 +545,6 @@ export default function Home() {
                   width={1200}
                   height={800}
                   draggable={false}
-                  /* B2: informar slot previsto melhora escolhas de resolução */
                   sizes="(min-width: 768px) 800px, 100vw"
                 />
               </div>
