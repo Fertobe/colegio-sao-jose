@@ -285,7 +285,8 @@ export default function COCPage() {
       </section>
 
       {/* ===================== DNA APROVADOR ===================== */}
-      <section className="relative bg-white">
+      {/* overflow-hidden só no mobile evita que imagens invadam a seção do botão */}
+      <section className="relative bg-white overflow-hidden md:overflow-visible">
         {/* mobile: menos padding para tirar o “vazio” */}
         <div
           className="relative isolate mx-auto max-w-7xl px-6 py-8 md:py-36"
@@ -296,7 +297,7 @@ export default function COCPage() {
             <img
               src={DNA_LEFT}
               alt=""
-              className="block h-48 w-auto select-none opacity-50"
+              className="block h-48 w-auto select-none pointer-events-none opacity-50"
               loading="eager"
               decoding="async"
               draggable={false}
@@ -349,13 +350,13 @@ export default function COCPage() {
               <Reveal
                 from="right"
                 duration={700}
-                className="absolute right-0 top-1/2 -translate-y-1/2 z-0"
+                className="pointer-events-none absolute right-0 top-1/2 -translate-y-1/2 z-0"
               >
                 <img
                   src={DNA_RING}
                   alt=""
                   aria-hidden
-                  className="h-[var(--dna-ring-h)] w-auto object-contain select-none"
+                  className="h-[var(--dna-ring-h)] w-auto object-contain select-none pointer-events-none"
                   decoding="async"
                   draggable={false}
                 />
@@ -365,12 +366,12 @@ export default function COCPage() {
                 from="right"
                 duration={700}
                 delay={120}
-                className="absolute right-[var(--dna-students-right)] top-[calc(50%+var(--dna-y))] -translate-y-1/2 z-10"
+                className="pointer-events-none absolute right-[var(--dna-students-right)] top-[calc(50%+var(--dna-y))] -translate-y-1/2 z-10"
               >
                 <img
                   src={DNA_STUDENTS}
                   alt="Estudantes do Sistema COC"
-                  className="h-[var(--dna-students-h)] w-auto object-contain"
+                  className="h-[var(--dna-students-h)] w-auto object-contain select-none pointer-events-none"
                   loading="lazy"
                   decoding="async"
                   draggable={false}
@@ -382,7 +383,7 @@ export default function COCPage() {
       </section>
 
       {/* ===================== VOLTAR PARA DIFERENCIAIS ===================== */}
-      <section className="bg-white">
+      <section className="relative z-10 bg-white">
         <div className="mx-auto max-w-6xl px-4 py-10">
           <Link
             href="/#diferenciais"

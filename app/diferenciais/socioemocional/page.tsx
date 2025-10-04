@@ -2,11 +2,31 @@
 import BackToTop from "../../components/BackToTop";
 import Link from "next/link";
 import type { Metadata } from "next";
+import { getSiteUrl } from "@/app/utils/site-url";
+
+/** Página totalmente estática (rápida) */
+export const dynamic = "force-static";
+export const revalidate = 3600; // 1h
+
+const SITE_URL = getSiteUrl();
 
 export const metadata: Metadata = {
   title: "Educação Socioemocional · Programa Pleno | Colégio São José",
   description:
     "Conheça o Programa Pleno: competências socioemocionais, metodologias ativas e aprendizagem conectada à realidade dos estudantes.",
+  metadataBase: new URL(SITE_URL),
+  alternates: { canonical: "/diferenciais/socioemocional" },
+  openGraph: {
+    type: "website",
+    siteName: "Colégio São José",
+    title: "Educação Socioemocional · Programa Pleno | Colégio São José",
+    description:
+      "Conheça o Programa Pleno: competências socioemocionais, metodologias ativas e aprendizagem conectada à realidade dos estudantes.",
+    url: `${SITE_URL}/diferenciais/socioemocional`,
+    images: ["/pleno/hero-pack.webp"],
+  },
+  robots: { index: true, follow: true, "max-image-preview": "large" },
+  twitter: { card: "summary_large_image" },
 };
 
 // imagem única do herói
@@ -73,8 +93,29 @@ const MATERIAIS = [
 ];
 
 export default function SocioemocionalPage() {
+  // Breadcrumb JSON-LD (Início → Educação Socioemocional)
+  const breadcrumbLd = {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    itemListElement: [
+      { "@type": "ListItem", position: 1, name: "Início", item: `${SITE_URL}/` },
+      {
+        "@type": "ListItem",
+        position: 2,
+        name: "Educação Socioemocional",
+        item: `${SITE_URL}/diferenciais/socioemocional`,
+      },
+    ],
+  };
+
   return (
     <main className="bg-white">
+      {/* JSON-LD estruturado (SEO) */}
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbLd) }}
+      />
+
       {/* ===================== HERO ===================== */}
       <section className="relative overflow-visible">
         {/* fundo em degradê */}
@@ -89,7 +130,13 @@ export default function SocioemocionalPage() {
                 src={HERO_IMG}
                 alt="Estudante do Programa Pleno sorrindo"
                 className="pointer-events-none select-none h-auto w-[300px] md:w-[420px] lg:w-[520px] drop-shadow-[0_25px_40px_rgba(0,0,0,.35)]"
+                width={1200}
+                height={1200}
+                sizes="(min-width:1024px) 520px, (min-width:768px) 420px, 300px"
                 loading="eager"
+                decoding="async"
+                fetchPriority="high"
+                draggable={false}
               />
             </div>
 
@@ -302,6 +349,10 @@ export default function SocioemocionalPage() {
                   alt={m.altCard}
                   className="mx-auto mt-4 max-w-full h-auto"
                   loading="lazy"
+                  width={1200}
+                  height={800}
+                  decoding="async"
+                  draggable={false}
                 />
 
                 <img
@@ -309,6 +360,10 @@ export default function SocioemocionalPage() {
                   alt={m.altBooks}
                   className="mx-auto mt-6 max-w-full h-auto"
                   loading="lazy"
+                  width={1200}
+                  height={800}
+                  decoding="async"
+                  draggable={false}
                 />
               </div>
             ))}

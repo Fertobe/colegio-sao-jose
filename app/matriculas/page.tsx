@@ -22,10 +22,15 @@ const WHATSAPP_URL = "https://wa.me/5542998276516";
 // SEO base
 const SITE_URL = getSiteUrl();
 
+/* Conteúdo estático + ISR, mantendo padrão do projeto */
+export const dynamic = "force-static";
+export const revalidate = 3600; // 1h
+
 export const metadata: Metadata = {
   title: "Matrículas | Colégio São José",
   description:
     "Estamos felizes com o seu interesse! Agende sua visita e conheça nossa proposta pedagógica. Matrículas abertas.",
+  metadataBase: new URL(SITE_URL),
   alternates: { canonical: "/matriculas" },
   openGraph: {
     type: "website",
