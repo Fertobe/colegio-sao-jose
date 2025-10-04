@@ -169,7 +169,7 @@ export default function Home() {
               juntas para formar estudantes preparados para o
               <span className="text-brand-300"> Mundo Real</span>
             </h1>
-            <p className="mt-4 text-base text:white/90 md:text-lg text-white/90">
+            <p className="mt-4 text-base md:text-lg text-white/90">
               Do Infantil ao Ensino Médio, com projetos, tecnologia e desenvolvimento socioemocional.
             </p>
             <div className="mt-6 flex flex-wrap gap-3">
@@ -248,7 +248,7 @@ export default function Home() {
 
             <Link
               href="/ensino/ensino-fundamental"
-              className="group block rounded-3xl bg-brand-700/90 text:white shadow-lg ring-1 ring-white/10 transition hover:bg-brand-700 text-white"
+              className="group block rounded-3xl bg-brand-700/90 text-white shadow-lg ring-1 ring-white/10 transition hover:bg-brand-700"
             >
               <div className="rounded-3xl rounded-b-none bg-white/10 px-6 py-4">
                 <div className="flex items-center gap-3">
@@ -299,7 +299,7 @@ export default function Home() {
           <h2 id="diferenciais-heading" className="text-xl md:text-2xl font-bold text-brand-700 uppercase">
             NOSSOS DIFERENCIAIS
           </h2>
-          {/* linha */}
+        {/* linha */}
           <div className="relative mt-6">
             <div className="h-[3px] w-full rounded-full bg-brand-400" />
             <div className="pointer-events-none absolute inset-x-0 top-1/2 -translate-y-1/2 grid grid-cols-4">
@@ -316,7 +316,7 @@ export default function Home() {
               href="/diferenciais/socioemocional"
               className="group block rounded-3xl bg-brand-600/95 text-white shadow-lg ring-1 ring-brand-800/10 transition hover:bg-brand-600"
             >
-              <div className="rounded-3xl rounded-b-none bg:white/10 px-6 py-4 bg-white/10">
+              <div className="rounded-3xl rounded-b-none bg-white/10 px-6 py-4">
                 <div className="flex items-center gap-3">
                   <svg viewBox="0 0 24 24" className="h-6 w-6 text-white" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden="true" role="presentation">
                     <path d="M12 20s-7-4.35-7-10a7 7 0 0 1 14 0c0 5.65-7 10-7 10Z" />
@@ -335,7 +335,7 @@ export default function Home() {
               href="/diferenciais/sistema-coc"
               className="group block rounded-3xl bg-brand-600/95 text-white shadow-lg ring-1 ring-brand-800/10 transition hover:bg-brand-600"
             >
-              <div className="rounded-3xl rounded-b-none bg:white/10 px-6 py-4 bg-white/10">
+              <div className="rounded-3xl rounded-b-none bg-white/10 px-6 py-4">
                 <div className="flex items-center gap-3">
                   <svg viewBox="0 0 24 24" className="h-6 w-6 text-white" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden="true" role="presentation">
                     <path d="M4 6h16v12H4Z" />
@@ -355,7 +355,7 @@ export default function Home() {
               href="/diferenciais/genio-das-financas"
               className="group block rounded-3xl bg-brand-600/95 text-white shadow-lg ring-1 ring-brand-800/10 transition hover:bg-brand-600"
             >
-              <div className="rounded-3xl rounded-b-none bg:white/10 px-6 py-4 bg-white/10">
+              <div className="rounded-3xl rounded-b-none bg-white/10 px-6 py-4">
                 <div className="flex items-center gap-3">
                   <svg viewBox="0 0 24 24" className="h-6 w-6 text-white" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden="true" role="presentation">
                     <path d="M3 10h18M3 14h18" />
@@ -375,8 +375,8 @@ export default function Home() {
               href="/diferenciais/maralto"
               className="group block rounded-3xl bg-brand-600/95 text-white shadow-lg ring-1 ring-brand-800/10 transition hover:bg-brand-600"
             >
-              <div className="rounded-3xl rounded-b-none bg:white/10 px-6 py-4 bg-white/10">
-                <div className="flex items:center gap-3 items-center">
+              <div className="rounded-3xl rounded-b-none bg-white/10 px-6 py-4">
+                <div className="flex items-center gap-3">
                   <svg viewBox="0 0 24 24" className="h-6 w-6 text-white" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden="true" role="presentation">
                     <path d="M12 3v3M12 18v3M3 12h3M18 12h3" />
                     <path d="M7.8 7.8l2.1 2.1M14.1 14.1l2.1 2.1M7.8 16.2l2.1-2.1M14.1 9.9l2.1-2.1" />
@@ -527,8 +527,8 @@ export default function Home() {
 
               <div className="mt-4 flex flex-wrap gap-2 text-xs text-white/80">
                 <span className="rounded-full bg-white/10 px-3 py-1">Tempo médio de resposta &lt; 1h</span>
-                <span className="rounded-full bg:white/10 px-3 py-1 bg-white/10">Horário comercial</span>
-                <span className="rounded-full bg:white/10 px-3 py-1 bg-white/10">Equipe especializada</span>
+                <span className="rounded-full bg-white/10 px-3 py-1">Horário comercial</span>
+                <span className="rounded-full bg-white/10 px-3 py-1">Equipe especializada</span>
               </div>
             </div>
 
