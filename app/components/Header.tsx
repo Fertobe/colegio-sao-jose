@@ -69,14 +69,14 @@ export default function Header() {
   // ===== PRELOAD dos HEROS do ENSINO (1ª visita mais rápida) =====
   const preloadedEnsino = useRef(false);
   const ENSINO_HERO_MOBILE = [
-    "/ensino/infantil/mobile/hero.webp",
-    "/ensino/fundamental/mobile/hero.webp",
-    "/ensino/medio/mobile/hero.webp",
+    "/ensino/educacao-infantil/mobile/hero.webp",
+    "/ensino/ensino-fundamental/mobile/hero.webp",
+    "/ensino/ensino-medio/mobile/hero.webp",
   ];
   const ENSINO_HERO_DESKTOP = [
-    "/ensino/infantil/hero.webp",
-    "/ensino/fundamental/hero.webp",
-    "/ensino/medio/hero.webp",
+    "/ensino/educacao-infantil/hero.webp",
+    "/ensino/ensino-fundamental/hero.webp",
+    "/ensino/ensino-medio/hero.webp",
   ];
   const warmEnsinoHeros = () => {
     if (preloadedEnsino.current) return;
@@ -199,7 +199,10 @@ export default function Header() {
     "text-brand-700 font-semibold underline underline-offset-4 decoration-brand-300";
   const triggerBase =
     "inline-flex items-center gap-1 rounded hover:text-brand-600 focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-400/40";
-  const triggerActive = instAtivo || ensinoAtivo ? activeLink : "";
+
+  // WhatsApp com mensagem padrão
+  const WAPP =
+    "https://wa.me/5542998276516?text=Ol%C3%A1!%20Tenho%20uma%20d%C3%BAvida.";
 
   return (
     <header className="border-b bg-white">
@@ -291,6 +294,7 @@ export default function Header() {
             }}
           >
             <button
+              id="btn-institucional"
               ref={instBtnRef}
               type="button"
               aria-haspopup="menu"
@@ -328,7 +332,7 @@ export default function Header() {
               id="menu-institucional"
               ref={instMenuRef}
               role="menu"
-              aria-label="submenu institucional"
+              aria-labelledby="btn-institucional"
               tabIndex={-1}
               className={`absolute left-0 top-full z-50 mt-2 w-64 rounded-2xl border bg-white p-2 shadow-lg transition ${
                 instOpen ? "pointer-events-auto opacity-100" : "pointer-events-none opacity-0"
@@ -384,6 +388,7 @@ export default function Header() {
             }}
           >
             <button
+              id="btn-ensino"
               ref={ensBtnRef}
               type="button"
               aria-haspopup="menu"
@@ -421,7 +426,7 @@ export default function Header() {
               id="menu-ensino"
               ref={ensMenuRef}
               role="menu"
-              aria-label="submenu ensino"
+              aria-labelledby="btn-ensino"
               tabIndex={-1}
               className={`absolute left-0 top-full z-50 mt-2 w-64 rounded-2xl border bg-white p-2 shadow-lg transition ${
                 ensOpen ? "pointer-events-auto opacity-100" : "pointer-events-none opacity-0"
@@ -498,7 +503,7 @@ export default function Header() {
 
           {/* WhatsApp (desktop) */}
           <a
-            href="https://wa.me/5542998276516"
+            href={WAPP}
             target="_blank"
             rel="noopener noreferrer"
             className="inline-flex items-center gap-2 rounded-full border border-brand-600 px-4 py-2 text-brand-600 hover:bg-brand-50"
@@ -513,7 +518,7 @@ export default function Header() {
 
         {/* ===== Ação à direita no mobile: WhatsApp ===== */}
         <a
-          href="https://wa.me/5542998276516"
+          href={WAPP}
           target="_blank"
           rel="noopener noreferrer"
           className="inline-flex items-center gap-2 rounded-full border border-brand-600 px-3 py-1 text-brand-600 md:hidden"

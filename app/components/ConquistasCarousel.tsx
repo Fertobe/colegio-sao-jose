@@ -4,20 +4,28 @@ import { useEffect, useMemo, useState } from "react";
 
 type Item = { src: string; alt?: string; href?: string };
 
+type Props = {
+  items: Item[];
+  perPage?: number;
+  /** Quando true (default), os cards NÃO são clicáveis */
+  disableLinks?: boolean;
+  /** Classe Tailwind de altura para a imagem (ex.: "h-[240px]") */
+  heightClass?: string;
+  /** Rótulo acessível do carrossel */
+  ariaLabel?: string;
+};
+
 export default function ConquistasCarousel({
   items,
   perPage = 3,
-  /** Quando true (default), os cards NÃO são clicáveis */
   disableLinks = true,
-}: {
-  items: Item[];
-  perPage?: number;
-  disableLinks?: boolean;
-}) {
+  heightClass,
+  ariaLabel = "Carrossel de conquistas",
+}: Props) {
   /**
    * ===== Desktop (mantido como estava) =====
    */
-  const IMG_H_DESK = 400;     // altura da imagem
+  const IMG_H_DESK = 400;     // altura padrão da imagem
   const DOT_OFFSET_DESK = 30; // distância das bolinhas
   const ARROW_OUT_DESK = 56;  // setas “para fora” da grade (px)
 
@@ -74,9 +82,35 @@ export default function ConquistasCarousel({
 
   const hasControls = pages > 1;
 
+  // Acessibilidade via teclado
+  const onKeyDown = (e: React.KeyboardEvent<HTMLDivElement>) => {
+    if (!hasControls) return;
+    if (e.key === "ArrowRight") {
+      e.preventDefault();
+      go("next");
+    } else if (e.key === "ArrowLeft") {
+      e.preventDefault();
+      go("prev");
+    } else if (e.key === "Home") {
+      e.preventDefault();
+      go(0);
+    } else if (e.key === "End") {
+      e.preventDefault();
+      go(pages - 1);
+    }
+  };
+
   return (
     // padding-bottom reserva a área das bolinhas (nada “sobe”/“desce”)
-    <div className="relative" style={{ paddingBottom: DOT_OFFSET + 26 }}>
+    <div
+      className="relative"
+      style={{ paddingBottom: DOT_OFFSET + 26 }}
+      role="region"
+      aria-roledescription="carousel"
+      aria-label={ariaLabel}
+      tabIndex={0}
+      onKeyDown={onKeyDown}
+    >
       {/* ===== SETAS — desktop: fora; mobile: para dentro e fora da imagem ===== */}
       {hasControls && (
         <div
@@ -116,6 +150,7 @@ export default function ConquistasCarousel({
               <button
                 key={i}
                 aria-label={`Ir para página ${i + 1}`}
+                aria-current={i === page ? "true" : undefined}
                 onClick={() => go(i)}
                 className={`h-2.5 w-2.5 rounded-full transition ${
                   i === page
@@ -140,14 +175,18 @@ export default function ConquistasCarousel({
                 width: isMobile ? `calc(100% - ${2 * SIDE_GUTTER_MOBILE}px)` : "100%",
               }}
             >
+              {/* IMPORTANTE: manter o <img> como filho DIRETO deste wrapper,
+                  pois seu CSS (.conquistasHoverSoft :has(> img)) depende disso */}
               <img
                 src={it.src}
                 alt={it.alt || "Conquista do colégio"}
-                style={{ height: IMG_H }}
-                className="w-full rounded-2xl object-cover transition-transform duration-300 group-hover:scale-[1.02]"
+                className={`w-full rounded-2xl object-cover ${heightClass ?? ""}`}
+                style={heightClass ? undefined : { height: IMG_H }}
                 loading={page === 0 && idx === 0 ? "eager" : "lazy"}
                 decoding="async"
-                {...(page === 0 && idx === 0 ? { fetchPriority: "high" as const } : { fetchPriority: "low" as const })}
+                {...(page === 0 && idx === 0
+                  ? { fetchPriority: "high" as const }
+                  : { fetchPriority: "low" as const })}
                 width={1200}
                 height={800}
                 draggable={false}

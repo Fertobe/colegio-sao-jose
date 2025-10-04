@@ -8,27 +8,36 @@ type NewsItem = {
   href?: string;
 };
 
+type NewsCarouselProps = {
+  items: NewsItem[];
+  /** Cartões por página (ex.: 1 no mobile, 3 no desktop) */
+  perPage?: 1 | 2 | 3 | 4;
+  /** Classe de altura do bloco da imagem (ex.: "h-[240px]") */
+  heightClass?: string;
+  /** Rótulo acessível do carrossel */
+  ariaLabel?: string;
+};
+
 export default function NewsCarousel({
   items,
   perPage = 3,
-}: {
-  items: NewsItem[];
-  perPage?: number;
-}) {
+  heightClass,
+  ariaLabel = "Carrossel de notícias",
+}: NewsCarouselProps) {
   /**
    * Desktop (mantido igual ao seu layout original)
    */
   const IMG_H_DESK = 232;
-  const DOT_OFFSET_DESK = 82; // distância das bolinhas a partir da base da imagem
+  const DOT_OFFSET_DESK = 82; // distância dos dots a partir da base da imagem
   const ARROW_OFFSET_DESK = -48; // setas “para fora” no desktop
 
   /**
-   * Mobile (apenas ajustes para caber setas e dots sem ficar em cima da imagem)
+   * Mobile (ajustes p/ caber setas e dots sem ficar em cima da imagem)
    */
-  const IMG_H_MOBILE = 180;          // imagem mais baixa no mobile
-  const DOT_OFFSET_MOBILE = 56;      // espaço menor para os dots
-  const ARROW_OFFSET_MOBILE = 8;     // setas “para dentro” (perto da borda)
-  const SIDE_GUTTER_MOBILE = 56;     // margem lateral reservada p/ as setas
+  const IMG_H_MOBILE = 180;
+  const DOT_OFFSET_MOBILE = 56;
+  const ARROW_OFFSET_MOBILE = 8;
+  const SIDE_GUTTER_MOBILE = 56;
 
   // detecta mobile sem afetar SSR
   const [isMobile, setIsMobile] = useState(false);
@@ -40,7 +49,7 @@ export default function NewsCarousel({
     return () => mq.removeEventListener?.("change", apply);
   }, []);
 
-  const perPageEffective = isMobile ? 1 : perPage;
+  const perPageEffective = (isMobile ? 1 : perPage) as 1 | 2 | 3 | 4;
   const IMG_H = isMobile ? IMG_H_MOBILE : IMG_H_DESK;
   const DOT_OFFSET = isMobile ? DOT_OFFSET_MOBILE : DOT_OFFSET_DESK;
   const ARROW_LEFT = isMobile ? ARROW_OFFSET_MOBILE : ARROW_OFFSET_DESK;
@@ -50,7 +59,7 @@ export default function NewsCarousel({
   const [page, setPage] = useState(0);
   const hasNav = pages > 1;
 
-  // garante que a página atual não estoure ao mudar o perPage (ex.: rotacionar tela)
+  // garante que a página atual não estoure ao mudar o perPage (ex.: rotacionar)
   useEffect(() => {
     setPage((p) => Math.min(p, pages - 1));
   }, [pages]);
@@ -67,10 +76,35 @@ export default function NewsCarousel({
     else setPage(Math.min(Math.max(0, dir), pages - 1));
   };
 
-  // paddingBottom reserva espaço das bolinhas para não “invadir” o título
+  // Acessibilidade via teclado
+  const onKeyDown = (e: React.KeyboardEvent<HTMLDivElement>) => {
+    if (e.key === "ArrowRight") {
+      e.preventDefault();
+      go("next");
+    } else if (e.key === "ArrowLeft") {
+      e.preventDefault();
+      go("prev");
+    } else if (e.key === "Home") {
+      e.preventDefault();
+      go(0);
+    } else if (e.key === "End") {
+      e.preventDefault();
+      go(pages - 1);
+    }
+  };
+
+  // paddingBottom reserva espaço dos dots para não “invadir” o título
   return (
-    <div className="relative" style={{ paddingBottom: DOT_OFFSET + 24 }}>
-      {/* ===== SETAS (desktop: fora; mobile: para dentro e fora da imagem) ===== */}
+    <div
+      className="relative"
+      style={{ paddingBottom: DOT_OFFSET + 24 }}
+      role="region"
+      aria-roledescription="carousel"
+      aria-label={ariaLabel}
+      tabIndex={0}
+      onKeyDown={onKeyDown}
+    >
+      {/* ===== SETAS ===== */}
       {hasNav && (
         <div
           className="pointer-events-none absolute left-0 right-0 z-10"
@@ -97,7 +131,7 @@ export default function NewsCarousel({
         </div>
       )}
 
-      {/* ===== BOLINHAS (abaixo da imagem, fixas e centralizadas) ===== */}
+      {/* ===== Dots ===== */}
       {hasNav && (
         <div
           className="pointer-events-auto absolute left-1/2 z-10 -translate-x-1/2 rounded-full bg-white/90 px-3 py-1 shadow"
@@ -109,6 +143,7 @@ export default function NewsCarousel({
                 key={i}
                 aria-label={`Ir para página ${i + 1}`}
                 onClick={() => go(i)}
+                aria-current={i === page ? "true" : undefined}
                 className={`h-2.5 w-2.5 rounded-full transition ${
                   i === page
                     ? "bg-brand-600 ring-2 ring-brand-600/30"
@@ -123,6 +158,9 @@ export default function NewsCarousel({
       {/* ===== GRID DE CARDS ===== */}
       <div className="grid items-start gap-5 grid-cols-1 md:grid-cols-3">
         {view.map((n, idx) => {
+          const ImageWrapperStyle =
+            heightClass ? undefined : { height: IMG_H as number };
+
           const Card = (
             <div
               className="overflow-hidden rounded-2xl border bg-white shadow-sm mx-auto"
@@ -130,18 +168,22 @@ export default function NewsCarousel({
                 width: isMobile ? `calc(100% - ${2 * SIDE_GUTTER_MOBILE}px)` : "100%",
               }}
             >
-              <img
-                src={n.img}
-                alt={n.title}
-                style={{ height: IMG_H }}
-                className="w-full object-cover transition-transform duration-300 group-hover:scale-[1.02]"
-                loading={page === 0 && idx === 0 ? "eager" : "lazy"}
-                decoding="async"
-                fetchPriority={page === 0 && idx === 0 ? "high" : "low"}
-                width={1200}
-                height={675}
-                draggable={false}
-              />
+              <div
+                className={`w-full overflow-hidden ${heightClass ?? ""}`}
+                style={ImageWrapperStyle}
+              >
+                <img
+                  src={n.img}
+                  alt={n.title}
+                  className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-[1.02]"
+                  loading={page === 0 && idx === 0 ? "eager" : "lazy"}
+                  decoding="async"
+                  fetchPriority={page === 0 && idx === 0 ? "high" : "low"}
+                  width={1200}
+                  height={675}
+                  draggable={false}
+                />
+              </div>
             </div>
           );
 
