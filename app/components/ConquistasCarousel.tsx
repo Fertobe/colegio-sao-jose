@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
+import type React from "react";
 
 type Item = { src: string; alt?: string; href?: string };
 
@@ -25,17 +26,17 @@ export default function ConquistasCarousel({
   /**
    * ===== Desktop (mantido como estava) =====
    */
-  const IMG_H_DESK = 400;     // altura padrão da imagem
+  const IMG_H_DESK = 400; // altura padrão da imagem
   const DOT_OFFSET_DESK = 30; // distância das bolinhas
-  const ARROW_OUT_DESK = 56;  // setas “para fora” da grade (px)
+  const ARROW_OUT_DESK = 56; // setas “para fora” da grade (px)
 
   /**
    * ===== Mobile (ajustes para caber setas e dots) =====
    */
-  const IMG_H_MOBILE = 220;       // imagem um pouco mais baixa
-  const DOT_OFFSET_MOBILE = 40;   // espaço para os dots
-  const ARROW_IN_MOBILE = 8;      // setas para dentro, próximas às bordas
-  const SIDE_GUTTER_MOBILE = 48;  // margem lateral reservada às setas
+  const IMG_H_MOBILE = 220; // imagem um pouco mais baixa
+  const DOT_OFFSET_MOBILE = 40; // espaço para os dots
+  const ARROW_IN_MOBILE = 8; // setas para dentro, próximas às bordas
+  const SIDE_GUTTER_MOBILE = 48; // margem lateral reservada às setas
 
   // detecta mobile (sem quebrar SSR)
   const [isMobile, setIsMobile] = useState(false);
@@ -57,7 +58,10 @@ export default function ConquistasCarousel({
     }
   }, []);
 
-  const perPageEffective = isMobile ? 1 : perPage;
+  // garante valor mínimo de 1
+  const perPageClamped = Math.max(1, Math.floor(perPage || 1));
+  const perPageEffective = isMobile ? 1 : perPageClamped;
+
   const IMG_H = isMobile ? IMG_H_MOBILE : IMG_H_DESK;
   const DOT_OFFSET = isMobile ? DOT_OFFSET_MOBILE : DOT_OFFSET_DESK;
 
@@ -99,6 +103,9 @@ export default function ConquistasCarousel({
       go(pages - 1);
     }
   };
+
+  // lista vazia: não renderiza o componente
+  if (!items || items.length === 0) return null;
 
   return (
     // padding-bottom reserva a área das bolinhas (nada “sobe”/“desce”)
@@ -167,6 +174,7 @@ export default function ConquistasCarousel({
       <div className="grid items-start gap-6 grid-cols-1 md:grid-cols-3">
         {view.map((it, idx) => {
           const clickable = !disableLinks && !!it.href;
+          const alt = it.alt || `Conquista ${page * perPageEffective + idx + 1}`;
 
           const CardInner = (
             <div
@@ -179,7 +187,7 @@ export default function ConquistasCarousel({
                   pois seu CSS (.conquistasHoverSoft :has(> img)) depende disso */}
               <img
                 src={it.src}
-                alt={it.alt || "Conquista do colégio"}
+                alt={alt}
                 className={`w-full rounded-2xl object-cover ${heightClass ?? ""}`}
                 style={heightClass ? undefined : { height: IMG_H }}
                 loading={page === 0 && idx === 0 ? "eager" : "lazy"}
@@ -190,6 +198,8 @@ export default function ConquistasCarousel({
                 width={1200}
                 height={800}
                 draggable={false}
+                // baixa tamanhos coerentes com o grid (3/1 colunas)
+                sizes="(min-width: 768px) 33vw, 100vw"
               />
             </div>
           );
@@ -203,7 +213,7 @@ export default function ConquistasCarousel({
               key={`${page}-${idx}-${it.src}`}
               className="group block cursor-default"
               role="group"
-              aria-label={it.alt || "Conquista do colégio"}
+              aria-label={alt}
             >
               {CardInner}
             </div>

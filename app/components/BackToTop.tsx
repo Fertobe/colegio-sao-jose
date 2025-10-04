@@ -1,13 +1,15 @@
+// app/components/BackToTop.tsx
 "use client";
 
 import { useEffect, useState } from "react";
+import type { CSSProperties } from "react";
 
 type Props = {
   threshold?: number;
   className?: string;
   iconClass?: string;
   variant?: "brand" | "purple";
-  style?: React.CSSProperties;
+  style?: CSSProperties;
 };
 
 export default function BackToTop({
@@ -20,32 +22,50 @@ export default function BackToTop({
   const [show, setShow] = useState(false);
   const [reduceMotion, setReduceMotion] = useState(false);
 
-  // controla exibição pelo scroll
+  // Controla exibição pelo scroll (com rAF para não renderizar em todo evento)
   useEffect(() => {
+    let ticking = false;
+
     const onScroll = () => {
-      // window.scrollY sempre existe no client
-      setShow(window.scrollY > threshold);
+      if (ticking) return;
+      ticking = true;
+      requestAnimationFrame(() => {
+        setShow(window.scrollY > threshold);
+        ticking = false;
+      });
     };
+
     onScroll();
     window.addEventListener("scroll", onScroll, { passive: true });
-    return () => window.removeEventListener("scroll", onScroll);
+    return () => {
+      window.removeEventListener("scroll", onScroll);
+    };
   }, [threshold]);
 
-  // detecta prefers-reduced-motion
+  // Detecta prefers-reduced-motion (com fallback addListener/removeListener)
   useEffect(() => {
-    const mq = window.matchMedia?.("(prefers-reduced-motion: reduce)");
+    const mq = typeof window !== "undefined" && window.matchMedia
+      ? window.matchMedia("(prefers-reduced-motion: reduce)")
+      : null;
     if (!mq) return;
+
     const update = () => setReduceMotion(!!mq.matches);
     update();
-    mq.addEventListener?.("change", update);
-    return () => mq.removeEventListener?.("change", update);
+
+    if (typeof mq.addEventListener === "function") {
+      mq.addEventListener("change", update);
+      return () => mq.removeEventListener("change", update);
+    } else if (typeof (mq as any).addListener === "function") {
+      (mq as any).addListener(update);
+      return () => (mq as any).removeListener(update);
+    }
   }, []);
 
   const baseBtn =
     "fixed bottom-6 right-6 z-[60] inline-flex items-center justify-center " +
     "rounded-full p-3 ring-1 transition-colors focus:outline-none focus:ring-2";
 
-  // mantém tua paleta (Home azul por padrão)
+  // Mantém a paleta (azul padrão ou roxo)
   const variantBtn =
     variant === "purple"
       ? "bg-[#7F3A97] text-white hover:bg-[#8E47A4] ring-white/40"
@@ -55,8 +75,8 @@ export default function BackToTop({
 
   if (!show) return null;
 
-  // Safe area para iOS (soma ao bottom/right = 1.5rem das classes Tailwind)
-  const safeAreaStyle: React.CSSProperties = {
+  // Safe area para iOS (soma ao bottom/right das classes)
+  const safeAreaStyle: CSSProperties = {
     marginRight: "max(0px, env(safe-area-inset-right))",
     marginBottom: "max(0px, env(safe-area-inset-bottom))",
   };
@@ -80,9 +100,11 @@ export default function BackToTop({
         className={`h-5 w-5 ${iconClass || ""}`}
         fill="none"
         stroke="currentColor"
-        strokeWidth="2.5"
+        strokeWidth={2.5}
         strokeLinecap="round"
         strokeLinejoin="round"
+        aria-hidden="true"
+        focusable="false"
       >
         <path d="M12 19V5" />
         <path d="M5 12l7-7 7 7" />

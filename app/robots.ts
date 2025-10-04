@@ -1,22 +1,14 @@
 // app/robots.ts
 import type { MetadataRoute } from "next";
+import { getSiteUrl } from "@/app/utils/site-url";
 
-/** Normaliza a base: remove barra final e garante protocolo */
-function normalizeBase(u?: string) {
-  if (!u) return "https://colegio.artferro.site";
-  let s = u.trim().replace(/\/$/, "");
-  if (!/^https?:\/\//i.test(s)) s = `https://${s}`;
-  return s;
-}
+/** Mantém estático (default em metadata routes, mas deixo explícito) */
+export const dynamic = "force-static";
 
-/** Fallback para previews usando VERCEL_URL (mantido) */
-const rawBase =
-  process.env.NEXT_PUBLIC_SITE_URL ||
-  (process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : undefined);
+/** Base do site (respeita env/preview) via util centralizado */
+const BASE_URL = getSiteUrl();
 
-const base = normalizeBase(rawBase);
-
-/** Opt-in para anunciar sitemap/host
+/** Opt-in para anunciar sitemap/host (mesma lógica que você já usava)
  * Produção: defina uma destas:
  * - NEXT_PUBLIC_ENABLE_SITEMAP=1
  * - ENABLE_SITEMAP=true
@@ -41,13 +33,13 @@ export default function robots(): MetadataRoute.Robots {
     { userAgent: "*", disallow: ["/institucional/noticias"] },
   ];
 
-  // Base sem sitemap (seguro por padrão)
+  // Saída base (segura por padrão)
   const out: MetadataRoute.Robots = { rules };
 
   // Anuncia sitemap/host só quando habilitado
   if (sitemapEnabled) {
-    out.sitemap = `${base}/sitemap.xml`;
-    out.host = base;
+    out.sitemap = `${BASE_URL}/sitemap.xml`;
+    out.host = BASE_URL;
   }
 
   return out;

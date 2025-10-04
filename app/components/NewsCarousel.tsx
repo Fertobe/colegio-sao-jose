@@ -1,6 +1,7 @@
+// app/components/NewsCarousel.tsx
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useState, useId } from "react";
 
 type NewsItem = {
   img: string;
@@ -49,6 +50,17 @@ export default function NewsCarousel({
     return () => mq.removeEventListener?.("change", apply);
   }, []);
 
+  // reduz movimento para quem prefere
+  const [reduceMotion, setReduceMotion] = useState(false);
+  useEffect(() => {
+    const mq = window.matchMedia?.("(prefers-reduced-motion: reduce)");
+    if (!mq) return;
+    const update = () => setReduceMotion(!!mq.matches);
+    update();
+    mq.addEventListener?.("change", update);
+    return () => mq.removeEventListener?.("change", update);
+  }, []);
+
   const perPageEffective = (isMobile ? 1 : perPage) as 1 | 2 | 3 | 4;
   const IMG_H = isMobile ? IMG_H_MOBILE : IMG_H_DESK;
   const DOT_OFFSET = isMobile ? DOT_OFFSET_MOBILE : DOT_OFFSET_DESK;
@@ -76,7 +88,7 @@ export default function NewsCarousel({
     else setPage(Math.min(Math.max(0, dir), pages - 1));
   };
 
-  // Acessibilidade via teclado
+  // Acessibilidade via teclado no contêiner do carrossel
   const onKeyDown = (e: React.KeyboardEvent<HTMLDivElement>) => {
     if (e.key === "ArrowRight") {
       e.preventDefault();
@@ -93,6 +105,31 @@ export default function NewsCarousel({
     }
   };
 
+  // ids para ligação ARIA
+  const statusId = useId();
+  const viewportId = useId();
+
+  // grid responsiva no desktop conforme perPage desejado
+  const gridMdCols =
+    perPage === 4
+      ? "md:grid-cols-4"
+      : perPage === 3
+      ? "md:grid-cols-3"
+      : perPage === 2
+      ? "md:grid-cols-2"
+      : "md:grid-cols-1";
+
+  // sizes das imagens (ajuda o browser a baixar a resolução certa)
+  const imgSizes = isMobile
+    ? "100vw"
+    : perPage === 4
+    ? "(min-width:1024px) 25vw, (min-width:768px) 50vw, 100vw"
+    : perPage === 3
+    ? "(min-width:1024px) 33vw, (min-width:768px) 50vw, 100vw"
+    : perPage === 2
+    ? "(min-width:768px) 50vw, 100vw"
+    : "100vw";
+
   // paddingBottom reserva espaço dos dots para não “invadir” o título
   return (
     <div
@@ -101,6 +138,7 @@ export default function NewsCarousel({
       role="region"
       aria-roledescription="carousel"
       aria-label={ariaLabel}
+      aria-describedby={statusId}
       tabIndex={0}
       onKeyDown={onKeyDown}
     >
@@ -114,19 +152,21 @@ export default function NewsCarousel({
             type="button"
             onClick={() => go("prev")}
             aria-label="Anterior"
+            aria-controls={viewportId}
             className="pointer-events-auto absolute top-1/2 -translate-y-1/2 flex h-10 w-10 items-center justify-center rounded-full border bg-white shadow-md hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-brand-600/40"
             style={{ left: ARROW_LEFT }}
           >
-            ‹
+            <span aria-hidden="true">‹</span>
           </button>
           <button
             type="button"
             onClick={() => go("next")}
             aria-label="Próximo"
+            aria-controls={viewportId}
             className="pointer-events-auto absolute top-1/2 -translate-y-1/2 flex h-10 w-10 items-center justify-center rounded-full border bg-white shadow-md hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-brand-600/40"
             style={{ right: ARROW_RIGHT }}
           >
-            ›
+            <span aria-hidden="true">›</span>
           </button>
         </div>
       )}
@@ -142,8 +182,8 @@ export default function NewsCarousel({
               <button
                 key={i}
                 aria-label={`Ir para página ${i + 1}`}
+                aria-current={i === page ? "page" : undefined}
                 onClick={() => go(i)}
-                aria-current={i === page ? "true" : undefined}
                 className={`h-2.5 w-2.5 rounded-full transition ${
                   i === page
                     ? "bg-brand-600 ring-2 ring-brand-600/30"
@@ -156,10 +196,15 @@ export default function NewsCarousel({
       )}
 
       {/* ===== GRID DE CARDS ===== */}
-      <div className="grid items-start gap-5 grid-cols-1 md:grid-cols-3">
+      <div
+        id={viewportId}
+        className={`grid items-start gap-5 grid-cols-1 ${gridMdCols}`}
+      >
         {view.map((n, idx) => {
-          const ImageWrapperStyle =
-            heightClass ? undefined : { height: IMG_H as number };
+          const ImageWrapperStyle = heightClass ? undefined : { height: IMG_H as number };
+          const imgMotionClasses = reduceMotion
+            ? "" // sem hover motion
+            : "transition-transform duration-300 group-hover:scale-[1.02]";
 
           const Card = (
             <div
@@ -175,13 +220,14 @@ export default function NewsCarousel({
                 <img
                   src={n.img}
                   alt={n.title}
-                  className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-[1.02]"
+                  className={`h-full w-full object-cover ${imgMotionClasses}`}
                   loading={page === 0 && idx === 0 ? "eager" : "lazy"}
                   decoding="async"
                   fetchPriority={page === 0 && idx === 0 ? "high" : "low"}
                   width={1200}
                   height={675}
                   draggable={false}
+                  sizes={imgSizes}
                 />
               </div>
             </div>
@@ -209,6 +255,11 @@ export default function NewsCarousel({
           );
         })}
       </div>
+
+      {/* Status para leitores de tela (anuncia a página atual) */}
+      <p id={statusId} className="sr-only" aria-live="polite">
+        Página {page + 1} de {pages}
+      </p>
     </div>
   );
 }

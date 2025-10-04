@@ -6,14 +6,15 @@ import ContatoFormMailto from "./ContatoFormMailto";
 import BrandIcon from "../components/icons/BrandIcon";
 import { getSiteUrl } from "@/app/utils/site-url";
 
-export const metadata: Metadata = {
-  title: "Contato | Colégio São José",
-  description:
-    "Fale conosco: telefone, WhatsApp, e-mail, formulário e mapa do Colégio São José.",
-  alternates: { canonical: "/contato" },
-};
+/** Página pode ser totalmente estática */
+export const dynamic = "force-static";
 
-// ============ CONFIG ============
+const SITE_URL = getSiteUrl();
+
+/** ⚠️ E-mail: manteremos temporário (e-mail é o último a mexer) */
+const EMAIL = process.env.CONTACT_TO_EMAIL || "fernando.tobe@gmail.com";
+
+/** Hero */
 const HERO_DESKTOP = {
   src: "/contato/hero.webp",
   alt: "Equipe de atendimento do Colégio São José",
@@ -23,22 +24,42 @@ const HERO_MOBILE = {
   alt: "Equipe de atendimento do Colégio São José (mobile)",
 };
 
+/** Telefones / WhatsApp / Mapas */
 const TELEFONE = "+55 (42) 3446-2212";
 const TEL_E164 = "+" + TELEFONE.replace(/\D/g, ""); // tel:+554234462212
-
-// ⚠️ E-mail: deixamos igual (env + fallback de testes). Trocaremos no final.
-const EMAIL = process.env.CONTACT_TO_EMAIL || "fernando.tobe@gmail.com";
 
 const WHATSAPP_URL = "https://wa.me/5542998276516";
 const MAPS_EMBED =
   "https://www.google.com/maps?q=R.+C%C3%A2ndido+de+Abreu,+1636+-+Prudent%C3%B3polis,+PR,+84400-000&output=embed";
 const MAPS_LINK =
   "https://www.google.com/maps/place/R.+C%C3%A2ndido+de+Abreu,+1636+-+Prudent%C3%B3polis,+PR,+84400-000/@-25.2140252,-50.9746768,3a,75y,323.69h,90t/data=!3m7!1e1!3m5!1sWN9GgL0cOO7Z1nelRQCkhw!2e0!6shttps:%2F%2Fstreetviewpixels-pa.googleapis.com%2Fv1%2Fthumbnail%3Fcb_client%3Dmaps_sv.tactile%26w%3D900%26h%3D600%26pitch%3D0%26panoid%3DWN9GgL0cOO7Z1nelRQCkhw%26yaw%3D323.69373!7i16384!8i8192!4m6!3m5!1s0x94e8eaf79b45a20d:0x6204f5fe513870b!8m2!3d-25.2141198!4d-50.9750099!16s%2Fg%2F11bw442r8f";
-// =================================
+
+/** SEO */
+export const metadata: Metadata = {
+  metadataBase: new URL(SITE_URL),
+  title: "Contato | Colégio São José",
+  description:
+    "Fale conosco: telefone, WhatsApp, e-mail, formulário e mapa do Colégio São José.",
+  alternates: { canonical: "/contato" },
+  openGraph: {
+    type: "website",
+    title: "Contato | Colégio São José",
+    description:
+      "Fale conosco: telefone, WhatsApp, e-mail, formulário e mapa do Colégio São José.",
+    url: `${SITE_URL}/contato`,
+    images: [`${SITE_URL}/og-cover.webp`],
+    siteName: "Colégio São José",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Contato | Colégio São José",
+    description:
+      "Fale conosco: telefone, WhatsApp, e-mail, formulário e mapa do Colégio São José.",
+    images: [`${SITE_URL}/og-cover.webp`],
+  },
+};
 
 export default function ContatoPage() {
-  const SITE_URL = getSiteUrl();
-
   // JSON-LD de ContactPage + Organization/contactPoint
   const jsonLd = {
     "@context": "https://schema.org",
@@ -114,6 +135,9 @@ export default function ContatoPage() {
                 decoding="async"
                 fetchPriority="high"
                 draggable={false}
+                width={900}
+                height={900}
+                sizes="(max-width: 767px) 320px, 0px"
               />
             </div>
             {/* Desktop/Tablet */}
@@ -132,18 +156,20 @@ export default function ContatoPage() {
                 decoding="async"
                 fetchPriority="high"
                 draggable={false}
+                width={1200}
+                height={1200}
+                sizes="(min-width: 1024px) 520px, (min-width: 768px) 420px, 0px"
               />
             </div>
           </div>
         </div>
 
         {/* Onda branca */}
-        <div className="pointer-events-none absolute inset-x-0 bottom-0 z-30">
+        <div className="pointer-events-none absolute inset-x-0 bottom-0 z-30" aria-hidden="true" role="presentation">
           <svg
             viewBox="0 0 1440 140"
             className="h-[90px] w-full md:h-[110px] lg:h-[130px]"
             preserveAspectRatio="none"
-            aria-hidden="true"
             focusable="false"
           >
             <path d="M0,80 C320,140 920,10 1440,90 L1440,140 L0,140 Z" fill="#fff" />
@@ -266,6 +292,7 @@ export default function ContatoPage() {
                   className="inline-flex items-center justify-center rounded-full bg-brand-700 px-5 py-3 font-semibold text-white shadow-sm transition hover:bg-brand-600"
                 >
                   Ver no Google Maps
+                  <span className="sr-only"> — R. Cândido de Abreu, 1636, Prudentópolis, PR</span>
                 </a>
               </div>
             </div>

@@ -1,12 +1,14 @@
 // app/sitemap.ts
 import type { MetadataRoute } from "next";
 import { getSiteUrl } from "@/app/utils/site-url";
+import { listNewsMeta } from "@/lib/news";
 
 /**
- * Sitemap minimalista e seguro:
- * - usa apenas getSiteUrl()
- * - bloqueia previews
- * - só expõe quando habilitado por ENV (alinhado ao robots.ts)
+ * Sitemap com:
+ * - bloqueio em previews (VERCEL_ENV !== "production")
+ * - opt-in por ENV (NEXT_PUBLIC_ENABLE_SITEMAP=1 ou ENABLE_SITEMAP=true)
+ * - rotas estáticas principais
+ * - rotas dinâmicas para /noticias/[slug] (apenas publicadas)
  */
 export default function sitemap(): MetadataRoute.Sitemap {
   // 1) Nunca expor em pré-produção
@@ -14,18 +16,17 @@ export default function sitemap(): MetadataRoute.Sitemap {
     return [];
   }
 
-  // 2) Opt-in para expor sitemap em produção
+  // 2) Opt-in para expor sitemap em produção (alinhado ao robots.ts)
   const sitemapEnabled =
     process.env.NEXT_PUBLIC_ENABLE_SITEMAP === "1" ||
     process.env.ENABLE_SITEMAP === "true";
-  if (!sitemapEnabled) {
-    return [];
-  }
+  if (!sitemapEnabled) return [];
 
   const base = getSiteUrl();
   const now = new Date();
 
-  return [
+  // Rotas fixas
+  const fixed: MetadataRoute.Sitemap = [
     // Home
     { url: `${base}/`, lastModified: now, changeFrequency: "weekly", priority: 1 },
 
@@ -54,4 +55,19 @@ export default function sitemap(): MetadataRoute.Sitemap {
     { url: `${base}/matriculas`, lastModified: now, priority: 0.6 },
     { url: `${base}/contato`, lastModified: now, priority: 0.5 },
   ];
+
+  // Rotas dinâmicas de notícias publicadas
+  const posts = (listNewsMeta() || []) as Array<{ slug: string; date?: string }>;
+  const newsEntries: MetadataRoute.Sitemap = posts.map((p) => {
+    const d = p.date ? new Date(p.date) : now;
+    const lastModified = isNaN(d.getTime()) ? now : d;
+    return {
+      url: `${base}/noticias/${p.slug}`,
+      lastModified,
+      changeFrequency: "weekly",
+      priority: 0.7,
+    };
+  });
+
+  return [...fixed, ...newsEntries];
 }

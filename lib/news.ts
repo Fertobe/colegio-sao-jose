@@ -7,9 +7,9 @@ export type CarouselItem = { img: string; title: string; href: string };
 type NewsFrontmatter = {
   title?: string;
   date?: string;       // YYYY-MM-DD
-  cover?: string;      // "feira.webp" ou "/noticias/feira.webp"
+  cover?: string;      // "/noticias/feira.webp" | "feira.webp" | "https://..."
   excerpt?: string;
-  published?: boolean; // novo: default true se ausente
+  published?: boolean; // default true se ausente
   tags?: string[];     // opcional (não usado na UI ainda)
   author?: string;     // opcional
 };
@@ -19,6 +19,11 @@ const POSTS_DIR = path.join(process.cwd(), "content", "noticias");
 /* =========================
    Helpers
    ========================= */
+
+function normalizeEOL(s: string): string {
+  // Garante que o parser funcione igual em Windows/Linux/Mac
+  return s.replace(/\r\n/g, "\n");
+}
 
 function parseBool(val?: string): boolean | undefined {
   if (!val) return undefined;
@@ -59,14 +64,20 @@ function parseDateISO(d?: string): Date {
 
 function resolveCover(cover?: string) {
   if (!cover) return "/noticias/placeholder.jpg";
-  return cover.startsWith("/") ? cover : `/noticias/${cover}`;
+  // ✅ suporta imagens absolutas remotas
+  if (cover.startsWith("http://") || cover.startsWith("https://")) return cover;
+  // ✅ suporta absoluto local (/noticias/...)
+  if (cover.startsWith("/")) return cover;
+  // fallback relativo
+  return `/noticias/${cover}`;
 }
 
 /* =========================
    Frontmatter
    ========================= */
 
-function parseFrontmatter(md: string): NewsFrontmatter {
+function parseFrontmatter(mdRaw: string): NewsFrontmatter {
+  const md = normalizeEOL(mdRaw);
   if (!md.startsWith("---")) return {};
   const end = md.indexOf("\n---", 3);
   if (end === -1) return {};
@@ -140,7 +151,9 @@ function escapeHtml(src: string) {
     .replace(/"/g, "&quot;");
 }
 
-function mdToHtml(src: string) {
+function mdToHtml(srcRaw: string) {
+  const src = normalizeEOL(srcRaw);
+
   // 1) escapa qualquer HTML cru
   let html = escapeHtml(src);
 
@@ -237,7 +250,9 @@ export function readNewsBySlug(slug: string) {
   const file = path.join(POSTS_DIR, `${slug}.md`);
   if (!fs.existsSync(file)) return null;
 
-  const md = fs.readFileSync(file, "utf8");
+  const mdRaw = fs.readFileSync(file, "utf8");
+  const md = normalizeEOL(mdRaw);
+
   let fm: NewsFrontmatter = {};
   let body = md;
 

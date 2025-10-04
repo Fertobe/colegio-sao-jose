@@ -40,7 +40,7 @@ export default function Header() {
   const cancelEnsClose = () => {
     if (ensCloseTimer.current) {
       window.clearTimeout(ensCloseTimer.current);
-      ensCloseTimer.current = null;
+    ensCloseTimer.current = null;
     }
   };
   const scheduleInstClose = () => {
@@ -203,6 +203,43 @@ export default function Header() {
   // WhatsApp com mensagem padrão
   const WAPP =
     "https://wa.me/5542998276516?text=Ol%C3%A1!%20Tenho%20uma%20d%C3%BAvida.";
+
+  // ===== Focus trap no drawer (corrige ts(18048)) =====
+  const drawerRef = useRef<HTMLElement | null>(null);
+  useEffect(() => {
+    if (!mobileOpen || !drawerRef.current) return;
+
+    const panel = drawerRef.current;
+    const selector =
+      'a[href], button:not([disabled]), textarea, input, select, [tabindex]:not([tabindex="-1"])';
+
+    function onKeydown(e: KeyboardEvent) {
+      if (e.key !== "Tab") return;
+
+      const focusables = Array.from(
+        panel.querySelectorAll<HTMLElement>(selector)
+      ).filter(
+        (el) => el.offsetParent !== null || el === document.activeElement
+      );
+
+      if (focusables.length === 0) return;
+
+      const first = focusables[0] ?? null;
+      const last = focusables[focusables.length - 1] ?? null;
+      if (!first || !last) return;
+
+      if (e.shiftKey && document.activeElement === first) {
+        last.focus();
+        e.preventDefault();
+      } else if (!e.shiftKey && document.activeElement === last) {
+        first.focus();
+        e.preventDefault();
+      }
+    }
+
+    panel.addEventListener("keydown", onKeydown);
+    return () => panel.removeEventListener("keydown", onKeydown);
+  }, [mobileOpen]);
 
   return (
     <header className="border-b bg-white">
@@ -542,6 +579,7 @@ export default function Header() {
         />
         {/* painel */}
         <aside
+          ref={drawerRef}
           className={`fixed left-0 top-0 z-50 h-full w-[86%] max-w-[360px] transform bg-white shadow-xl transition-transform ${
             mobileOpen ? "translate-x-0" : "-translate-x-full"
           }`}
@@ -584,9 +622,7 @@ export default function Header() {
                   Institucional
                 </span>
                 <svg
-                  className={`h-5 w-5 transition-transform ${
-                    mobileInstOpen ? "rotate-180" : ""
-                  }`}
+                  className={`h-5 w-5 transition-transform ${mobileInstOpen ? "rotate-180" : ""}`}
                   viewBox="0 0 20 20"
                   fill="currentColor"
                   aria-hidden="true"
@@ -612,7 +648,9 @@ export default function Header() {
                       prefetch={false}
                       onClick={closeMobileAnd()}
                       className={`block rounded-md px-2 py-2 hover:bg-gray-100 ${
-                        isActive("/institucional/nossa-historia") ? "text-brand-700 font-semibold" : "text-gray-800"
+                        isActive("/institucional/nossa-historia")
+                          ? "text-brand-700 font-semibold"
+                          : "text-gray-800"
                       }`}
                       aria-current={isActive("/institucional/nossa-historia") ? "page" : undefined}
                     >
@@ -625,7 +663,9 @@ export default function Header() {
                       prefetch={false}
                       onClick={closeMobileAnd()}
                       className={`block rounded-md px-2 py-2 hover:bg-gray-100 ${
-                        isActive("/institucional/filosofia") ? "text-brand-700 font-semibold" : "text-gray-800"
+                        isActive("/institucional/filosofia")
+                          ? "text-brand-700 font-semibold"
+                          : "text-gray-800"
                       }`}
                       aria-current={isActive("/institucional/filosofia") ? "page" : undefined}
                     >
@@ -661,9 +701,7 @@ export default function Header() {
                   Ensino
                 </span>
                 <svg
-                  className={`h-5 w-5 transition-transform ${
-                    mobileEnsOpen ? "rotate-180" : ""
-                  }`}
+                  className={`h-5 w-5 transition-transform ${mobileEnsOpen ? "rotate-180" : ""}`}
                   viewBox="0 0 20 20"
                   fill="currentColor"
                   aria-hidden="true"
@@ -689,7 +727,9 @@ export default function Header() {
                       prefetch={false}
                       onClick={closeMobileAnd()}
                       className={`block rounded-md px-2 py-2 hover:bg-gray-100 ${
-                        isActive("/ensino/educacao-infantil") ? "text-brand-700 font-semibold" : "text-gray-800"
+                        isActive("/ensino/educacao-infantil")
+                          ? "text-brand-700 font-semibold"
+                          : "text-gray-800"
                       }`}
                       aria-current={isActive("/ensino/educacao-infantil") ? "page" : undefined}
                     >
@@ -702,7 +742,9 @@ export default function Header() {
                       prefetch={false}
                       onClick={closeMobileAnd()}
                       className={`block rounded-md px-2 py-2 hover:bg-gray-100 ${
-                        isActive("/ensino/ensino-fundamental") ? "text-brand-700 font-semibold" : "text-gray-800"
+                        isActive("/ensino/ensino-fundamental")
+                          ? "text-brand-700 font-semibold"
+                          : "text-gray-800"
                       }`}
                       aria-current={isActive("/ensino/ensino-fundamental") ? "page" : undefined}
                     >
@@ -715,7 +757,9 @@ export default function Header() {
                       prefetch={false}
                       onClick={closeMobileAnd()}
                       className={`block rounded-md px-2 py-2 hover:bg-gray-100 ${
-                        isActive("/ensino/ensino-medio") ? "text-brand-700 font-semibold" : "text-gray-800"
+                        isActive("/ensino/ensino-medio")
+                          ? "text-brand-700 font-semibold"
+                          : "text-gray-800"
                       }`}
                       aria-current={isActive("/ensino/ensino-medio") ? "page" : undefined}
                     >
