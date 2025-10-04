@@ -453,8 +453,7 @@ export default function Home() {
 
               {/* Carrossel — MOBILE 1 por vez */}
               <div className="mt-6 md:hidden">
-                {/* @ts-expect-error: heightClass será tipado no componente na próxima etapa */}
-                <NewsCarousel items={news} perPage={1} heightClass="h-[240px]" />
+                <NewsCarousel items={news} perPage={1} />
               </div>
 
               {/* Carrossel — DESKTOP/TABLET 3 por vez */}
@@ -500,8 +499,7 @@ export default function Home() {
 
         {/* Carrossel sem clique (componente já está com disableLinks=true por padrão) */}
         <div className={`mx-auto max-w-6xl px-4 md:hidden ${styles.conquistasHoverSoft}`}>
-          {/* @ts-expect-error: heightClass será tipado no componente na próxima etapa */}
-          <ConquistasCarousel items={conquistas} perPage={1} heightClass="h-[240px]" />
+          <ConquistasCarousel items={conquistas} perPage={1} />
         </div>
 
         <div className={`mx-auto max-w-6xl px-4 hidden md:block ${styles.conquistasHoverSoft}`}>
