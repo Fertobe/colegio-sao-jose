@@ -6,30 +6,22 @@ import BackToTop from "../components/BackToTop";
 import BrandIcon from "../components/icons/BrandIcon";
 
 /** ====== TOGGLES ======
- * Se estiver FALSE (padrão), não chama a API e usa fallback (WhatsApp ou e-mail).
- * Quando você finalizar o backend, coloque TRUE no .env:
- * NEXT_PUBLIC_AGENDAMENTOS_ATIVO=true
+ * Mantém fallback via WhatsApp por padrão (e-mail fica por último, quando for a hora).
+ * Leitura direta das envs NEXT_PUBLIC (Next in-line no build).
  */
-const AGENDAMENTO_ATIVO =
-  typeof process !== "undefined" &&
-  process.env.NEXT_PUBLIC_AGENDAMENTOS_ATIVO === "true";
+const AGENDAMENTO_ATIVO = process.env.NEXT_PUBLIC_AGENDAMENTOS_ATIVO === "true";
 
 /** Fallback (enquanto o e-mail não estiver pronto)
  * Opções: "whatsapp" | "email"
- * Se quiser usar e-mail temporariamente:
- * NEXT_PUBLIC_AGENDAMENTOS_FALLBACK=email
+ * Mantemos "whatsapp" por padrão para não mexer com e-mail agora.
  */
 const FALLBACK =
-  (typeof process !== "undefined" &&
-    (process.env.NEXT_PUBLIC_AGENDAMENTOS_FALLBACK as
-      | "whatsapp"
-      | "email")) || "whatsapp";
+  (process.env.NEXT_PUBLIC_AGENDAMENTOS_FALLBACK as "whatsapp" | "email") ||
+  "whatsapp";
 
-/** E-mail de destino para o fallback por e-mail (se usar) */
+/** E-mail de destino para o fallback por e-mail (se/quando usar) */
 const DEST_EMAIL =
-  (typeof process !== "undefined" &&
-    process.env.NEXT_PUBLIC_CONTATO_EMAIL) ||
-  "contato@colegiosaojose.com.br";
+  process.env.NEXT_PUBLIC_CONTATO_EMAIL || "contato@colegiosaojose.com.br";
 
 // ======== Imagens ========
 const HERO_SIDE_IMG_DESKTOP = "/agendamento/hero-side.webp";
@@ -49,9 +41,13 @@ const COLEGIO = {
 function formatPhoneBR(value: string): string {
   const d = value.replace(/\D/g, "").slice(0, 11);
   if (d.length <= 10) {
-    return d.replace(/^(\d{0,2})(\d)/, "($1) $2").replace(/(\d{4})(\d)/, "$1-$2");
+    return d
+      .replace(/^(\d{0,2})(\d)/, "($1) $2")
+      .replace(/(\d{4})(\d)/, "$1-$2");
   }
-  return d.replace(/^(\d{0,2})(\d)/, "($1) $2").replace(/(\d{5})(\d)/, "$1-$2");
+  return d
+    .replace(/^(\d{0,2})(\d)/, "($1) $2")
+    .replace(/(\d{5})(\d)/, "$1-$2");
 }
 function isValidPhone(value: string): boolean {
   const d = value.replace(/\D/g, "");
@@ -84,7 +80,20 @@ export default function AgendamentoClient() {
   const [alertaResp, setAlertaResp] = useState(false);
 
   const canIrAluno =
-    respNome.trim().length > 0 && isValidPhone(respTel) && isValidEmail(respEmail);
+    respNome.trim().length > 0 &&
+    isValidPhone(respTel) &&
+    isValidEmail(respEmail);
+
+  // IDs para acessibilidade
+  const idNome = "resp-nome";
+  const idTel = "resp-tel";
+  const idEmail = "resp-email";
+  const idAlunoNome = "aluno-nome";
+  const idAlunoSerie = "aluno-serie";
+  const idMensagem = "msg";
+  const errNomeId = "err-resp-nome";
+  const errTelId = "err-resp-tel";
+  const errEmailId = "err-resp-email";
 
   // Link para falar com a unidade (CTA do card)
   const whatsUrl = useMemo(() => {
@@ -92,7 +101,9 @@ export default function AgendamentoClient() {
       `Olá! Gostaria de falar com a unidade.\n\n` +
       `• Unidade: ${COLEGIO.nome}\n` +
       `• Endereço: ${COLEGIO.endereco}\n`;
-    return `https://wa.me/${COLEGIO.telefoneWa}?text=${encodeURIComponent(texto)}`;
+    return `https://wa.me/${COLEGIO.telefoneWa}?text=${encodeURIComponent(
+      texto
+    )}`;
   }, []);
 
   function validateResponsavel(): boolean {
@@ -146,10 +157,14 @@ export default function AgendamentoClient() {
       const subject = "Agendamento de visita — Colégio São José";
       const href = `mailto:${encodeURIComponent(
         DEST_EMAIL
-      )}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(corpo)}`;
+      )}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(
+        corpo
+      )}`;
       window.location.href = href;
     } else {
-      const href = `https://wa.me/${COLEGIO.telefoneWa}?text=${encodeURIComponent(corpo)}`;
+      const href = `https://wa.me/${COLEGIO.telefoneWa}?text=${encodeURIComponent(
+        corpo
+      )}`;
       window.open(href, "_blank", "noopener,noreferrer");
     }
   }
@@ -176,7 +191,11 @@ export default function AgendamentoClient() {
         body: JSON.stringify({
           unidade: COLEGIO.nome,
           endereco: COLEGIO.endereco,
-          responsavel: { nome: respNome, telefone: respTel, email: respEmail },
+          responsavel: {
+            nome: respNome,
+            telefone: respTel,
+            email: respEmail,
+          },
           aluno: { nome: alunoNome, serie: alunoSerie },
           mensagem,
           origem: "site-agendamento",
@@ -215,8 +234,9 @@ export default function AgendamentoClient() {
             </h1>
 
             <p className="mt-4 max-w-3xl text-white/90 md:text-lg">
-              Venha conhecer nossos espaços e conversar com nossa equipe. O processo é simples:
-              preencha seus dados, escolha o melhor horário e nós confirmamos com você.
+              Venha conhecer nossos espaços e conversar com nossa equipe. O
+              processo é simples: preencha seus dados, escolha o melhor horário
+              e nós confirmamos com você.
             </p>
             {/* frase “envio temporariamente via …” permanece removida */}
           </div>
@@ -229,11 +249,15 @@ export default function AgendamentoClient() {
                 src={HERO_SIDE_IMG_MOBILE}
                 alt="Família visitando a escola (mobile)"
                 className="absolute left-1/2 bottom-[-10px] h-[120%] w-auto max-w-none select-none object-contain origin-bottom drop-shadow-[0_25px_40px_rgba(0,0,0,.35)]"
-                style={{ transform: "translateX(-50%) translateY(30px) scale(0.98)" }}
+                style={{
+                  transform: "translateX(-50%) translateY(30px) scale(0.98)",
+                }}
                 loading="eager"
                 decoding="async"
                 fetchPriority="high"
                 draggable={false}
+                width={900}
+                height={900}
               />
             </div>
 
@@ -253,6 +277,8 @@ export default function AgendamentoClient() {
                 decoding="async"
                 fetchPriority="high"
                 draggable={false}
+                width={1200}
+                height={1200}
               />
             </div>
           </div>
@@ -267,7 +293,10 @@ export default function AgendamentoClient() {
             aria-hidden="true"
             role="presentation"
           >
-            <path d="M0,80 C320,140 920,10 1440,90 L1440,140 L0,140 Z" fill="#fff" />
+            <path
+              d="M0,80 C320,140 920,10 1440,90 L1440,140 L0,140 Z"
+              fill="#fff"
+            />
           </svg>
         </div>
       </section>
@@ -279,7 +308,8 @@ export default function AgendamentoClient() {
             Venha conhecer nossos espaços e nossa proposta pedagógica em detalhes
           </h2>
           <p className="mx-auto mt-3 max-w-3xl text-center text-gray-700">
-            Escolha uma data e nos conte quem vai visitar. Nossa equipe confirma tudo com você por e-mail/telefone.
+            Escolha uma data e nos conte quem vai visitar. Nossa equipe confirma
+            tudo com você por e-mail/telefone.
           </p>
         </div>
       </section>
@@ -299,58 +329,103 @@ export default function AgendamentoClient() {
               <div className="flex items-center gap-8 text-brand-700">
                 <button
                   type="button"
-                  className={`relative pb-2 text-sm font-semibold ${passo === 1 ? "text-brand-700" : "text-brand-700/60"}`}
+                  className={`relative pb-2 text-sm font-semibold ${
+                    passo === 1 ? "text-brand-700" : "text-brand-700/60"
+                  }`}
                   onClick={() => setPasso(1)}
+                  aria-current={passo === 1 ? "step" : undefined}
                 >
                   <span className="mr-2 inline-flex h-6 w-6 items-center justify-center rounded-full bg-brand-300 text-brand-900 text-xs font-bold">
                     1
                   </span>
                   Dados do Responsável
-                  <span className={`absolute left-0 -bottom-[2px] h-[2px] w-full rounded-full transition ${passo === 1 ? "bg-brand-400" : "bg-transparent"}`} />
+                  <span
+                    className={`absolute left-0 -bottom-[2px] h-[2px] w-full rounded-full transition ${
+                      passo === 1 ? "bg-brand-400" : "bg-transparent"
+                    }`}
+                  />
                 </button>
 
                 <button
                   type="button"
                   aria-disabled={!canIrAluno}
                   disabled={!canIrAluno}
-                  className={`relative pb-2 text-sm font-semibold ${passo === 2 ? "text-brand-700" : "text-brand-700/60"} ${
-                    !canIrAluno ? "cursor-not-allowed opacity-40" : ""
-                  }`}
+                  className={`relative pb-2 text-sm font-semibold ${
+                    passo === 2 ? "text-brand-700" : "text-brand-700/60"
+                  } ${!canIrAluno ? "cursor-not-allowed opacity-40" : ""}`}
                   onClick={() => (canIrAluno ? setPasso(2) : null)}
+                  aria-current={passo === 2 ? "step" : undefined}
                 >
                   <span className="mr-2 inline-flex h-6 w-6 items-center justify-center rounded-full bg-brand-300 text-brand-900 text-xs font-bold">
                     2
                   </span>
                   Dados do Aluno
-                  <span className={`absolute left-0 -bottom-[2px] h-[2px] w-full rounded-full transition ${passo === 2 ? "bg-brand-400" : "bg-transparent"}`} />
+                  <span
+                    className={`absolute left-0 -bottom-[2px] h-[2px] w-full rounded-full transition ${
+                      passo === 2 ? "bg-brand-400" : "bg-transparent"
+                    }`}
+                  />
                 </button>
               </div>
 
               {alertaResp && (
-                <p className="mt-3 text-sm font-semibold text-rose-600">Preencha os dados do responsável para continuar.</p>
+                <p className="mt-3 text-sm font-semibold text-rose-600">
+                  Preencha os dados do responsável para continuar.
+                </p>
               )}
 
               {/* passo 1 */}
               {passo === 1 && (
                 <div className="mt-5 space-y-4">
                   <div>
-                    <label className="mb-1 block text-sm font-medium text-brand-700">Nome do Responsável *</label>
+                    <label
+                      htmlFor={idNome}
+                      className="mb-1 block text-sm font-medium text-brand-700"
+                    >
+                      Nome do Responsável *
+                    </label>
                     <input
+                      id={idNome}
+                      name="responsavel-nome"
                       value={respNome}
                       onChange={(e) => {
                         setRespNome(e.target.value);
                         if (e.target.value.trim()) setErrNome(null);
                       }}
-                      onBlur={() => setErrNome(respNome.trim() ? null : "Informe o nome do responsável.")}
+                      onBlur={() =>
+                        setErrNome(
+                          respNome.trim()
+                            ? null
+                            : "Informe o nome do responsável."
+                        )
+                      }
                       className="w-full rounded-full border border-black/10 px-4 py-3 outline-none focus:ring-2 focus:ring-brand-300"
                       placeholder="Informe o nome do Responsável"
+                      autoComplete="name"
+                      required
+                      aria-invalid={!!errNome}
+                      aria-describedby={errNome ? errNomeId : undefined}
                     />
-                    {errNome && <p className="mt-1 text-xs font-semibold text-rose-600">{errNome}</p>}
+                    {errNome && (
+                      <p
+                        id={errNomeId}
+                        className="mt-1 text-xs font-semibold text-rose-600"
+                      >
+                        {errNome}
+                      </p>
+                    )}
                   </div>
 
                   <div>
-                    <label className="mb-1 block text-sm font-medium text-brand-700">Telefone *</label>
+                    <label
+                      htmlFor={idTel}
+                      className="mb-1 block text-sm font-medium text-brand-700"
+                    >
+                      Telefone *
+                    </label>
                     <input
+                      id={idTel}
+                      name="responsavel-telefone"
                       type="tel"
                       value={respTel}
                       onChange={(e) => {
@@ -358,28 +433,69 @@ export default function AgendamentoClient() {
                         setRespTel(masked);
                         if (isValidPhone(masked)) setErrTel(null);
                       }}
-                      onBlur={() => setErrTel(isValidPhone(respTel) ? null : "Informe um telefone válido.")}
+                      onBlur={() =>
+                        setErrTel(
+                          isValidPhone(respTel)
+                            ? null
+                            : "Informe um telefone válido."
+                        )
+                      }
                       className="w-full rounded-full border border-black/10 px-4 py-3 outline-none focus:ring-2 focus:ring-brand-300"
                       placeholder="(99) 99999-9999"
                       inputMode="numeric"
+                      autoComplete="tel"
+                      required
+                      aria-invalid={!!errTel}
+                      aria-describedby={errTel ? errTelId : undefined}
                     />
-                    {errTel && <p className="mt-1 text-xs font-semibold text-rose-600">{errTel}</p>}
+                    {errTel && (
+                      <p
+                        id={errTelId}
+                        className="mt-1 text-xs font-semibold text-rose-600"
+                      >
+                        {errTel}
+                      </p>
+                    )}
                   </div>
 
                   <div>
-                    <label className="mb-1 block text-sm font-medium text-brand-700">E-mail do Responsável *</label>
+                    <label
+                      htmlFor={idEmail}
+                      className="mb-1 block text-sm font-medium text-brand-700"
+                    >
+                      E-mail do Responsável *
+                    </label>
                     <input
+                      id={idEmail}
+                      name="responsavel-email"
                       type="email"
                       value={respEmail}
                       onChange={(e) => {
                         setRespEmail(e.target.value);
                         if (isValidEmail(e.target.value)) setErrEmail(null);
                       }}
-                      onBlur={() => setErrEmail(isValidEmail(respEmail) ? null : "Informe um e-mail válido.")}
+                      onBlur={() =>
+                        setErrEmail(
+                          isValidEmail(respEmail)
+                            ? null
+                            : "Informe um e-mail válido."
+                        )
+                      }
                       className="w-full rounded-full border border-black/10 px-4 py-3 outline-none focus:ring-2 focus:ring-brand-300"
                       placeholder="Informe seu melhor e-mail"
+                      autoComplete="email"
+                      required
+                      aria-invalid={!!errEmail}
+                      aria-describedby={errEmail ? errEmailId : undefined}
                     />
-                    {errEmail && <p className="mt-1 text-xs font-semibold text-rose-600">{errEmail}</p>}
+                    {errEmail && (
+                      <p
+                        id={errEmailId}
+                        className="mt-1 text-xs font-semibold text-rose-600"
+                      >
+                        {errEmail}
+                      </p>
+                    )}
                   </div>
 
                   <button
@@ -396,26 +512,50 @@ export default function AgendamentoClient() {
               {passo === 2 && (
                 <div className="mt-5 space-y-4">
                   <div>
-                    <label className="mb-1 block text-sm font-medium text-brand-700">Nome do Aluno *</label>
+                    <label
+                      htmlFor={idAlunoNome}
+                      className="mb-1 block text-sm font-medium text-brand-700"
+                    >
+                      Nome do Aluno *
+                    </label>
                     <input
+                      id={idAlunoNome}
+                      name="aluno-nome"
                       value={alunoNome}
                       onChange={(e) => setAlunoNome(e.target.value)}
                       className="w-full rounded-full border border-black/10 px-4 py-3 outline-none focus:ring-2 focus:ring-brand-300"
                       placeholder="Informe o nome do Aluno"
+                      autoComplete="off"
+                      required
                     />
                   </div>
                   <div>
-                    <label className="mb-1 block text-sm font-medium text-brand-700">Série / Idade</label>
+                    <label
+                      htmlFor={idAlunoSerie}
+                      className="mb-1 block text-sm font-medium text-brand-700"
+                    >
+                      Série / Idade
+                    </label>
                     <input
+                      id={idAlunoSerie}
+                      name="aluno-serie"
                       value={alunoSerie}
                       onChange={(e) => setAlunoSerie(e.target.value)}
                       className="w-full rounded-full border border-black/10 px-4 py-3 outline-none focus:ring-2 focus:ring-brand-300"
                       placeholder="Ex.: 5º ano / 10 anos"
+                      autoComplete="off"
                     />
                   </div>
                   <div>
-                    <label className="mb-1 block text-sm font-medium text-brand-700">Observações (opcional)</label>
+                    <label
+                      htmlFor={idMensagem}
+                      className="mb-1 block text-sm font-medium text-brand-700"
+                    >
+                      Observações (opcional)
+                    </label>
                     <textarea
+                      id={idMensagem}
+                      name="observacoes"
                       value={mensagem}
                       onChange={(e) => setMensagem(e.target.value)}
                       className="min-h-[110px] w-full rounded-2xl border border-black/10 px-4 py-3 outline-none focus:ring-2 focus:ring-brand-300"
@@ -429,7 +569,11 @@ export default function AgendamentoClient() {
                     disabled={enviando}
                     className="mt-2 inline-flex rounded-full bg-brand-300 px-5 py-3 font-semibold text-brand-900 shadow-sm transition hover:bg-brand-200 disabled:opacity-60"
                   >
-                    {enviando ? "Enviando…" : AGENDAMENTO_ATIVO ? "Agendar" : "Enviar pedido"}
+                    {enviando
+                      ? "Enviando…"
+                      : AGENDAMENTO_ATIVO
+                        ? "Agendar"
+                        : "Enviar pedido"}
                   </button>
 
                   {/* A11y: status anunciado por leitores de tela */}
@@ -453,10 +597,20 @@ export default function AgendamentoClient() {
             <div className="space-y-4">
               <div className="overflow-hidden rounded-2xl border border-black/10 shadow-md">
                 <div className="aspect-[16/9] w-full overflow-hidden">
-                  <img src={COLEGIO.img} alt={COLEGIO.nome} className="h-full w-full object-cover" />
+                  <img
+                    src={COLEGIO.img}
+                    alt={COLEGIO.nome}
+                    className="h-full w-full object-cover"
+                    width={1280}
+                    height={720}
+                    decoding="async"
+                    loading="lazy"
+                  />
                 </div>
                 <div className="space-y-3 p-4">
-                  <h3 className="text-xl font-semibold text-brand-700">{COLEGIO.nome}</h3>
+                  <h3 className="text-xl font-semibold text-brand-700">
+                    {COLEGIO.nome}
+                  </h3>
 
                   <span className="inline-block rounded-full border border-brand-300/60 bg-brand-50 px-3 py-1 text-xs font-semibold text-brand-700">
                     {COLEGIO.segmentos}
@@ -464,17 +618,26 @@ export default function AgendamentoClient() {
 
                   <ul className="space-y-2 text-sm text-gray-700">
                     <li className="flex items-center gap-2">
-                      <BrandIcon name="pinHome" className="h-5 w-5 text-brand-700" title="Endereço" />
+                      <BrandIcon
+                        name="pinHome"
+                        className="h-5 w-5 text-brand-700"
+                        title="Endereço"
+                      />
                       <span>{COLEGIO.endereco}</span>
                     </li>
                     <li className="flex items-center gap-2">
-                      <BrandIcon name="calendar" className="h-5 w-5 text-brand-700" title="Horário" />
+                      <BrandIcon
+                        name="calendar"
+                        className="h-5 w-5 text-brand-700"
+                        title="Horário"
+                      />
                       <span>{COLEGIO.horario}</span>
                     </li>
                   </ul>
 
                   <p className="text-xs text-gray-500">
-                    Se você já é pai, mãe ou responsável de aluno matriculado, fale diretamente com a unidade.
+                    Se você já é pai, mãe ou responsável de aluno matriculado,
+                    fale diretamente com a unidade.
                   </p>
 
                   <a
@@ -483,7 +646,12 @@ export default function AgendamentoClient() {
                     rel="noopener noreferrer"
                     className="inline-flex items-center justify-center gap-2 rounded-full bg-brand-300 px-5 py-3 text-sm font-semibold text-brand-900 shadow-sm transition hover:bg-brand-200"
                   >
-                    <BrandIcon name="whatsapp" color="currentColor" className="h-5 w-5 text-brand-900" title="WhatsApp" />
+                    <BrandIcon
+                      name="whatsapp"
+                      color="currentColor"
+                      className="h-5 w-5 text-brand-900"
+                      title="WhatsApp"
+                    />
                     Falar com a unidade no WhatsApp
                   </a>
                 </div>

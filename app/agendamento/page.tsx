@@ -1,7 +1,7 @@
 // app/agendamento/page.tsx
 import type { Metadata } from "next";
 import { getSiteUrl } from "@/app/utils/site-url";
-import AgendamentoClient from "./AgendamentoClient.tsx"; // importa direto o componente client
+import AgendamentoClient from "./AgendamentoClient"; // import sem extensão
 
 // Mantém a página estática; o formulário roda no client
 export const dynamic = "force-static";
@@ -9,6 +9,7 @@ export const dynamic = "force-static";
 const SITE_URL = getSiteUrl();
 
 export const metadata: Metadata = {
+  metadataBase: new URL(SITE_URL),
   title: "Agendamento de Visita | Colégio São José",
   description:
     "Agende sua visita ao Colégio São José. Informe seus dados e o segmento de interesse.",
