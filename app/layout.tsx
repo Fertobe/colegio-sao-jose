@@ -17,7 +17,7 @@ export const metadata: Metadata = {
   },
   description: "Tradição e inovação para preparar estudantes para a vida real.",
   metadataBase: new URL(BASE_URL),
-  // ❌ Removido: canonical global "/" — cada página define o seu quando necessário
+  // ❌ Sem canonical global — cada página define o seu quando necessário
   openGraph: {
     type: "website",
     siteName: "Colégio São José",
@@ -35,6 +35,12 @@ export const metadata: Metadata = {
     },
   },
   twitter: { card: "summary_large_image" },
+
+  // ✅ Adicionado: manifest + ícone padrão
+  manifest: "/site.webmanifest",
+  icons: {
+    icon: "/logo.svg"
+  },
 };
 
 export const viewport: Viewport = {
