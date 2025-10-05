@@ -10,6 +10,16 @@ import { getSiteUrl, assertSiteUrlForEnv } from "@/app/utils/site-url"; // util 
 const BASE_URL = getSiteUrl();
 assertSiteUrlForEnv();
 
+// Ambiente: bloquear pré-produção também por domínio (defensivo)
+const IS_PREVIEW =
+  (process.env.VERCEL_ENV && process.env.VERCEL_ENV !== "production") ||
+  BASE_URL.includes("vercel.app") ||
+  BASE_URL.includes("localhost");
+
+// Opcional: GTM/GA via ENV (só entram em produção)
+const GTM_ID = process.env.NEXT_PUBLIC_GTM_ID; // ex: "GTM-XXXXXXX"
+const GA_ID  = process.env.NEXT_PUBLIC_GA_ID;  // ex: "G-XXXXXXXXXX"
+
 export const metadata: Metadata = {
   title: {
     default: "Colégio São José",
@@ -24,22 +34,30 @@ export const metadata: Metadata = {
     url: `${BASE_URL}/`,
     images: ["/og-cover.webp"], // resolvido para absoluto via metadataBase
   },
-  robots: {
-    index: true,
-    follow: true,
-    "max-image-preview": "large",
-    googleBot: {
-      index: true,
-      follow: true,
-      "max-image-preview": "large",
-    },
-  },
+  // ✅ Meta robots também respeita preview (alinhado ao robots.ts/sitemap.ts)
+  robots: IS_PREVIEW
+    ? {
+        index: false,
+        follow: false,
+        googleBot: { index: false, follow: false },
+      }
+    : {
+        index: true,
+        follow: true,
+        "max-image-preview": "large",
+        googleBot: {
+          index: true,
+          follow: true,
+          "max-image-preview": "large",
+        },
+      },
   twitter: { card: "summary_large_image" },
 
   // ✅ Adicionado: manifest + ícone padrão
   manifest: "/site.webmanifest",
   icons: {
-    icon: "/logo.svg"
+    icon: "/logo.svg",
+    // se quiser: apple: "/apple-touch-icon.png", shortcut: "/favicon.ico"
   },
 };
 
@@ -126,9 +144,57 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           crossOrigin="anonymous"
         />
         */}
+
+        {/* ================== GTM (opcional) ================== */}
+        {!IS_PREVIEW && GTM_ID && (
+          <>
+            <script
+              dangerouslySetInnerHTML={{
+                __html: `
+  (function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+  new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+  j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+  'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+  })(window,document,'script','dataLayer','${GTM_ID}');
+                `.trim(),
+              }}
+            />
+          </>
+        )}
+
+        {/* ================== GA4 direto (opcional) ==================
+            Use apenas se NÃO estiver disparando GA4 via GTM.
+        */}
+        {!IS_PREVIEW && GA_ID && !GTM_ID && (
+          <>
+            <script async src={`https://www.googletagmanager.com/gtag/js?id=${GA_ID}`} />
+            <script
+              dangerouslySetInnerHTML={{
+                __html: `
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', '${GA_ID}', { anonymize_ip: true });
+                `.trim(),
+              }}
+            />
+          </>
+        )}
       </head>
 
       <body className="min-h-screen flex flex-col bg-white text-gray-900" suppressHydrationWarning>
+        {/* GTM noscript (boa prática) */}
+        {!IS_PREVIEW && GTM_ID && (
+          <noscript>
+            <iframe
+              src={`https://www.googletagmanager.com/ns.html?id=${GTM_ID}`}
+              height="0"
+              width="0"
+              style={{ display: "none", visibility: "hidden" }}
+            />
+          </noscript>
+        )}
+
         {/* A11y: link para pular direto ao conteúdo */}
         <a
           href="#conteudo"

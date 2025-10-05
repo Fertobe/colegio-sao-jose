@@ -3,18 +3,27 @@ import type { MetadataRoute } from "next";
 import { getSiteUrl } from "@/app/utils/site-url";
 import { listNewsMeta } from "@/lib/news";
 
+/** Metadata routes são estáticas; deixo explícito e com ISR opcional */
+export const dynamic = "force-static";
+export const revalidate = 3600; // opcional: 1h
+
 /**
  * Sitemap com:
- * - bloqueio em previews (VERCEL_ENV !== "production")
+ * - bloqueio em previews (VERCEL_ENV !== "production" ou domínio de preview)
  * - opt-in por ENV (NEXT_PUBLIC_ENABLE_SITEMAP=1 ou ENABLE_SITEMAP=true)
  * - rotas estáticas principais
  * - rotas dinâmicas para /noticias/[slug] (apenas publicadas)
  */
 export default function sitemap(): MetadataRoute.Sitemap {
-  // 1) Nunca expor em pré-produção
-  if (process.env.VERCEL_ENV && process.env.VERCEL_ENV !== "production") {
-    return [];
-  }
+  const base = getSiteUrl();
+
+  // 1) Nunca expor em pré-produção / domínios de preview
+  const isPreviewEnv =
+    (process.env.VERCEL_ENV && process.env.VERCEL_ENV !== "production") ||
+    base.includes("vercel.app") ||
+    base.includes("localhost");
+
+  if (isPreviewEnv) return [];
 
   // 2) Opt-in para expor sitemap em produção (alinhado ao robots.ts)
   const sitemapEnabled =
@@ -22,7 +31,6 @@ export default function sitemap(): MetadataRoute.Sitemap {
     process.env.ENABLE_SITEMAP === "true";
   if (!sitemapEnabled) return [];
 
-  const base = getSiteUrl();
   const now = new Date();
 
   // Rotas fixas
@@ -57,17 +65,20 @@ export default function sitemap(): MetadataRoute.Sitemap {
   ];
 
   // Rotas dinâmicas de notícias publicadas
-  const posts = (listNewsMeta() || []) as Array<{ slug: string; date?: string }>;
-  const newsEntries: MetadataRoute.Sitemap = posts.map((p) => {
-    const d = p.date ? new Date(p.date) : now;
-    const lastModified = isNaN(d.getTime()) ? now : d;
-    return {
-      url: `${base}/noticias/${p.slug}`,
-      lastModified,
-      changeFrequency: "weekly",
-      priority: 0.7,
-    };
-  });
+  const posts = (listNewsMeta() || []) as Array<{ slug?: string; date?: string }>;
+  const newsEntries: MetadataRoute.Sitemap =
+    posts
+      .filter((p) => !!p.slug)
+      .map((p) => {
+        const d = p.date ? new Date(p.date) : now;
+        const lastModified = isNaN(d.getTime()) ? now : d;
+        return {
+          url: `${base}/noticias/${p.slug}`,
+          lastModified,
+          changeFrequency: "weekly",
+          priority: 0.7,
+        };
+      });
 
   return [...fixed, ...newsEntries];
 }
