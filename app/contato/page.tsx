@@ -2,8 +2,8 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import BackToTop from "../components/BackToTop";
-import ContatoFormMailto from "./ContatoFormMailto";
 import BrandIcon from "../components/icons/BrandIcon";
+import ContactForm from "./ContactForm";
 import { getSiteUrl } from "@/app/utils/site-url";
 
 /** Página pode ser totalmente estática */
@@ -11,8 +11,8 @@ export const dynamic = "force-static";
 
 const SITE_URL = getSiteUrl();
 
-/** ⚠️ E-mail: manteremos temporário (e-mail é o último a mexer) */
-const EMAIL = process.env.CONTACT_TO_EMAIL || "fernando.tobe@gmail.com";
+/** E-mail exibido nos cards e usado no link mailto (não afeta o POST). */
+const EMAIL = process.env.CONTACT_TO || "contato@colegiosaojose.net";
 
 /** Hero */
 const HERO_DESKTOP = {
@@ -257,9 +257,10 @@ export default function ContatoPage() {
               <p className="mt-2 text-brand-800/85">
                 Preencha os campos e vamos responder o quanto antes. Campos com * são obrigatórios.
               </p>
+
+              {/* <<< FORMULÁRIO QUE ENVIA PARA /api/mail >>> */}
               <div className="mt-6 rounded-2xl border border-brand-100 p-6 shadow-sm">
-                {/* Abre o app de e-mail (mailto) — perfeito para testes */}
-                <ContatoFormMailto email={EMAIL} />
+                <ContactForm />
               </div>
             </div>
 
