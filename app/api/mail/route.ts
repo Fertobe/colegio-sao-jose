@@ -1,7 +1,7 @@
 // app/api/mail/route.ts
 import { Resend } from "resend";
 
-export const dynamic = "force-dynamic"; // sempre executa no server
+export const dynamic = "force-dynamic";
 
 // ---------- util ----------
 function reqEnv(name: string): string {
@@ -9,27 +9,34 @@ function reqEnv(name: string): string {
   if (!v || v.trim() === "") throw new Error(`Faltou variável ${name}`);
   return v.trim();
 }
+function escapeHtml(s: string) {
+  return s
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;");
+}
 
-// ---------- GET: só para teste rápido no navegador ----------
+// ---------- GET: teste rápido ----------
 export async function GET() {
   try {
-    // tenta ler as variáveis (se faltar, cai no catch)
     reqEnv("RESEND_API_KEY");
     reqEnv("MAIL_FROM");
     reqEnv("CONTACT_TO");
-
     return Response.json({ ok: true, route: "/api/mail", tip: "Use POST para enviar." });
   } catch (err: any) {
     return Response.json({ ok: false, error: String(err?.message || err) }, { status: 500 });
   }
 }
 
-// ---------- POST: envio de e-mail ----------
+// ---------- POST: envio ----------
 type Body = {
   name: string;
-  email: string;       // usado em replyTo
+  email: string;       // replyTo
   phone?: string;
   message: string;
+  subject?: string;    // <- opcional (novo)
+  meta?: Record<string, string | number | boolean | null | undefined>; // <- opcional (novo)
 };
 
 export async function POST(req: Request) {
@@ -42,7 +49,7 @@ export async function POST(req: Request) {
 
     const data = (await req.json()) as Partial<Body>;
 
-    // validação bem simples
+    // validação básica
     if (!data?.name || !data?.email || !data?.message) {
       return Response.json(
         { ok: false, error: "Campos obrigatórios: name, email, message." },
@@ -52,23 +59,42 @@ export async function POST(req: Request) {
 
     const resend = new Resend(RESEND_API_KEY);
 
-    const subject = `${PREFIX ? `${PREFIX} ` : ""}Contato via site — ${data.name}`;
-    const text =
-      [
-        `Nome: ${data.name}`,
-        `E-mail: ${data.email}`,
-        data.phone ? `Telefone: ${data.phone}` : null,
-        "",
-        data.message,
-        "",
-        APP_BASE_URL ? `Origem: ${APP_BASE_URL}` : null,
-      ]
-        .filter(Boolean)
-        .join("\n");
+    const subject =
+      (data.subject && data.subject.trim()) ||
+      `${PREFIX ? `${PREFIX} ` : ""}Contato via site — ${data.name}`;
+
+    const metaLines =
+      data.meta
+        ? Object.entries(data.meta)
+            .map(([k, v]) => `${k}: ${v ?? ""}`)
+            .join("\n")
+        : "";
+
+    const text = [
+      `Nome: ${data.name}`,
+      `E-mail: ${data.email}`,
+      data.phone ? `Telefone: ${data.phone}` : null,
+      "",
+      "Mensagem:",
+      data.message,
+      "",
+      APP_BASE_URL ? `Origem: ${APP_BASE_URL}` : null,
+      metaLines ? "\n-- Metadados --" : null,
+      metaLines || null,
+    ]
+      .filter(Boolean)
+      .join("\n");
+
+    const htmlMeta = data.meta
+      ? `<hr style="margin:16px 0;border:none;border-top:1px solid #eee"/>
+         <p style="color:#666"><strong>Metadados</strong><br/>${Object.entries(data.meta)
+           .map(([k, v]) => `${escapeHtml(k)}: ${escapeHtml(String(v ?? ""))}`)
+           .join("<br/>")}</p>`
+      : "";
 
     const html = `
       <div style="font-family: system-ui, Arial, sans-serif; line-height:1.6">
-        <h2>Contato via site</h2>
+        <h2>${escapeHtml(subject)}</h2>
         <ul>
           <li><strong>Nome:</strong> ${escapeHtml(data.name)}</li>
           <li><strong>E-mail:</strong> ${escapeHtml(data.email)}</li>
@@ -77,20 +103,20 @@ export async function POST(req: Request) {
         <p><strong>Mensagem:</strong></p>
         <pre style="white-space:pre-wrap">${escapeHtml(data.message)}</pre>
         ${APP_BASE_URL ? `<p style="color:#666">Origem: ${escapeHtml(APP_BASE_URL)}</p>` : ""}
+        ${htmlMeta}
       </div>
     `;
 
     const sent = await resend.emails.send({
-      from: MAIL_FROM,         // ex.: "Colégio São José <onboarding@resend.dev>"
-      to: CONTACT_TO,          // seu destino de testes (Gmail)
-      replyTo: data.email,     // <<< atenção: 'replyTo' é string, não objeto
+      from: MAIL_FROM,
+      to: CONTACT_TO,
+      replyTo: data.email,
       subject,
       text,
       html,
     });
 
     if (sent.error) {
-      // Resend retornou erro
       return Response.json({ ok: false, error: sent.error.message }, { status: 502 });
     }
 
@@ -101,13 +127,4 @@ export async function POST(req: Request) {
       { status: 500 }
     );
   }
-}
-
-// pequeno escape para o HTML
-function escapeHtml(s: string) {
-  return s
-    .replace(/&/g, "&amp;")
-    .replace(/</g, "&lt;")
-    .replace(/>/g, "&gt;")
-    .replace(/"/g, "&quot;");
 }

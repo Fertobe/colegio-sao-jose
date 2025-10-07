@@ -6,15 +6,13 @@ import BackToTop from "../components/BackToTop";
 import BrandIcon from "../components/icons/BrandIcon";
 
 /** ====== TOGGLES ======
- * Mantém fallback via WhatsApp por padrão (e-mail fica por último, quando for a hora).
- * Leitura direta das envs NEXT_PUBLIC (Next in-line no build).
+ * Se NÃO for "false", manda para /api/mail (padrão: ativo).
+ * Se for "false", cai no fallback (WhatsApp ou e-mail).
  */
-const AGENDAMENTO_ATIVO = process.env.NEXT_PUBLIC_AGENDAMENTOS_ATIVO === "true";
+const AGENDAMENTO_ATIVO =
+  process.env.NEXT_PUBLIC_AGENDAMENTOS_ATIVO !== "false";
 
-/** Fallback (enquanto o e-mail não estiver pronto)
- * Opções: "whatsapp" | "email"
- * Mantemos "whatsapp" por padrão para não mexer com e-mail agora.
- */
+/** Fallback enquanto não quiser usar a API (opcional) */
 const FALLBACK =
   (process.env.NEXT_PUBLIC_AGENDAMENTOS_FALLBACK as "whatsapp" | "email") ||
   "whatsapp";
@@ -175,39 +173,66 @@ export default function AgendamentoClient() {
       return;
     }
 
+    // Plano B (WhatsApp/mailto) se você quiser desativar por env
     if (!AGENDAMENTO_ATIVO) {
       sendFallback();
       setOk("ok");
       return;
     }
 
-    // Quando houver API real:
+    // ===== Envio para /api/mail (Resend) =====
     setEnviando(true);
     setOk(null);
+
+    // Observação: o /api/mail monta o subject internamente (“Contato via site — Nome”).
+    // Colocamos “Agendamento de visita” no início do corpo para facilitar sua triagem.
+    const message =
+      [
+        "[Agendamento de visita]",
+        `Unidade: ${COLEGIO.nome}`,
+        `Endereço: ${COLEGIO.endereco}`,
+        "",
+        "Responsável:",
+        `• Nome: ${respNome}`,
+        `• Telefone: ${respTel}`,
+        `• E-mail: ${respEmail}`,
+        "",
+        "Aluno:",
+        `• Nome: ${alunoNome}`,
+        `• Série/Idade: ${alunoSerie || "-"}`,
+        "",
+        "Observações:",
+        mensagem || "-",
+      ].join("\n");
+
     try {
-      const res = await fetch("/api/agendamentos", {
+      const res = await fetch("/api/mail", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          unidade: COLEGIO.nome,
-          endereco: COLEGIO.endereco,
-          responsavel: {
-            nome: respNome,
-            telefone: respTel,
-            email: respEmail,
+          name: respNome,
+          email: respEmail,
+          phone: respTel,
+          message,
+          // meta opcional — aparece no HTML do e-mail se você quiser adaptar
+          meta: {
+            tipo: "agendamento",
+            url: typeof window !== "undefined" ? window.location.href : "",
           },
-          aluno: { nome: alunoNome, serie: alunoSerie },
-          mensagem,
-          origem: "site-agendamento",
-          quando: new Date().toISOString(),
         }),
       });
-      if (!res.ok) throw new Error("Falha no envio");
+
+      const json = await res.json();
+      if (!res.ok || !json?.ok) {
+        throw new Error(json?.error || "Falha no envio");
+      }
+
       setOk("ok");
+      // limpa alguns campos
       setAlunoNome("");
       setAlunoSerie("");
       setMensagem("");
-    } catch {
+    } catch (err) {
       setOk("erro");
     } finally {
       setEnviando(false);
@@ -238,7 +263,6 @@ export default function AgendamentoClient() {
               processo é simples: preencha seus dados, escolha o melhor horário
               e nós confirmamos com você.
             </p>
-            {/* frase “envio temporariamente via …” permanece removida */}
           </div>
 
           {/* DIREITA: imagem */}
